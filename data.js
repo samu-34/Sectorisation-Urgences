@@ -32,7 +32,7 @@ const HOSPITAL_RECORDS = [
   },
   {
     id: "saint_jean",
-    name: "Clinique Saint Jean Sud de France",
+    name: "Clinique Saint - Jean Sud de France",
     color: "#fd5901",
     location: {
       lat: 43.5747,
