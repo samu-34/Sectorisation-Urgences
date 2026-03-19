@@ -71,21 +71,6 @@ html, body {
   font-weight: 500;
 }
 
-/* ─── Quick Badges ─── */
-.badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border-radius: var(--radius-pill);
-  padding: 5px 10px;
-  font-size: 11px;
-  font-weight: 700;
-  border: 1px solid var(--line);
-  background: #fff;
-}
-.dot-mini { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-
 /* ─── Sections ─── */
 .section {
   padding: 14px 18px;

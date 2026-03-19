@@ -161,6 +161,39 @@ test("dedicated coastal clouds stay aligned with their commune reference points"
   });
 });
 
+test("circonstanciel follows the configured territorial sectorisation", () => {
+  const areaById = new Map([...CITY_AREAS, ...MTP_SUBAREAS].map((area) => [area.id, area]));
+
+  const expectedAssignments = {
+    mtp_centre_historique: "lapeyronie",
+    mtp_hf: "lapeyronie",
+    mtp_mosson: "lapeyronie",
+    assas: "lapeyronie",
+    mtp_pres_arenes: "saint_roch",
+    mtp_croix_argent: "saint_roch",
+    "lattes-centre": "saint_roch",
+    "lattes-maurin": "saint_roch",
+    mtp_cevennes: "beausoleil",
+    mtp_arceaux_gambetta: "beausoleil",
+    mtp_port_marianne: "millenaire",
+    mtp_millenaire: "millenaire",
+    carnon: "millenaire",
+    saint_bres: "millenaire",
+    "lattes-boirargues": "millenaire",
+    baillargues: "parc",
+    vendargues: "parc",
+    saint_genies_des_mourgues: "parc",
+    montaud: "parc",
+    mireval: "saint_jean"
+  };
+
+  Object.entries(expectedAssignments).forEach(([areaId, hospitalId]) => {
+    const area = areaById.get(areaId);
+    assert.ok(area, `Missing area ${areaId}`);
+    assert.equal(resolveHospitalForArea(area, "divers", {}), hospitalId, `Unexpected divers hospital for ${areaId}`);
+  });
+});
+
 test("every configured area resolves to a valid hospital for every specialty", () => {
   const allAreas = [...CITY_AREAS, ...MTP_SUBAREAS];
 

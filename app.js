@@ -30,7 +30,6 @@ const DOM = {
   symptomInput: document.getElementById("symptomInput"),
   suggestBox: document.getElementById("suggestBox"),
   citySuggestBox: document.getElementById("citySuggestBox"),
-  quickBadges: document.getElementById("quickBadges"),
   regulateBtn: document.getElementById("regulateBtn"),
   focusBtn: document.getElementById("focusBtn")
 };
@@ -38,7 +37,7 @@ const DOM = {
 // ─────────────────────────────────────────────
 // ÉTAT APPLICATIF
 // ─────────────────────────────────────────────
-let activeSpecialty = "cardio_pneumo";
+let activeSpecialty = "divers";
 let diversAssignments = {};
 let cloudLayers = [];
 let haloLayers = [];
@@ -414,27 +413,9 @@ function buildLabels() {
 // SECTORISATION — calcul d'orientation
 // ─────────────────────────────────────────────
 function computeDiversAssignments() {
-  const hospitals = Object.keys(HOSPITALS);
-  const areas = [
-    ...CITY_AREAS.map(a => ({ id: a.id, city: a.city, lat: a.lat, lng: a.lng, weight: estimateDensityWeight(a.city) })),
-    ...MTP_SUBAREAS.map(a => ({ id: a.id, city: "Montpellier", lat: a.lat, lng: a.lng, weight: 2.4 }))
-  ];
-  const total = areas.reduce((s, a) => s + a.weight, 0);
-  const target = {}, current = {};
-  hospitals.forEach(h => { target[h] = total / hospitals.length; current[h] = 0; });
   diversAssignments = {};
-  areas.sort((a, b) => b.weight - a.weight).forEach(area => {
-    let best = hospitals[0], scoreBest = Infinity;
-    hospitals.forEach(hid => {
-      const h = HOSPITALS[hid];
-      const d = distanceKm(area.lat, area.lng, h.lat, h.lng);
-      const overload = Math.max(0, current[hid] - target[hid]);
-      const under = Math.max(0, target[hid] - current[hid]);
-      const score = d + overload * 7.5 - under * 1.6;
-      if (score < scoreBest) { scoreBest = score; best = hid; }
-    });
-    diversAssignments[area.id] = best;
-    current[best] += area.weight;
+  [...CITY_AREAS, ...MTP_SUBAREAS].forEach(area => {
+    diversAssignments[area.id] = resolveHospitalForArea(area, "divers", {});
   });
 }
 
@@ -590,24 +571,13 @@ function refreshMap() {
 }
 
 // ─────────────────────────────────────────────
-// UI — légende, badges, chips, selects
+// UI — légende, chips, selects
 // ─────────────────────────────────────────────
 function renderLegend() {
   DOM.legend.innerHTML = `<div style="font-weight:700;margin-bottom:6px">${SPECIALTIES.find(s => s.id === activeSpecialty).label}</div>`;
   Object.values(HOSPITALS).forEach(h => {
     DOM.legend.innerHTML += `<div class="legend-item"><span class="legend-swatch" style="background:${h.color}"></span><span>${h.name}</span></div>`;
   });
-}
-
-function renderQuickBadges() {
-  if (!DOM.quickBadges) return;
-  const rows = [
-    ['Stable', '#16a34a'],
-    ['Non grave', '#2563eb'],
-    ['Territorial', '#7c3aed'],
-    ['Régulation', '#ea580c']
-  ];
-  DOM.quickBadges.innerHTML = rows.map(([t, c]) => `<span class="badge"><span class="dot-mini" style="background:${c}"></span>${t}</span>`).join("");
 }
 
 function renderChips() {
@@ -857,9 +827,9 @@ map.on('zoomend', updateLabelVisibility);
 // ─────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
   DOM.toolbar.innerHTML = "Carte interactive chargée.";
-  renderQuickBadges();
   renderChips();
   populateSpecialtySelect();
+  DOM.detectedSpecialty.value = activeSpecialty;
   populateCitySelect();
   updateSubzoneOptions();
   refreshMap();
