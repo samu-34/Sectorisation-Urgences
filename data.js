@@ -48,7 +48,7 @@ const HOSPITAL_RECORDS = [
       note: "Coordonnées historiques à confirmer"
     },
     verified_at: "2026-03-19",
-    verification_status: "reviewed"
+    verification_status: "needs_review"
   },
   {
     id: "beausoleil",
@@ -90,7 +90,7 @@ const HOSPITAL_RECORDS = [
       note: "Coordonnées historiques à confirmer"
     },
     verified_at: "2026-03-19",
-    verification_status: "reviewed"
+    verification_status: "needs_review"
   },
   {
     id: "parc",
@@ -111,7 +111,7 @@ const HOSPITAL_RECORDS = [
       note: "Coordonnées historiques à confirmer"
     },
     verified_at: "2026-03-19",
-    verification_status: "reviewed"
+    verification_status: "needs_review"
   },
   {
     id: "millenaire",
@@ -132,7 +132,7 @@ const HOSPITAL_RECORDS = [
       note: "Coordonnées historiques à confirmer"
     },
     verified_at: "2026-03-19",
-    verification_status: "reviewed"
+    verification_status: "needs_review"
   }
 ];
 
@@ -240,8 +240,8 @@ const MOTIF_CATALOG = [
 // ZONES GÉOGRAPHIQUES (communes)
 // ─────────────────────────────────────────────
 const CITY_AREAS = [
-  { id: "carnon", city: "Carnon", lat: 43.5498, lng: 4.0381, type: "commune", cloud: "sud_est" },
-  { id: "palavas", city: "Palavas-les-Flots", lat: 43.5284, lng: 3.9304, type: "commune", cloud: "sud_est" },
+  { id: "carnon", city: "Carnon", lat: 43.5468, lng: 3.9796, type: "commune", cloud: "sud_est" },
+  { id: "palavas", city: "Palavas-les-Flots", lat: 43.5294, lng: 3.9346, type: "commune", cloud: "sud_est" },
   { id: "saint_jean_de_vedas", city: "Saint-Jean-de-Védas", lat: 43.5735, lng: 3.8286, type: "commune", cloud: "sud_ouest" },
   { id: "villeneuve", city: "Villeneuve-lès-Maguelone", lat: 43.5343, lng: 3.8625, type: "commune", cloud: "sud_ouest" },
   { id: "vic", city: "Vic-la-Gardiole", lat: 43.4906, lng: 3.7982, type: "commune", cloud: "sud_ouest" },
@@ -275,27 +275,109 @@ const CITY_AREAS = [
   { id: "saint_drezery", city: "Saint-Drézéry", lat: 43.7318, lng: 3.9788, type: "commune", cloud: "est" },
   { id: "beaulieu", city: "Beaulieu", lat: 43.7287, lng: 3.9964, type: "commune", cloud: "est" },
   { id: "restinclieres", city: "Restinclières", lat: 43.7228, lng: 4.0382, type: "commune", cloud: "est" },
-  { id: "mauguio", city: "Mauguio", lat: 43.6168, lng: 4.0073, type: "commune", cloud: "sud_est" },
+  { id: "mauguio", city: "Mauguio", lat: 43.6168, lng: 4.0091, type: "commune", cloud: "sud_est" },
   { id: "saint_aunes", city: "Saint-Aunès", lat: 43.6408, lng: 4.0088, type: "commune", cloud: "est" },
-  { id: "perols", city: "Pérols", lat: 43.5641, lng: 3.9530, type: "commune", cloud: "sud_est" },
+  { id: "perols", city: "Pérols", lat: 43.5622, lng: 3.9536, type: "commune", cloud: "sud_est" },
   { id: "baillargues", city: "Baillargues", lat: 43.6635, lng: 4.0078, type: "commune", cloud: "est" },
-  { id: "lattes-west", city: "Lattes", label: "Lattes — secteur Ouest", lat: 43.561, lng: 3.895, type: "lattes", cloud: "lattes_west" },
-  { id: "lattes-east", city: "Lattes", label: "Lattes — secteur Est", lat: 43.561, lng: 3.955, type: "lattes", cloud: "lattes_east" }
+  { id: "lattes-maurin", city: "Lattes", label: "Lattes - Maurin", lat: 43.571, lng: 3.864, type: "lattes", cloud: "lattes_maurin" },
+  { id: "lattes-centre", city: "Lattes", label: "Lattes - Centre", lat: 43.565, lng: 3.901, type: "lattes", cloud: "lattes_centre" },
+  { id: "lattes-boirargues", city: "Lattes", label: "Lattes - Boirargues", lat: 43.566, lng: 3.936, type: "lattes", cloud: "lattes_boirargues" }
 ];
 
 // ─────────────────────────────────────────────
 // QUARTIERS DE MONTPELLIER
 // ─────────────────────────────────────────────
 const MTP_SUBAREAS = [
-  { id: "mtp_hf", label: "Montpellier - Hôpitaux facultés", lat: 43.629, lng: 3.874, cloud: "mtp_hf", bucket: "hopitaux-facultes" },
-  { id: "mtp_mosson", label: "Montpellier - Mosson", lat: 43.620, lng: 3.816, cloud: "mtp_mosson", bucket: "mosson" },
-  { id: "mtp_cevennes", label: "Montpellier - Cévennes", lat: 43.600, lng: 3.846, cloud: "mtp_cevennes", bucket: "cevennes" },
-  { id: "mtp_pres_arenes", label: "Montpellier - Près d'Arènes", lat: 43.588, lng: 3.872, cloud: "mtp_pres_arenes", bucket: "pres-darenes" },
-  { id: "mtp_croix_argent", label: "Montpellier - Croix d'Argent", lat: 43.579, lng: 3.832, cloud: "mtp_croix_argent", bucket: "croix-dargent" },
-  { id: "mtp_millenaire", label: "Montpellier - Millénaire", lat: 43.603, lng: 3.921, cloud: "mtp_millenaire", bucket: "millenaire" },
-  { id: "mtp_port_marianne", label: "Montpellier - Port Marianne", lat: 43.603, lng: 3.905, cloud: "mtp_millenaire", bucket: "millenaire" },
-  { id: "mtp_centre_historique", label: "Montpellier - Centre historique", lat: 43.600, lng: 3.875, cloud: "mtp_centre_historique", bucket: "pres-darenes" },
-  { id: "mtp_arceaux_gambetta", label: "Montpellier - Arceaux / Gambetta", lat: 43.602, lng: 3.853, cloud: "mtp_arceaux_gambetta", bucket: "pres-darenes" }
+  {
+    id: "mtp_hf",
+    label: "Montpellier - Hôpitaux facultés",
+    lat: 43.633,
+    lng: 3.862,
+    cloud: "mtp_hf",
+    bucket: "hopitaux-facultes",
+    bounds: [[43.618, 3.844], [43.648, 3.884]],
+    aliases: ["Hôpitaux-Facultés", "Aiguelongue", "Les Beaux-Arts", "Euromédecine", "Malbosc", "Plan des 4 Seigneurs", "Plan des Quatre Seigneurs", "Hauts de Saint-Priest", "Vert-Bois", "Boutonnet"]
+  },
+  {
+    id: "mtp_mosson",
+    label: "Montpellier - Mosson",
+    lat: 43.620,
+    lng: 3.816,
+    cloud: "mtp_mosson",
+    bucket: "mosson",
+    bounds: [[43.608, 3.793], [43.632, 3.831]],
+    aliases: ["Mosson", "La Paillade", "Hauts de Massane"]
+  },
+  {
+    id: "mtp_cevennes",
+    label: "Montpellier - Cévennes",
+    lat: 43.603,
+    lng: 3.839,
+    cloud: "mtp_cevennes",
+    bucket: "cevennes",
+    bounds: [[43.590, 3.816], [43.615, 3.854]],
+    aliases: ["Cévennes", "Les Cévennes", "Alco", "La Chamberte", "Pergola", "Petit-Bard", "La Martelle", "Montpellier Village", "Saint-Clément"]
+  },
+  {
+    id: "mtp_pres_arenes",
+    label: "Montpellier - Près d'Arènes",
+    lat: 43.587,
+    lng: 3.881,
+    cloud: "mtp_pres_arenes",
+    bucket: "pres-darenes",
+    bounds: [[43.575, 3.857], [43.597, 3.902]],
+    aliases: ["Près d'Arènes", "Pres d'Arenes", "Aiguerelles", "Cité Mion", "La Rauze", "Montpellier Sud", "Saint-Martin", "Tournezy", "La Restanque"]
+  },
+  {
+    id: "mtp_croix_argent",
+    label: "Montpellier - Croix d'Argent",
+    lat: 43.580,
+    lng: 3.838,
+    cloud: "mtp_croix_argent",
+    bucket: "croix-dargent",
+    bounds: [[43.567, 3.812], [43.592, 3.855]],
+    aliases: ["Croix d'Argent", "Pas du Loup", "Estanove", "Lepic", "Mas Drevon", "Ovalie", "Les Grisettes", "Bagatelle", "Tastavin", "Lemasson"]
+  },
+  {
+    id: "mtp_millenaire",
+    label: "Montpellier - Millénaire",
+    lat: 43.614,
+    lng: 3.928,
+    cloud: "mtp_millenaire",
+    bucket: "millenaire",
+    bounds: [[43.603, 3.910], [43.625, 3.948]],
+    aliases: ["Millénaire", "Le Millénaire", "Grammont", "Odysseum"]
+  },
+  {
+    id: "mtp_port_marianne",
+    label: "Montpellier - Port Marianne",
+    lat: 43.600,
+    lng: 3.898,
+    cloud: "mtp_port_marianne",
+    bucket: "port-marianne",
+    bounds: [[43.590, 3.883], [43.611, 3.914]],
+    aliases: ["Port Marianne", "Antigone", "Jacques Cœur", "Richter", "Rive Gauche", "Parc Marianne", "Lironde", "La Pompignane", "Pompignane"]
+  },
+  {
+    id: "mtp_centre_historique",
+    label: "Montpellier - Centre historique",
+    lat: 43.610,
+    lng: 3.877,
+    cloud: "mtp_centre_historique",
+    bucket: "centre",
+    bounds: [[43.601, 3.866], [43.617, 3.886]],
+    aliases: ["Centre historique", "Centre", "Écusson", "Ecusson", "Comédie", "Gares", "Figuerolles"]
+  },
+  {
+    id: "mtp_arceaux_gambetta",
+    label: "Montpellier - Arceaux / Gambetta",
+    lat: 43.606,
+    lng: 3.860,
+    cloud: "mtp_arceaux_gambetta",
+    bucket: "centre",
+    bounds: [[43.597, 3.848], [43.614, 3.870]],
+    aliases: ["Arceaux", "Les Arceaux", "Gambetta"]
+  }
 ];
 
 // ─────────────────────────────────────────────
@@ -307,21 +389,23 @@ const CLOUDS = {
   nord: { center: [43.688, 3.795], rx: 0.110, ry: 0.055, angle: 8 },
   est: { center: [43.681, 3.950], rx: 0.105, ry: 0.060, angle: 12 },
   sud_est: { center: [43.548, 3.960], rx: 0.055, ry: 0.040, angle: 12 },
-  mauguio_only: { center: [43.6168, 4.0073], rx: 0.040, ry: 0.030, angle: 16 },
-  carnon_only: { center: [43.5498, 4.0381], rx: 0.035, ry: 0.025, angle: 10 },
-  perols_only: { center: [43.5641, 3.9530], rx: 0.034, ry: 0.024, angle: 8 },
+  mauguio_only: { center: [43.6168, 4.0091], rx: 0.040, ry: 0.030, angle: 16 },
+  carnon_only: { center: [43.5468, 3.9796], rx: 0.030, ry: 0.021, angle: 8 },
+  perols_only: { center: [43.5622, 3.9536], rx: 0.034, ry: 0.024, angle: 8 },
   saint_aunes_only: { center: [43.6408, 4.0088], rx: 0.030, ry: 0.022, angle: 12 },
   baillargues_only: { center: [43.6635, 4.0078], rx: 0.030, ry: 0.022, angle: 12 },
-  lattes_west: { center: [43.561, 3.896], rx: 0.028, ry: 0.020, angle: 0 },
-  lattes_east: { center: [43.561, 3.955], rx: 0.026, ry: 0.019, angle: 0 },
-  mtp_hf: { center: [43.629, 3.874], rx: 0.040, ry: 0.024, angle: 18 },
+  lattes_maurin: { center: [43.571, 3.864], rx: 0.022, ry: 0.017, angle: -10 },
+  lattes_centre: { center: [43.565, 3.901], rx: 0.022, ry: 0.017, angle: 0 },
+  lattes_boirargues: { center: [43.566, 3.936], rx: 0.024, ry: 0.018, angle: 8 },
+  mtp_hf: { center: [43.633, 3.862], rx: 0.036, ry: 0.022, angle: 18 },
   mtp_mosson: { center: [43.620, 3.816], rx: 0.034, ry: 0.022, angle: -8 },
-  mtp_cevennes: { center: [43.600, 3.846], rx: 0.026, ry: 0.018, angle: 5 },
-  mtp_pres_arenes: { center: [43.588, 3.872], rx: 0.032, ry: 0.022, angle: 8 },
-  mtp_croix_argent: { center: [43.579, 3.832], rx: 0.034, ry: 0.022, angle: -10 },
-  mtp_millenaire: { center: [43.603, 3.921], rx: 0.036, ry: 0.022, angle: 16 },
-  mtp_centre_historique: { center: [43.600, 3.875], rx: 0.020, ry: 0.015, angle: 0 },
-  mtp_arceaux_gambetta: { center: [43.602, 3.853], rx: 0.022, ry: 0.015, angle: -10 }
+  mtp_cevennes: { center: [43.603, 3.839], rx: 0.030, ry: 0.020, angle: 4 },
+  mtp_pres_arenes: { center: [43.587, 3.881], rx: 0.031, ry: 0.020, angle: 10 },
+  mtp_croix_argent: { center: [43.580, 3.838], rx: 0.033, ry: 0.021, angle: -8 },
+  mtp_millenaire: { center: [43.614, 3.928], rx: 0.030, ry: 0.018, angle: 18 },
+  mtp_port_marianne: { center: [43.600, 3.898], rx: 0.026, ry: 0.018, angle: 14 },
+  mtp_centre_historique: { center: [43.610, 3.877], rx: 0.018, ry: 0.013, angle: 0 },
+  mtp_arceaux_gambetta: { center: [43.606, 3.860], rx: 0.020, ry: 0.014, angle: -12 }
 };
 
 // ─────────────────────────────────────────────
@@ -338,16 +422,18 @@ const CLOUD_STYLE = {
   perols_only: { density: 100, spread: 0.43, opacity: 0.60, halo: 0.50 },
   saint_aunes_only: { density: 92, spread: 0.40, opacity: 0.60, halo: 0.46 },
   baillargues_only: { density: 92, spread: 0.40, opacity: 0.60, halo: 0.46 },
-  lattes_west: { density: 90, spread: 0.45, opacity: 0.62, halo: 0.46 },
-  lattes_east: { density: 90, spread: 0.45, opacity: 0.62, halo: 0.46 },
-  mtp_hf: { density: 165, spread: 0.48, opacity: 0.60, halo: 0.50 },
+  lattes_maurin: { density: 72, spread: 0.42, opacity: 0.62, halo: 0.40 },
+  lattes_centre: { density: 86, spread: 0.43, opacity: 0.62, halo: 0.42 },
+  lattes_boirargues: { density: 84, spread: 0.44, opacity: 0.62, halo: 0.42 },
+  mtp_hf: { density: 158, spread: 0.48, opacity: 0.60, halo: 0.48 },
   mtp_mosson: { density: 145, spread: 0.50, opacity: 0.60, halo: 0.48 },
-  mtp_cevennes: { density: 100, spread: 0.42, opacity: 0.62, halo: 0.42 },
+  mtp_cevennes: { density: 116, spread: 0.45, opacity: 0.62, halo: 0.44 },
   mtp_pres_arenes: { density: 120, spread: 0.44, opacity: 0.60, halo: 0.44 },
   mtp_croix_argent: { density: 125, spread: 0.46, opacity: 0.60, halo: 0.44 },
-  mtp_millenaire: { density: 120, spread: 0.44, opacity: 0.60, halo: 0.44 },
-  mtp_centre_historique: { density: 88, spread: 0.34, opacity: 0.64, halo: 0.32 },
-  mtp_arceaux_gambetta: { density: 92, spread: 0.35, opacity: 0.64, halo: 0.34 }
+  mtp_millenaire: { density: 102, spread: 0.40, opacity: 0.60, halo: 0.40 },
+  mtp_port_marianne: { density: 118, spread: 0.42, opacity: 0.60, halo: 0.42 },
+  mtp_centre_historique: { density: 92, spread: 0.32, opacity: 0.64, halo: 0.30 },
+  mtp_arceaux_gambetta: { density: 98, spread: 0.34, opacity: 0.64, halo: 0.32 }
 };
 
 // ─────────────────────────────────────────────
@@ -374,22 +460,24 @@ const CLOUD_ANCHORS = {
     { lat: 43.7133, lng: 4.0030, w: 0.7 }, { lat: 43.7318, lng: 3.9788, w: 0.7 }, { lat: 43.7287, lng: 3.9964, w: 0.6 },
     { lat: 43.7228, lng: 4.0382, w: 0.6 }, { lat: 43.6408, lng: 4.0088, w: 0.85 }, { lat: 43.6635, lng: 4.0078, w: 0.9 }
   ],
-  sud_est: [{ lat: 43.5284, lng: 3.9304, w: 0.9 }],
-  mauguio_only: [{ lat: 43.6168, lng: 4.0073, w: 1.25 }],
-  carnon_only: [{ lat: 43.5498, lng: 4.0381, w: 1.1 }],
-  perols_only: [{ lat: 43.5641, lng: 3.9530, w: 1.1 }],
+  sud_est: [{ lat: 43.5294, lng: 3.9346, w: 0.9 }],
+  mauguio_only: [{ lat: 43.6168, lng: 4.0091, w: 1.25 }],
+  carnon_only: [{ lat: 43.5468, lng: 3.9796, w: 1.1 }],
+  perols_only: [{ lat: 43.5622, lng: 3.9536, w: 1.1 }],
   saint_aunes_only: [{ lat: 43.6408, lng: 4.0088, w: 1.0 }],
   baillargues_only: [{ lat: 43.6635, lng: 4.0078, w: 1.0 }],
-  lattes_west: [{ lat: 43.561, lng: 3.890, w: 1.1 }, { lat: 43.557, lng: 3.902, w: 1.0 }],
-  lattes_east: [{ lat: 43.562, lng: 3.944, w: 1.0 }, { lat: 43.559, lng: 3.960, w: 1.1 }],
-  mtp_hf: [{ lat: 43.629, lng: 3.874, w: 1.2 }, { lat: 43.633, lng: 3.858, w: 1.0 }, { lat: 43.622, lng: 3.890, w: 0.9 }],
+  lattes_maurin: [{ lat: 43.571, lng: 3.864, w: 1.2 }, { lat: 43.567, lng: 3.874, w: 0.9 }],
+  lattes_centre: [{ lat: 43.565, lng: 3.901, w: 1.2 }, { lat: 43.561, lng: 3.910, w: 0.9 }],
+  lattes_boirargues: [{ lat: 43.566, lng: 3.936, w: 1.1 }, { lat: 43.563, lng: 3.947, w: 1.0 }],
+  mtp_hf: [{ lat: 43.633, lng: 3.862, w: 1.2 }, { lat: 43.639, lng: 3.851, w: 1.0 }, { lat: 43.625, lng: 3.876, w: 0.9 }],
   mtp_mosson: [{ lat: 43.620, lng: 3.816, w: 1.2 }, { lat: 43.623, lng: 3.804, w: 1.0 }, { lat: 43.612, lng: 3.828, w: 0.9 }],
-  mtp_cevennes: [{ lat: 43.600, lng: 3.846, w: 1.2 }, { lat: 43.602, lng: 3.834, w: 1.0 }],
-  mtp_pres_arenes: [{ lat: 43.588, lng: 3.872, w: 1.1 }, { lat: 43.583, lng: 3.884, w: 1.0 }, { lat: 43.590, lng: 3.858, w: 0.9 }],
-  mtp_croix_argent: [{ lat: 43.579, lng: 3.832, w: 1.2 }, { lat: 43.573, lng: 3.842, w: 1.0 }],
-  mtp_millenaire: [{ lat: 43.603, lng: 3.921, w: 1.2 }, { lat: 43.606, lng: 3.936, w: 1.0 }, { lat: 43.597, lng: 3.910, w: 0.9 }],
-  mtp_centre_historique: [{ lat: 43.600, lng: 3.875, w: 1.3 }, { lat: 43.603, lng: 3.870, w: 1.0 }],
-  mtp_arceaux_gambetta: [{ lat: 43.602, lng: 3.853, w: 1.2 }, { lat: 43.597, lng: 3.860, w: 1.0 }]
+  mtp_cevennes: [{ lat: 43.603, lng: 3.839, w: 1.2 }, { lat: 43.607, lng: 3.828, w: 1.0 }, { lat: 43.596, lng: 3.849, w: 0.9 }],
+  mtp_pres_arenes: [{ lat: 43.587, lng: 3.881, w: 1.2 }, { lat: 43.582, lng: 3.892, w: 1.0 }, { lat: 43.591, lng: 3.869, w: 0.9 }],
+  mtp_croix_argent: [{ lat: 43.580, lng: 3.838, w: 1.2 }, { lat: 43.574, lng: 3.848, w: 1.0 }, { lat: 43.586, lng: 3.826, w: 0.9 }],
+  mtp_millenaire: [{ lat: 43.614, lng: 3.928, w: 1.2 }, { lat: 43.618, lng: 3.941, w: 1.0 }, { lat: 43.607, lng: 3.916, w: 0.8 }],
+  mtp_port_marianne: [{ lat: 43.600, lng: 3.898, w: 1.2 }, { lat: 43.604, lng: 3.908, w: 1.0 }, { lat: 43.594, lng: 3.889, w: 0.9 }],
+  mtp_centre_historique: [{ lat: 43.610, lng: 3.877, w: 1.3 }, { lat: 43.606, lng: 3.882, w: 1.0 }, { lat: 43.612, lng: 3.871, w: 0.9 }],
+  mtp_arceaux_gambetta: [{ lat: 43.606, lng: 3.860, w: 1.2 }, { lat: 43.602, lng: 3.852, w: 1.0 }, { lat: 43.609, lng: 3.866, w: 0.8 }]
 };
 
 // ─────────────────────────────────────────────
@@ -424,9 +512,9 @@ const RULES = {
 
 // Règles spécifiques Montpellier intra-muros
 const MTP_RULES = {
-  cardio_pneumo: { "hopitaux-facultes": "lapeyronie", "mosson": "lapeyronie", "pres-darenes": "saint_roch", "croix-dargent": "saint_roch", "cevennes": "beausoleil", "millenaire": "millenaire" },
-  gastro_uro: { "hopitaux-facultes": "lapeyronie", "mosson": "lapeyronie", "pres-darenes": "saint_roch", "croix-dargent": "beausoleil", "cevennes": "beausoleil", "millenaire": "millenaire" },
-  trauma: { "hopitaux-facultes": "lapeyronie", "mosson": "lapeyronie", "pres-darenes": "saint_roch", "croix-dargent": "saint_roch", "cevennes": "beausoleil", "millenaire": "saint_roch" }
+  cardio_pneumo: { "hopitaux-facultes": "lapeyronie", "mosson": "lapeyronie", "cevennes": "beausoleil", "centre": "saint_roch", "pres-darenes": "saint_roch", "croix-dargent": "saint_roch", "port-marianne": "millenaire", "millenaire": "millenaire" },
+  gastro_uro: { "hopitaux-facultes": "lapeyronie", "mosson": "lapeyronie", "cevennes": "beausoleil", "centre": "saint_roch", "pres-darenes": "saint_roch", "croix-dargent": "beausoleil", "port-marianne": "millenaire", "millenaire": "millenaire" },
+  trauma: { "hopitaux-facultes": "lapeyronie", "mosson": "lapeyronie", "cevennes": "beausoleil", "centre": "saint_roch", "pres-darenes": "saint_roch", "croix-dargent": "saint_roch", "port-marianne": "saint_roch", "millenaire": "saint_roch" }
 };
 
 const SPECIAL_AREA_RULES = {
@@ -449,11 +537,15 @@ function resolveHospitalForArea(area, specialty, diversAssignments = {}) {
     return SPECIAL_AREA_RULES[area.id][specialty];
   }
 
-  if (area.id === "lattes-west") {
+  if (area.id === "lattes-maurin") {
     return specialty === "divers" ? (diversAssignments[area.id] || "saint_roch") : "saint_roch";
   }
 
-  if (area.id === "lattes-east") {
+  if (area.id === "lattes-centre") {
+    return specialty === "divers" ? (diversAssignments[area.id] || "saint_roch") : "saint_roch";
+  }
+
+  if (area.id === "lattes-boirargues") {
     if (specialty === "divers") return diversAssignments[area.id] || "millenaire";
     return specialty === "trauma" ? "saint_roch" : "millenaire";
   }

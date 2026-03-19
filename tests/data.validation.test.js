@@ -9,6 +9,8 @@ const {
   SPECIALTIES,
   CITY_AREAS,
   MTP_SUBAREAS,
+  CLOUDS,
+  CLOUD_ANCHORS,
   RULES,
   MTP_RULES,
   SPECIAL_AREA_RULES,
@@ -20,6 +22,16 @@ const KNOWN_HOSPITAL_IDS = new Set(Object.keys(HOSPITALS));
 const COMMUNE_CITIES = new Set(CITY_AREAS.filter((area) => area.type === "commune").map((area) => area.city));
 const AREA_IDS = new Set([...CITY_AREAS, ...MTP_SUBAREAS].map((area) => area.id));
 const ALLOWED_VERIFICATION_STATUSES = new Set(["reviewed", "needs_review"]);
+
+function simplify(text) {
+  return String(text || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/['']/g, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
 test("hospital records expose coherent metadata, addresses and coordinates", () => {
   const seenAddresses = new Set();
@@ -94,6 +106,58 @@ test("special overrides and Montpellier rules only reference known entities", ()
       assert.ok(bucket, `Empty bucket in MTP_RULES.${specialty}`);
       assert.ok(KNOWN_HOSPITAL_IDS.has(hospitalId), `Unknown hospital ${hospitalId} in MTP_RULES.${specialty}.${bucket}`);
     });
+  });
+});
+
+test("Montpellier intramuros areas expose coherent geographic hints and unique search keys", () => {
+  const seenSearchKeys = new Map();
+
+  MTP_SUBAREAS.forEach((area) => {
+    assert.ok(Array.isArray(area.aliases) && area.aliases.length >= 1, `Missing aliases for ${area.id}`);
+    assert.ok(Array.isArray(area.bounds) && area.bounds.length === 2, `Missing bounds for ${area.id}`);
+    assert.ok(CLOUDS[area.cloud], `Unknown cloud ${area.cloud} for ${area.id}`);
+
+    const [[southLat, westLng], [northLat, eastLng]] = area.bounds;
+    assert.ok(southLat < northLat, `Invalid latitude bounds for ${area.id}`);
+    assert.ok(westLng < eastLng, `Invalid longitude bounds for ${area.id}`);
+    assert.ok(area.lat >= southLat && area.lat <= northLat, `Center latitude outside bounds for ${area.id}`);
+    assert.ok(area.lng >= westLng && area.lng <= eastLng, `Center longitude outside bounds for ${area.id}`);
+
+    [area.label, ...area.aliases].forEach((name) => {
+      const key = simplify(name);
+      assert.ok(key, `Empty search key for ${area.id}`);
+      const previousAreaId = seenSearchKeys.get(key);
+      assert.ok(!previousAreaId || previousAreaId === area.id, `Duplicate Montpellier search key "${name}" for ${area.id} and ${previousAreaId}`);
+      seenSearchKeys.set(key, area.id);
+    });
+  });
+
+  const portMarianne = MTP_SUBAREAS.find((area) => area.id === "mtp_port_marianne");
+  assert.ok(portMarianne, "Missing Port Marianne area");
+  assert.equal(portMarianne.cloud, "mtp_port_marianne");
+  assert.equal(portMarianne.bucket, "port-marianne");
+});
+
+test("dedicated coastal clouds stay aligned with their commune reference points", () => {
+  const cases = [
+    ["carnon", "carnon_only"],
+    ["perols", "perols_only"],
+    ["mauguio", "mauguio_only"]
+  ];
+
+  cases.forEach(([areaId, cloudKey]) => {
+    const area = CITY_AREAS.find((item) => item.id === areaId);
+    assert.ok(area, `Missing area ${areaId}`);
+    assert.ok(CLOUDS[cloudKey], `Missing cloud ${cloudKey}`);
+    assert.ok(Array.isArray(CLOUD_ANCHORS[cloudKey]) && CLOUD_ANCHORS[cloudKey].length >= 1, `Missing anchors for ${cloudKey}`);
+
+    const [centerLat, centerLng] = CLOUDS[cloudKey].center;
+    assert.ok(Math.abs(centerLat - area.lat) < 0.02, `Cloud ${cloudKey} latitude drifts too far from ${areaId}`);
+    assert.ok(Math.abs(centerLng - area.lng) < 0.02, `Cloud ${cloudKey} longitude drifts too far from ${areaId}`);
+
+    const anchor = CLOUD_ANCHORS[cloudKey][0];
+    assert.ok(Math.abs(anchor.lat - area.lat) < 0.02, `Anchor ${cloudKey} latitude drifts too far from ${areaId}`);
+    assert.ok(Math.abs(anchor.lng - area.lng) < 0.02, `Anchor ${cloudKey} longitude drifts too far from ${areaId}`);
   });
 });
 

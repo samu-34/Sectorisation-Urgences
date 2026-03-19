@@ -477,6 +477,9 @@ function zoomToBounds(area, hospitalId) {
   );
   // Ajouter aussi le point patient
   bounds.extend([area.lat, area.lng]);
+  if (Array.isArray(area.bounds)) {
+    area.bounds.forEach(point => bounds.extend(point));
+  }
   map.fitBounds(bounds, { padding: [60, 60], maxZoom: 14 });
 }
 
@@ -562,14 +565,16 @@ function refreshMap() {
     perols_only: getAreaHospital(CITY_AREAS.find(a => a.id === "perols")),
     saint_aunes_only: getAreaHospital(CITY_AREAS.find(a => a.id === "saint_aunes")),
     baillargues_only: getAreaHospital(CITY_AREAS.find(a => a.id === "baillargues")),
-    lattes_west: getAreaHospital(CITY_AREAS.find(a => a.id === "lattes-west")),
-    lattes_east: getAreaHospital(CITY_AREAS.find(a => a.id === "lattes-east")),
+    lattes_maurin: getAreaHospital(CITY_AREAS.find(a => a.id === "lattes-maurin")),
+    lattes_centre: getAreaHospital(CITY_AREAS.find(a => a.id === "lattes-centre")),
+    lattes_boirargues: getAreaHospital(CITY_AREAS.find(a => a.id === "lattes-boirargues")),
     mtp_hf: getAreaHospital(MTP_SUBAREAS.find(a => a.id === "mtp_hf")),
     mtp_mosson: getAreaHospital(MTP_SUBAREAS.find(a => a.id === "mtp_mosson")),
     mtp_cevennes: getAreaHospital(MTP_SUBAREAS.find(a => a.id === "mtp_cevennes")),
     mtp_pres_arenes: getAreaHospital(MTP_SUBAREAS.find(a => a.id === "mtp_pres_arenes")),
     mtp_croix_argent: getAreaHospital(MTP_SUBAREAS.find(a => a.id === "mtp_croix_argent")),
     mtp_millenaire: getAreaHospital(MTP_SUBAREAS.find(a => a.id === "mtp_millenaire")),
+    mtp_port_marianne: getAreaHospital(MTP_SUBAREAS.find(a => a.id === "mtp_port_marianne")),
     mtp_centre_historique: getAreaHospital(MTP_SUBAREAS.find(a => a.id === "mtp_centre_historique")),
     mtp_arceaux_gambetta: getAreaHospital(MTP_SUBAREAS.find(a => a.id === "mtp_arceaux_gambetta"))
   };
@@ -640,7 +645,11 @@ function updateSubzoneOptions() {
       MTP_SUBAREAS.map(a => `<option value="${a.id}">${a.label}</option>`).join("");
   } else if (DOM.citySelect.value === "Lattes") {
     DOM.subzoneWrap.classList.remove("hidden");
-    DOM.subzoneSelect.innerHTML = `<option value="" selected>— Sélectionner un secteur —</option><option value="lattes-west">Secteur Ouest</option><option value="lattes-east">Secteur Est</option>`;
+    DOM.subzoneSelect.innerHTML = `<option value="" selected>— Sélectionner un secteur —</option>` +
+      CITY_AREAS
+        .filter(area => area.type === "lattes")
+        .map(area => `<option value="${area.id}">${area.label}</option>`)
+        .join("");
   } else {
     DOM.subzoneWrap.classList.add("hidden");
     DOM.subzoneSelect.innerHTML = "";
@@ -683,7 +692,7 @@ const CITY_LIST = [
   ...new Set([
     ...CITY_AREAS.map(a => a.city),
     ...CITY_AREAS.filter(a => a.label).map(a => a.label),
-    ...MTP_SUBAREAS.map(a => a.label)
+    ...MTP_SUBAREAS.flatMap(a => [a.label, ...(a.aliases || [])])
   ])
 ];
 
@@ -692,7 +701,7 @@ const CITY_NAME_BY_KEY = new Map(
 );
 
 const MTP_SUBAREA_BY_KEY = new Map(
-  MTP_SUBAREAS.map(area => [simplify(area.label), area])
+  MTP_SUBAREAS.flatMap(area => [area.label, ...(area.aliases || [])].map(name => [simplify(name), area]))
 );
 
 const LATTES_AREA_BY_KEY = new Map(
