@@ -203,10 +203,10 @@ const HOSPITALS = createHospitalRegistry(HOSPITAL_RECORDS);
 // FILIÈRES DE SPÉCIALITÉ
 // ─────────────────────────────────────────────
 const SPECIALTIES = [
+  { id: "divers", label: "Classique" },
   { id: "cardio_pneumo", label: "Cardiologie / Pneumologie" },
   { id: "gastro_uro", label: "Gastro / Viscéral / Urologie" },
   { id: "trauma", label: "Traumatologie" },
-  { id: "divers", label: "Classique" },
 ];
 
 // ─────────────────────────────────────────────
@@ -793,6 +793,8 @@ const MTP_SUBAREAS = [
       "Centre",
       "Écusson",
       "Ecusson",
+      "Les Aubes",
+      "Aubes",
       "Comédie",
       "Gares",
       "Figuerolles",

@@ -122,6 +122,18 @@ input:focus, select:focus {
   box-shadow: 0 0 0 3px rgba(0, 107, 143, .12);
 }
 
+select:disabled {
+  background: #f6fafc;
+  color: var(--text);
+  opacity: 1;
+  cursor: default;
+}
+
+#detectedSpecialty {
+  background: #f6fafc;
+  cursor: default;
+}
+
 button {
   width: 100%;
   padding: 10px 12px;

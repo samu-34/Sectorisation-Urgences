@@ -51,43 +51,69 @@
             <div class="stack">
               <!-- Symptôme -->
               <div>
-                <label for="symptomInput">Symptôme / motif principal</label>
+                <label for="symptomInput">Motif d'appel :</label>
                 <div class="autocomplete-wrap">
                   <input
                     id="symptomInput"
                     type="text"
                     placeholder="Rechercher un motif…"
                     autocomplete="off"
+                    role="combobox"
+                    aria-autocomplete="list"
+                    aria-expanded="false"
+                    aria-controls="suggestBox"
+                    aria-haspopup="listbox"
                   />
-                  <div id="suggestBox" class="suggest-box hidden"></div>
+                  <div
+                    id="suggestBox"
+                    class="suggest-box hidden"
+                    role="listbox"
+                    aria-label="Suggestions de motifs"
+                  ></div>
                 </div>
               </div>
 
               <!-- Commune -->
               <div>
-                <label for="cityInput">Commune</label>
+                <label for="cityInput">Commune :</label>
                 <div class="autocomplete-wrap">
                   <input
                     id="cityInput"
                     type="text"
                     placeholder="Rechercher une commune ou un quartier…"
                     autocomplete="off"
+                    role="combobox"
+                    aria-autocomplete="list"
+                    aria-expanded="false"
+                    aria-controls="citySuggestBox"
+                    aria-haspopup="listbox"
                   />
-                  <div id="citySuggestBox" class="suggest-box hidden"></div>
+                  <div
+                    id="citySuggestBox"
+                    class="suggest-box hidden"
+                    role="listbox"
+                    aria-label="Suggestions de communes et quartiers"
+                  ></div>
                   <select id="citySelect" class="hidden"></select>
                 </div>
               </div>
 
               <!-- Sous-zone (Montpellier / Lattes) -->
               <div id="subzoneWrap" class="hidden">
-                <label for="subzoneSelect">Quartier / secteur fin</label>
+                <label for="subzoneSelect">Quartier :</label>
                 <select id="subzoneSelect"></select>
               </div>
 
               <!-- Filière -->
               <div>
-                <label for="detectedSpecialty">Filière retenue</label>
-                <select id="detectedSpecialty"></select>
+                <label for="detectedSpecialty">Filière : </label>
+                <input
+                  id="detectedSpecialty"
+                  type="text"
+                  placeholder="/"
+                  readonly
+                  aria-readonly="true"
+                />
               </div>
 
               <!-- Boutons action -->

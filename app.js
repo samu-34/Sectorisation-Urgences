@@ -46,7 +46,8 @@ let hospitalLayers = [];
 let labelLayers = [];
 let focusLayer = null;
 let routeLayer = null;
-let suggestionIndex = -1;
+let symptomSuggestionIndex = -1;
+let citySuggestionIndex = -1;
 
 // ─────────────────────────────────────────────
 // UTILITAIRES
@@ -81,9 +82,130 @@ function clearLayers(arr) {
   arr.length = 0;
 }
 
+function getSuggestItems(box) {
+  return [...box.querySelectorAll(".suggest-item")];
+}
+
+function setSuggestBoxState(input, box, isOpen) {
+  box.classList.toggle("hidden", !isOpen);
+  input.setAttribute("aria-expanded", isOpen ? "true" : "false");
+  if (!isOpen) {
+    input.removeAttribute("aria-activedescendant");
+  }
+}
+
+function setActiveSuggestion(input, box, index) {
+  const items = getSuggestItems(box);
+  items.forEach((item, itemIndex) => {
+    const isActive = itemIndex === index;
+    item.classList.toggle("active", isActive);
+    item.setAttribute("aria-selected", isActive ? "true" : "false");
+  });
+
+  if (index >= 0 && items[index]) {
+    input.setAttribute("aria-activedescendant", items[index].id);
+  } else {
+    input.removeAttribute("aria-activedescendant");
+  }
+}
+
+function closeSymptomSuggestions() {
+  DOM.suggestBox.innerHTML = "";
+  symptomSuggestionIndex = -1;
+  setSuggestBoxState(DOM.symptomInput, DOM.suggestBox, false);
+}
+
+function closeCitySuggestions() {
+  DOM.citySuggestBox.innerHTML = "";
+  citySuggestionIndex = -1;
+  setSuggestBoxState(DOM.cityInput, DOM.citySuggestBox, false);
+}
+
+function moveActiveSuggestion(input, box, currentIndex, delta) {
+  const items = getSuggestItems(box);
+  if (!items.length || box.classList.contains("hidden")) return -1;
+
+  let nextIndex = currentIndex;
+  if (nextIndex < 0) {
+    nextIndex = delta > 0 ? 0 : items.length - 1;
+  } else {
+    nextIndex = (nextIndex + delta + items.length) % items.length;
+  }
+
+  setActiveSuggestion(input, box, nextIndex);
+  return nextIndex;
+}
+
+function getMatchRank(label, query) {
+  const normalizedLabel = simplify(label);
+  const normalizedQuery = simplify(query);
+
+  if (!normalizedQuery || !normalizedLabel.includes(normalizedQuery)) {
+    return null;
+  }
+
+  if (normalizedLabel === normalizedQuery) {
+    return { score: 0, index: 0, length: normalizedLabel.length };
+  }
+
+  if (normalizedLabel.startsWith(normalizedQuery)) {
+    return { score: 1, index: 0, length: normalizedLabel.length };
+  }
+
+  const wordIndex = normalizedLabel
+    .split(/[\s-]+/)
+    .findIndex(word => word.startsWith(normalizedQuery));
+
+  if (wordIndex >= 0) {
+    return {
+      score: 2,
+      index: normalizedLabel.indexOf(normalizedQuery),
+      length: normalizedLabel.length,
+    };
+  }
+
+  return {
+    score: 3,
+    index: normalizedLabel.indexOf(normalizedQuery),
+    length: normalizedLabel.length,
+  };
+}
+
+function getRankedMatches(items, query, getLabel) {
+  return items
+    .map((item, sourceIndex) => {
+      const label = getLabel(item);
+      const rank = getMatchRank(label, query);
+
+      if (!rank) return null;
+
+      return { item, rank, sourceIndex };
+    })
+    .filter(Boolean)
+    .sort((a, b) => {
+      if (a.rank.score !== b.rank.score) return a.rank.score - b.rank.score;
+      if (a.rank.index !== b.rank.index) return a.rank.index - b.rank.index;
+      if (a.rank.length !== b.rank.length) return a.rank.length - b.rank.length;
+      return a.sourceIndex - b.sourceIndex;
+    })
+    .map(entry => entry.item);
+}
+
 function filiereLabelById(id) {
   const found = SPECIALTIES.find(s => s.id === id);
   return found ? found.label : id;
+}
+
+function inferDetectedSpecialty(text) {
+  return simplify(text) ? detectSpecialty(text) : "";
+}
+
+function setDetectedSpecialtyIndicator(specialtyId = "") {
+  DOM.detectedSpecialty.value = specialtyId ? filiereLabelById(specialtyId) : "";
+}
+
+function syncDetectedSpecialtyIndicator(text = DOM.symptomInput.value) {
+  setDetectedSpecialtyIndicator(inferDetectedSpecialty(text));
 }
 
 function escapeHtml(value) {
@@ -229,11 +351,11 @@ function renderToolbar(areaLabel, hospitalId, travelEstimate) {
 
 function clearSelectionVisuals() {
   if (focusLayer) {
-    map.removeLayer(focusLayer);
+    (Array.isArray(focusLayer) ? focusLayer : [focusLayer]).forEach(layer => map.removeLayer(layer));
     focusLayer = null;
   }
   if (routeLayer) {
-    map.removeLayer(routeLayer);
+    (Array.isArray(routeLayer) ? routeLayer : [routeLayer]).forEach(layer => map.removeLayer(layer));
     routeLayer = null;
   }
 }
@@ -434,16 +556,73 @@ function estimateTheoreticalTravel(area, hospitalId) {
 // CARTE — focus & route
 // ─────────────────────────────────────────────
 function highlightCurrentArea(area) {
-  if (focusLayer) map.removeLayer(focusLayer);
-  focusLayer = null;
+  if (focusLayer) {
+    (Array.isArray(focusLayer) ? focusLayer : [focusLayer]).forEach(layer => map.removeLayer(layer));
+  }
+  focusLayer = L.circleMarker([area.lat, area.lng], {
+    radius: 9,
+    color: "#ffffff",
+    weight: 3,
+    fillColor: "#0f172a",
+    fillOpacity: 0.9
+  }).addTo(map);
+}
+
+function buildRoutePath(area, hospital) {
+  const start = [area.lat, area.lng];
+  const end = [hospital.lat, hospital.lng];
+  const dLat = end[0] - start[0];
+  const dLng = end[1] - start[1];
+  const distance = Math.hypot(dLat, dLng);
+
+  if (distance < 0.01) return [start, end];
+
+  const midLat = (start[0] + end[0]) / 2;
+  const midLng = (start[1] + end[1]) / 2;
+  const normalLat = -dLng / distance;
+  const normalLng = dLat / distance;
+  const curvature = Math.min(0.012, distance * 0.18);
+  const control = [midLat + normalLat * curvature, midLng + normalLng * curvature];
+
+  return [start, control, end];
 }
 
 function drawRoute(area, hospitalId) {
-  if (routeLayer) map.removeLayer(routeLayer);
+  if (routeLayer) {
+    (Array.isArray(routeLayer) ? routeLayer : [routeLayer]).forEach(layer => map.removeLayer(layer));
+  }
   const h = HOSPITALS[hospitalId];
-  routeLayer = L.polyline([[area.lat, area.lng], [h.lat, h.lng]], {
-    color: "#0f172a", weight: 4, opacity: 0.7, dashArray: "10,8"
+  const path = buildRoutePath(area, h);
+  const shadow = L.polyline(path, {
+    color: "#ffffff",
+    weight: 8,
+    opacity: 0.7,
+    lineCap: "round",
+    lineJoin: "round"
   }).addTo(map);
+  const main = L.polyline(path, {
+    color: h.color,
+    weight: 4,
+    opacity: 0.92,
+    dashArray: "12,8",
+    lineCap: "round",
+    lineJoin: "round"
+  }).addTo(map);
+  const startMarker = L.circleMarker([area.lat, area.lng], {
+    radius: 5,
+    color: "#ffffff",
+    weight: 2,
+    fillColor: "#0f172a",
+    fillOpacity: 1
+  }).addTo(map);
+  const endMarker = L.circleMarker([h.lat, h.lng], {
+    radius: 6,
+    color: "#ffffff",
+    weight: 2,
+    fillColor: h.color,
+    fillOpacity: 1
+  }).addTo(map);
+  routeLayer = [shadow, main, startMarker, endMarker];
 }
 
 /**
@@ -588,18 +767,12 @@ function renderChips() {
     btn.textContent = s.label;
     btn.onclick = () => {
       activeSpecialty = s.id;
-      DOM.detectedSpecialty.value = s.id;
       renderChips();
       refreshMap();
       updateDecision();
     };
     DOM.chips.appendChild(btn);
   });
-}
-
-function populateSpecialtySelect() {
-  DOM.detectedSpecialty.innerHTML = `<option value="" selected>— Sélectionner une filière —</option>` +
-    SPECIALTIES.map(s => `<option value="${s.id}">${s.label}</option>`).join("");
 }
 
 function populateCitySelect() {
@@ -631,17 +804,25 @@ function updateSubzoneOptions() {
 // ─────────────────────────────────────────────
 function renderSuggestions(query) {
   const q = simplify(query);
-  if (!q) { DOM.suggestBox.innerHTML = ""; DOM.suggestBox.classList.add("hidden"); suggestionIndex = -1; return; }
-  const matches = MOTIF_CATALOG.filter(item => simplify(item.label).includes(q)).slice(0, 8);
-  if (!matches.length) { DOM.suggestBox.innerHTML = ""; DOM.suggestBox.classList.add("hidden"); suggestionIndex = -1; return; }
+  if (!q) {
+    closeSymptomSuggestions();
+    return;
+  }
+
+  const matches = getRankedMatches(MOTIF_CATALOG, q, item => item.label).slice(0, 8);
+  if (!matches.length) {
+    closeSymptomSuggestions();
+    return;
+  }
 
   DOM.suggestBox.innerHTML = matches.map((item, idx) =>
-    `<div class="suggest-item${idx === 0 ? ' active' : ''}" data-idx="${idx}" data-label="${item.label}" data-filiere="${item.filiere}">
+    `<div id="symptom-option-${idx}" class="suggest-item" role="option" aria-selected="false" data-idx="${idx}" data-label="${item.label}" data-filiere="${item.filiere}">
       ${item.label}<span class="suggest-cat">${filiereLabelById(item.filiere)}</span>
     </div>`
   ).join("");
-  DOM.suggestBox.classList.remove("hidden");
-  suggestionIndex = 0;
+  symptomSuggestionIndex = -1;
+  setSuggestBoxState(DOM.symptomInput, DOM.suggestBox, true);
+  setActiveSuggestion(DOM.symptomInput, DOM.suggestBox, symptomSuggestionIndex);
   DOM.suggestBox.querySelectorAll(".suggest-item").forEach(el => {
     el.addEventListener("click", () => applySuggestion(el.dataset.label, el.dataset.filiere));
   });
@@ -649,22 +830,40 @@ function renderSuggestions(query) {
 
 function applySuggestion(label, filiere) {
   DOM.symptomInput.value = label;
-  DOM.detectedSpecialty.value = filiere;
-  DOM.suggestBox.innerHTML = "";
-  DOM.suggestBox.classList.add("hidden");
-  suggestionIndex = -1;
+  setDetectedSpecialtyIndicator(filiere);
+  closeSymptomSuggestions();
 }
 
 // ─────────────────────────────────────────────
 // AUTOCOMPLETE — Communes
 // ─────────────────────────────────────────────
-const CITY_LIST = [
-  ...new Set([
-    ...CITY_AREAS.map(a => a.city),
-    ...CITY_AREAS.filter(a => a.label).map(a => a.label),
-    ...MTP_SUBAREAS.flatMap(a => [a.label, ...(a.aliases || [])])
-  ])
-];
+const CITY_SUGGESTIONS = Array.from(
+  new Map(
+    [
+      { label: "Montpellier", category: "Commune" },
+      ...[...new Set(CITY_AREAS.map(a => a.city))].map(city => ({
+        label: city,
+        category: "Commune",
+      })),
+      ...CITY_AREAS
+        .filter(area => area.type === "lattes" && area.label)
+        .map(area => ({
+          label: area.label,
+          category: "Secteur Lattes",
+        })),
+      ...MTP_SUBAREAS.flatMap(area => [
+        {
+          label: area.label,
+          category: "Quartier Montpellier",
+        },
+        ...(area.aliases || []).map(name => ({
+          label: name,
+          category: "Quartier Montpellier",
+        })),
+      ]),
+    ].map(entry => [simplify(entry.label), entry])
+  ).values()
+);
 
 const CITY_NAME_BY_KEY = new Map(
   [...new Set(CITY_AREAS.map(a => a.city)), "Montpellier", "Lattes"].map(city => [simplify(city), city])
@@ -724,18 +923,34 @@ function syncSelectionFromCityInput(rawValue) {
 function applyCitySelection(picked) {
   DOM.cityInput.value = picked;
   syncSelectionFromCityInput(picked);
-  DOM.citySuggestBox.classList.add("hidden");
+  closeCitySuggestions();
   updateDecision();
 }
 
 function renderCitySuggestions(query) {
   const q = simplify(query);
-  if (!q) { DOM.citySuggestBox.classList.add("hidden"); DOM.citySuggestBox.innerHTML = ""; return; }
-  const matches = CITY_LIST.filter(c => simplify(c).includes(q)).slice(0, 10);
-  if (!matches.length) { DOM.citySuggestBox.classList.add("hidden"); DOM.citySuggestBox.innerHTML = ""; return; }
+  if (!q) {
+    closeCitySuggestions();
+    return;
+  }
 
-  DOM.citySuggestBox.innerHTML = matches.map(c => `<div class="suggest-item" data-city="${c}">${c}</div>`).join("");
-  DOM.citySuggestBox.classList.remove("hidden");
+  const matches = getRankedMatches(
+    CITY_SUGGESTIONS,
+    q,
+    suggestion => suggestion.label
+  ).slice(0, 10);
+
+  if (!matches.length) {
+    closeCitySuggestions();
+    return;
+  }
+
+  DOM.citySuggestBox.innerHTML = matches.map((suggestion, idx) => (
+    `<div id="city-option-${idx}" class="suggest-item" role="option" aria-selected="false" data-city="${escapeHtml(suggestion.label)}">${escapeHtml(suggestion.label)}<span class="suggest-cat">${escapeHtml(suggestion.category)}</span></div>`
+  )).join("");
+  citySuggestionIndex = -1;
+  setSuggestBoxState(DOM.cityInput, DOM.citySuggestBox, true);
+  setActiveSuggestion(DOM.cityInput, DOM.citySuggestBox, citySuggestionIndex);
 
   DOM.citySuggestBox.querySelectorAll(".suggest-item").forEach(el => {
     el.addEventListener("click", () => applyCitySelection(el.dataset.city));
@@ -745,7 +960,10 @@ function renderCitySuggestions(query) {
 // ─────────────────────────────────────────────
 // EVENT LISTENERS
 // ─────────────────────────────────────────────
-DOM.symptomInput.addEventListener("input", () => renderSuggestions(DOM.symptomInput.value));
+DOM.symptomInput.addEventListener("input", () => {
+  syncDetectedSpecialtyIndicator(DOM.symptomInput.value);
+  renderSuggestions(DOM.symptomInput.value);
+});
 DOM.cityInput.addEventListener("input", () => {
   renderCitySuggestions(DOM.cityInput.value);
   syncSelectionFromCityInput(DOM.cityInput.value);
@@ -754,18 +972,40 @@ DOM.cityInput.addEventListener("input", () => {
 
 DOM.cityInput.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
-    DOM.citySuggestBox.classList.add("hidden");
+    closeCitySuggestions();
+    return;
+  }
+  if (e.key === "ArrowDown") {
+    e.preventDefault();
+    citySuggestionIndex = moveActiveSuggestion(
+      DOM.cityInput,
+      DOM.citySuggestBox,
+      citySuggestionIndex,
+      1
+    );
+    return;
+  }
+  if (e.key === "ArrowUp") {
+    e.preventDefault();
+    citySuggestionIndex = moveActiveSuggestion(
+      DOM.cityInput,
+      DOM.citySuggestBox,
+      citySuggestionIndex,
+      -1
+    );
     return;
   }
   if (e.key !== "Enter") return;
 
-  const firstSuggestion = DOM.citySuggestBox.querySelector(".suggest-item");
   e.preventDefault();
-  if (firstSuggestion && !DOM.citySuggestBox.classList.contains("hidden")) {
-    applyCitySelection(firstSuggestion.dataset.city);
+  const items = getSuggestItems(DOM.citySuggestBox);
+  const current = citySuggestionIndex >= 0 ? items[citySuggestionIndex] : null;
+  if (current && !DOM.citySuggestBox.classList.contains("hidden")) {
+    applyCitySelection(current.dataset.city);
     return;
   }
 
+  closeCitySuggestions();
   syncSelectionFromCityInput(DOM.cityInput.value);
   updateDecision();
 });
@@ -778,18 +1018,42 @@ DOM.cityInput.addEventListener("blur", () => {
 });
 
 DOM.symptomInput.addEventListener("keydown", (e) => {
-  const items = [...DOM.suggestBox.querySelectorAll(".suggest-item")];
-  if (!items.length || DOM.suggestBox.classList.contains("hidden")) return;
-  if (e.key === "ArrowDown") { e.preventDefault(); suggestionIndex = (suggestionIndex + 1) % items.length; }
-  else if (e.key === "ArrowUp") { e.preventDefault(); suggestionIndex = (suggestionIndex - 1 + items.length) % items.length; }
-  else if (e.key === "Enter") { e.preventDefault(); const cur = items[Math.max(0, suggestionIndex)]; if (cur) applySuggestion(cur.dataset.label, cur.dataset.filiere); return; }
-  else if (e.key === "Escape") { DOM.suggestBox.classList.add("hidden"); return; }
-  else return;
-  items.forEach((el, idx) => el.classList.toggle("active", idx === suggestionIndex));
+  if (e.key === "ArrowDown") {
+    e.preventDefault();
+    symptomSuggestionIndex = moveActiveSuggestion(
+      DOM.symptomInput,
+      DOM.suggestBox,
+      symptomSuggestionIndex,
+      1
+    );
+    return;
+  }
+  if (e.key === "ArrowUp") {
+    e.preventDefault();
+    symptomSuggestionIndex = moveActiveSuggestion(
+      DOM.symptomInput,
+      DOM.suggestBox,
+      symptomSuggestionIndex,
+      -1
+    );
+    return;
+  }
+  if (e.key === "Enter") {
+    const items = getSuggestItems(DOM.suggestBox);
+    const current =
+      symptomSuggestionIndex >= 0 ? items[symptomSuggestionIndex] : null;
+    if (!current || DOM.suggestBox.classList.contains("hidden")) return;
+    e.preventDefault();
+    applySuggestion(current.dataset.label, current.dataset.filiere);
+    return;
+  }
+  if (e.key === "Escape") {
+    closeSymptomSuggestions();
+  }
 });
 
 DOM.regulateBtn.addEventListener("click", () => {
-  activeSpecialty = DOM.detectedSpecialty.value || detectSpecialty(DOM.symptomInput.value);
+  activeSpecialty = inferDetectedSpecialty(DOM.symptomInput.value) || "divers";
   renderChips();
   refreshMap();
   updateDecision();
@@ -800,7 +1064,9 @@ DOM.focusBtn.addEventListener("click", () => {
   DOM.cityInput.value = "";
   DOM.citySelect.value = "";
   DOM.subzoneSelect.value = "";
-  DOM.detectedSpecialty.value = "";
+  setDetectedSpecialtyIndicator("");
+  closeSymptomSuggestions();
+  closeCitySuggestions();
   updateSubzoneOptions();
   resetDecisionState("Carte interactive chargée.");
   map.fitBounds([[43.47, 3.67], [43.75, 4.08]]);
@@ -816,8 +1082,8 @@ DOM.subzoneSelect.addEventListener("change", updateDecision);
 
 // Fermer les suggest-box au clic extérieur
 document.addEventListener("click", (e) => {
-  if (!DOM.symptomInput.parentElement.contains(e.target)) DOM.suggestBox.classList.add("hidden");
-  if (!DOM.cityInput.parentElement.contains(e.target)) DOM.citySuggestBox.classList.add("hidden");
+  if (!DOM.symptomInput.parentElement.contains(e.target)) closeSymptomSuggestions();
+  if (!DOM.cityInput.parentElement.contains(e.target)) closeCitySuggestions();
 });
 
 map.on('zoomend', updateLabelVisibility);
@@ -828,8 +1094,7 @@ map.on('zoomend', updateLabelVisibility);
 document.addEventListener("DOMContentLoaded", () => {
   DOM.toolbar.innerHTML = "Carte interactive chargée.";
   renderChips();
-  populateSpecialtySelect();
-  DOM.detectedSpecialty.value = activeSpecialty;
+  setDetectedSpecialtyIndicator("");
   populateCitySelect();
   updateSubzoneOptions();
   refreshMap();
