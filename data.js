@@ -117,7 +117,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "millenaire",
     name: "Clinique du Millénaire",
-    color: "#d7263d",
+    color: "#ee6055",
     location: {
       lat: 43.6049,
       lng: 3.9189,
@@ -975,14 +975,14 @@ const CLOUD_STYLE = {
   baillargues_only: { density: 92, spread: 0.4, opacity: 0.6, halo: 0.46 },
   lattes_maurin: { density: 72, spread: 0.42, opacity: 0.62, halo: 0.4 },
   lattes_centre: { density: 86, spread: 0.43, opacity: 0.62, halo: 0.42 },
-  lattes_boirargues: { density: 84, spread: 0.44, opacity: 0.62, halo: 0.42 },
+  lattes_boirargues: { density: 128, spread: 0.5, opacity: 0.64, halo: 0.52 },
   mtp_hf: { density: 158, spread: 0.48, opacity: 0.6, halo: 0.48 },
   mtp_mosson: { density: 145, spread: 0.5, opacity: 0.6, halo: 0.48 },
   mtp_cevennes: { density: 116, spread: 0.45, opacity: 0.62, halo: 0.44 },
   mtp_pres_arenes: { density: 120, spread: 0.44, opacity: 0.6, halo: 0.44 },
   mtp_croix_argent: { density: 125, spread: 0.46, opacity: 0.6, halo: 0.44 },
   mtp_millenaire: { density: 102, spread: 0.4, opacity: 0.6, halo: 0.4 },
-  mtp_port_marianne: { density: 118, spread: 0.42, opacity: 0.6, halo: 0.42 },
+  mtp_port_marianne: { density: 148, spread: 0.48, opacity: 0.62, halo: 0.5 },
   mtp_centre_historique: {
     density: 92,
     spread: 0.32,
@@ -1068,6 +1068,11 @@ const CLOUD_ANCHORS = {
   lattes_boirargues: [
     { lat: 43.566, lng: 3.936, w: 1.1 },
     { lat: 43.563, lng: 3.947, w: 1.0 },
+    { lat: 43.569, lng: 3.943, w: 1.05 },
+    { lat: 43.56, lng: 3.939, w: 1.0 },
+    { lat: 43.5675, lng: 3.95, w: 0.95 },
+    { lat: 43.571, lng: 3.938, w: 0.92 },
+    { lat: 43.5645, lng: 3.952, w: 0.88 },
   ],
   mtp_hf: [
     { lat: 43.633, lng: 3.862, w: 1.2 },
@@ -1103,6 +1108,11 @@ const CLOUD_ANCHORS = {
     { lat: 43.6, lng: 3.898, w: 1.2 },
     { lat: 43.604, lng: 3.908, w: 1.0 },
     { lat: 43.594, lng: 3.889, w: 0.9 },
+    { lat: 43.607, lng: 3.923, w: 1.12 },
+    { lat: 43.611, lng: 3.919, w: 1.08 },
+    { lat: 43.603, lng: 3.917, w: 1.0 },
+    { lat: 43.609, lng: 3.928, w: 0.96 },
+    { lat: 43.613, lng: 3.924, w: 0.94 },
   ],
   mtp_centre_historique: [
     { lat: 43.61, lng: 3.877, w: 1.3 },
