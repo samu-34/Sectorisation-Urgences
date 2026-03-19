@@ -20,7 +20,7 @@ const HOSPITAL_RECORDS = [
         "560 Av. du Colonel André Pavelet dit Villars, 34000 Montpellier",
     },
     phones: {
-      urgences: "04 67 61 48 48",
+      urgences: "04 67 61 27 27",
       specialites: "04 67 61 48 00",
     },
     source: {
@@ -41,7 +41,7 @@ const HOSPITAL_RECORDS = [
       address: "1 place de l'Europe, 34430 Saint-Jean-de-Védas",
     },
     phones: {
-      urgences: "04 67 61 44 44",
+      urgences: "04 67 61 20 04",
       specialites: "04 67 61 44 00",
     },
     source: {
@@ -62,7 +62,7 @@ const HOSPITAL_RECORDS = [
       address: "149 Rue de la Taillade, 34070 Montpellier",
     },
     phones: {
-      urgences: "04 67 75 97 97",
+      urgences: "04 67 75 97 19",
       specialites: "04 67 75 97 00",
     },
     source: {
@@ -83,7 +83,7 @@ const HOSPITAL_RECORDS = [
       address: "371 avenue du Doyen Gaston Giraud, 34090 Montpellier",
     },
     phones: {
-      urgences: "04 67 33 67 33",
+      urgences: "04 67 33 95 02",
       specialites: "04 67 33 67 33",
     },
     source: {
@@ -104,7 +104,7 @@ const HOSPITAL_RECORDS = [
       address: "50 rue Émile Combes, 34170 Castelnau-le-Lez",
     },
     phones: {
-      urgences: "04 67 33 05 05",
+      urgences: "04 67 75 97 19",
       specialites: "04 67 33 05 00",
     },
     source: {
@@ -125,7 +125,7 @@ const HOSPITAL_RECORDS = [
       address: "220 boulevard Pénélope, 34960 Montpellier",
     },
     phones: {
-      urgences: "04 99 75 60 60",
+      urgences: "04 99 53 63 73",
       specialites: "04 99 75 60 00",
     },
     source: {

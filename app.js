@@ -7,7 +7,7 @@
 // ─────────────────────────────────────────────
 // INITIALISATION CARTE
 // ─────────────────────────────────────────────
-const map = L.map("map", { zoomControl: true }).setView([43.61, 3.87], 10);
+const map = L.map("map", { zoomControl: true }).setView([43.61, 3.87], 12);
 const AGGLO_BOUNDS = [
   [43.47, 3.67],
   [43.75, 4.08],
@@ -20,6 +20,10 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 
 function fitAggloBounds() {
   map.fitBounds(AGGLO_BOUNDS, { padding: [24, 24] });
+}
+
+function setDefaultMapView() {
+  map.setView([43.61, 3.87], 12);
 }
 
 const AggloControl = L.Control.extend({
@@ -391,15 +395,81 @@ function appendTextLine(container, parts = []) {
 }
 
 function buildPhoneLink(label, value) {
-  const link = document.createElement("a");
-  link.href = `tel:${normalizePhoneHref(value)}`;
-  link.textContent = value;
-
   const row = document.createElement("span");
   row.appendChild(document.createElement("strong")).textContent = label;
   row.appendChild(document.createTextNode(" "));
-  row.appendChild(link);
+
+  const phoneValues = String(value ?? "")
+    .split(/\s*\/\s*|\s+ou\s+/i)
+    .map((entry) => entry.trim())
+    .filter(Boolean);
+
+  phoneValues.forEach((phone, index) => {
+    const link = document.createElement("a");
+    link.href = `tel:${normalizePhoneHref(phone)}`;
+    link.textContent = phone;
+    row.appendChild(link);
+    if (index < phoneValues.length - 1) {
+      row.appendChild(document.createTextNode(" ou "));
+    }
+  });
+
   return row;
+}
+
+async function copyTextToClipboard(value) {
+  const text = String(value ?? "").trim();
+  if (!text) return false;
+
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  } catch (error) {}
+
+  try {
+    const input = document.createElement("textarea");
+    input.value = text;
+    input.setAttribute("readonly", "");
+    input.style.position = "absolute";
+    input.style.left = "-9999px";
+    document.body.appendChild(input);
+    input.select();
+    const copied = document.execCommand("copy");
+    document.body.removeChild(input);
+    return copied;
+  } catch (error) {
+    return false;
+  }
+}
+
+function buildCopyButton(value, color) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.textContent = "Copier";
+  button.style.width = "auto";
+  button.style.padding = "5px 10px";
+  button.style.borderRadius = "999px";
+  button.style.border = `1px solid ${hexToRgba(color, 0.26)}`;
+  button.style.background = hexToRgba(color, 0.1);
+  button.style.color = color;
+  button.style.fontSize = "12px";
+  button.style.fontWeight = "700";
+  button.style.marginLeft = "8px";
+
+  button.addEventListener("click", async (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const previousLabel = button.textContent;
+    const copied = await copyTextToClipboard(value);
+    button.textContent = copied ? "Copié" : "Échec";
+    window.setTimeout(() => {
+      button.textContent = previousLabel;
+    }, 1200);
+  });
+
+  return button;
 }
 
 function buildInfoRow(label, value) {
@@ -457,10 +527,19 @@ function buildPopupPhoneCard(hospital) {
   const phones = document.createElement("div");
   phones.className = "contact-block popup-phone";
   applyPopupCardTint(phones, hospital.color, 0.1, 0.18);
-  appendTextLine(phones, [
+
+  const row = document.createElement("div");
+  row.style.display = "flex";
+  row.style.alignItems = "center";
+  row.style.justifyContent = "space-between";
+  row.style.gap = "10px";
+  row.style.flexWrap = "wrap";
+  row.append(
     buildPhoneLink("Urgences :", hospital.phone_urgences),
-    buildPhoneLink("Spécialités :", hospital.phone_specialites),
-  ]);
+    buildCopyButton(hospital.phone_urgences, hospital.color),
+  );
+
+  phones.append(row);
   return phones;
 }
 
@@ -1451,7 +1530,7 @@ DOM.focusBtn.addEventListener("click", () => {
   closeCitySuggestions();
   updateSubzoneOptions();
   resetDecisionState();
-  fitAggloBounds();
+  setDefaultMapView();
 });
 
 DOM.citySelect.addEventListener("change", () => {
