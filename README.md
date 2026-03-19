@@ -41,8 +41,9 @@ Les metadonnees etablissements incluent une date de verification
 ## Stack technique
 
 - application front statique: [index.html](./index.html),
-  [style.css](./style.css), [app.js](./app.js), [data.js](./data.js)
-- carte: Leaflet charge via CDN `unpkg`
+  [style.css](./style.css), [app.js](./app.js), [application.js](./application.js),
+  [domain.js](./domain.js), [data.js](./data.js)
+- carte: Leaflet 1.9.4 embarque localement dans [`vendor/leaflet/`](./vendor/leaflet)
 - fond de carte: tuiles OpenStreetMap
 - serveur local de dev sans cache: [dev_server.py](./dev_server.py)
 - tests: Node.js natif (`node:test`) avec harnais maison dans [tests/](./tests)
@@ -53,9 +54,12 @@ Les metadonnees etablissements incluent une date de verification
 .
 ├── index.html        # structure de l'interface
 ├── style.css         # styles de l'application
-├── app.js            # logique UI, carte, orientation, interactions
-├── data.js           # donnees metier et regles de sectorisation
+├── app.js            # couche UI / DOM
+├── application.js    # cas d'usage applicatifs
+├── domain.js         # regles metier pures
+├── data.js           # referentiel metier et sectorisation declarative
 ├── dev_server.py     # serveur statique local sans cache
+├── vendor/leaflet/   # distribution Leaflet embarquee
 ├── tests/            # tests data + comportements UI
 └── assets/           # logos
 ```
@@ -65,7 +69,7 @@ Les metadonnees etablissements incluent une date de verification
 - navigateur moderne avec JavaScript active
 - Python 3 pour lancer le serveur local recommande
 - Node.js 18+ recommande pour executer les tests
-- acces reseau pour charger Leaflet et les tuiles OpenStreetMap
+- acces reseau pour charger les tuiles OpenStreetMap
 
 ## Lancement local
 
@@ -105,6 +109,28 @@ Couverture actuelle:
 - verification du comportement principal de l'UI via un harnais DOM / Leaflet
   simule
 
+## Deploiement GitHub Pages
+
+Le projet peut etre publie tel quel sur GitHub Pages car:
+
+- tous les chemins applicatifs sont relatifs
+- Leaflet est embarque localement dans le repo
+- l'application ne depend d'aucun backend
+
+Points a verifier avant publication:
+
+1. pousser aussi le dossier [`vendor/leaflet/`](./vendor/leaflet)
+2. activer GitHub Pages sur la branche / le dossier qui contient `index.html`
+3. conserver les suffixes `?v=...` dans `index.html` quand un asset change pour eviter les caches agressifs
+4. garder un acces reseau public vers les tuiles OpenStreetMap, sinon seule l'UI chargera sans fond de carte
+
+Exemples d'URLs:
+
+- site utilisateur: `https://<user>.github.io/`
+- site de projet: `https://<user>.github.io/<repo>/`
+
+Comme les liens sont relatifs, aucun changement de `basePath` n'est necessaire pour ces deux cas.
+
 ## Utilisation
 
 1. saisir un motif d'appel dans `Motif d'appel`
@@ -129,6 +155,7 @@ par specialite, independamment de la saisie courante.
 | `MOTIF_CATALOG` | Catalogue de motifs et alias pour la detection de filiere |
 | `CITY_AREAS` | Communes + secteurs de Lattes |
 | `MTP_SUBAREAS` | Quartiers / sous-zones de Montpellier |
+| `AREA_SPECIALTY_RULES` | Affectations explicites par zone et par filiere |
 | `RULES` | Regles de sectorisation par commune pour les filieres specialisees |
 | `MTP_RULES` / `MTP_AREA_RULES` | Regles dediees a Montpellier |
 | `DIVERS_MTP_RULES` / `DIVERS_AREA_RULES` / `DIVERS_CITY_RULES` | Regles de la filiere Classique |
@@ -166,7 +193,7 @@ Pour les autres filieres, l'ordre de priorite est:
 ### Detection de filiere
 
 La detection automatique repose sur `detectSpecialty(...)` dans
-[app.js](./app.js), a partir des libelles et alias definis dans
+[domain.js](./domain.js), a partir des libelles et alias definis dans
 `MOTIF_CATALOG`.
 
 Priorite de detection:
