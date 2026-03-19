@@ -8,11 +8,14 @@
 // INITIALISATION CARTE
 // ─────────────────────────────────────────────
 const map = L.map("map", { zoomControl: true }).setView([43.61, 3.87], 10);
-const AGGLO_BOUNDS = [[43.47, 3.67], [43.75, 4.08]];
+const AGGLO_BOUNDS = [
+  [43.47, 3.67],
+  [43.75, 4.08],
+];
 
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 19,
-  attribution: "&copy; OpenStreetMap"
+  attribution: "&copy; OpenStreetMap",
 }).addTo(map);
 
 function fitAggloBounds() {
@@ -23,6 +26,10 @@ const AggloControl = L.Control.extend({
   options: { position: "topleft" },
   onAdd() {
     const container = L.DomUtil.create("div", "leaflet-bar leaflet-control");
+    container.style.position = "absolute";
+    container.style.top = "0";
+    container.style.left = "56px";
+    container.style.margin = "10px 0 0 0";
     const button = L.DomUtil.create("button", "", container);
     button.type = "button";
     button.title = "Adapter le zoom sur l'agglomération";
@@ -50,6 +57,7 @@ const AggloControl = L.Control.extend({
     button.style.placeItems = "center";
     button.style.cursor = "pointer";
     button.style.boxShadow = "none";
+    button.style.borderRadius = "4px";
 
     L.DomEvent.disableClickPropagation(container);
     L.DomEvent.disableScrollPropagation(container);
@@ -59,7 +67,7 @@ const AggloControl = L.Control.extend({
     });
 
     return container;
-  }
+  },
 });
 
 map.addControl(new AggloControl());
@@ -80,13 +88,13 @@ const DOM = {
   suggestBox: document.getElementById("suggestBox"),
   citySuggestBox: document.getElementById("citySuggestBox"),
   regulateBtn: document.getElementById("regulateBtn"),
-  focusBtn: document.getElementById("focusBtn")
+  focusBtn: document.getElementById("focusBtn"),
 };
 
 // ─────────────────────────────────────────────
 // ÉTAT APPLICATIF
 // ─────────────────────────────────────────────
-let activeSpecialty = "divers";
+let mapSpecialty = "divers";
 let diversAssignments = {};
 let cloudLayers = [];
 let haloLayers = [];
@@ -103,20 +111,56 @@ let citySuggestionIndex = -1;
 // UTILITAIRES
 // ─────────────────────────────────────────────
 function simplify(text) {
-  return (text || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/['']/g, "'").replace(/\s+/g, " ").trim();
+  return String(text || "")
+    .toLowerCase()
+    .replace(/[œ]/g, "oe")
+    .replace(/[æ]/g, "ae")
+    .replace(/[’‘`´]/g, "'")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[-/]+/g, " ")
+    .replace(/\bste\.?(?=\s|$)/g, "sainte")
+    .replace(/\bst\.?(?=\s|$)/g, "saint")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 function distanceKm(lat1, lng1, lat2, lng2) {
   const R = 6371;
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLng = (lng2 - lng1) * Math.PI / 180;
-  const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) ** 2;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLng = ((lng2 - lng1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLng / 2) ** 2;
   return 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
 function estimateDensityWeight(name) {
-  const dense = ["Castelnau-le-Lez", "Le Crès", "Mauguio", "Pérols", "Juvignac", "Saint-Jean-de-Védas", "Baillargues", "Clapiers", "Jacou", "Palavas-les-Flots", "Lattes", "Montpellier"];
-  const medium = ["Villeneuve-lès-Maguelone", "Fabrègues", "Pignan", "Saint-Gély-du-Fesc", "Prades-le-Lez", "Montferrier-sur-Lez", "Castries"];
+  const dense = [
+    "Castelnau-le-Lez",
+    "Le Crès",
+    "Mauguio",
+    "Pérols",
+    "Juvignac",
+    "Saint-Jean-de-Védas",
+    "Baillargues",
+    "Clapiers",
+    "Jacou",
+    "Palavas-les-Flots",
+    "Lattes",
+    "Montpellier",
+  ];
+  const medium = [
+    "Villeneuve-lès-Maguelone",
+    "Fabrègues",
+    "Pignan",
+    "Saint-Gély-du-Fesc",
+    "Prades-le-Lez",
+    "Montferrier-sur-Lez",
+    "Castries",
+  ];
   if (dense.includes(name)) return 1.7;
   if (medium.includes(name)) return 1.35;
   return 1.0;
@@ -128,7 +172,7 @@ function seededRand(seed) {
 }
 
 function clearLayers(arr) {
-  arr.forEach(l => map.removeLayer(l));
+  arr.forEach((l) => map.removeLayer(l));
   arr.length = 0;
 }
 
@@ -204,7 +248,7 @@ function getMatchRank(label, query) {
 
   const wordIndex = normalizedLabel
     .split(/[\s-]+/)
-    .findIndex(word => word.startsWith(normalizedQuery));
+    .findIndex((word) => word.startsWith(normalizedQuery));
 
   if (wordIndex >= 0) {
     return {
@@ -224,12 +268,25 @@ function getMatchRank(label, query) {
 function getRankedMatches(items, query, getLabel) {
   return items
     .map((item, sourceIndex) => {
-      const label = getLabel(item);
-      const rank = getMatchRank(label, query);
+      const rawLabels = getLabel(item);
+      const labels = Array.isArray(rawLabels) ? rawLabels : [rawLabels];
+      const rankedLabels = labels
+        .filter(Boolean)
+        .map((label) => ({ label, rank: getMatchRank(label, query) }))
+        .filter((entry) => entry.rank !== null)
+        .sort((a, b) => {
+          if (a.rank.score !== b.rank.score) return a.rank.score - b.rank.score;
+          if (a.rank.index !== b.rank.index) return a.rank.index - b.rank.index;
+          if (a.rank.length !== b.rank.length)
+            return a.rank.length - b.rank.length;
+          return 0;
+        });
 
-      if (!rank) return null;
+      const bestMatch = rankedLabels[0];
 
-      return { item, rank, sourceIndex };
+      if (!bestMatch) return null;
+
+      return { item, rank: bestMatch.rank, sourceIndex };
     })
     .filter(Boolean)
     .sort((a, b) => {
@@ -238,11 +295,11 @@ function getRankedMatches(items, query, getLabel) {
       if (a.rank.length !== b.rank.length) return a.rank.length - b.rank.length;
       return a.sourceIndex - b.sourceIndex;
     })
-    .map(entry => entry.item);
+    .map((entry) => entry.item);
 }
 
 function filiereLabelById(id) {
-  const found = SPECIALTIES.find(s => s.id === id);
+  const found = SPECIALTIES.find((s) => s.id === id);
   return found ? found.label : id;
 }
 
@@ -250,8 +307,23 @@ function inferDetectedSpecialty(text) {
   return simplify(text) ? detectSpecialty(text) : "";
 }
 
+function getOrientationSpecialty() {
+  return inferDetectedSpecialty(DOM.symptomInput.value) || "divers";
+}
+
+function syncMapSpecialtyFromDetectedInput(text = DOM.symptomInput.value) {
+  const detectedSpecialty = inferDetectedSpecialty(text);
+  if (!detectedSpecialty || detectedSpecialty === mapSpecialty) return false;
+  mapSpecialty = detectedSpecialty;
+  renderChips();
+  refreshMap();
+  return true;
+}
+
 function setDetectedSpecialtyIndicator(specialtyId = "") {
-  DOM.detectedSpecialty.value = specialtyId ? filiereLabelById(specialtyId) : "";
+  DOM.detectedSpecialty.value = specialtyId
+    ? filiereLabelById(specialtyId)
+    : "";
 }
 
 function syncDetectedSpecialtyIndicator(text = DOM.symptomInput.value) {
@@ -284,7 +356,9 @@ function getPopupAddress(hospital) {
 }
 
 function hexToRgba(hex, alpha) {
-  const normalized = String(hex || "").replace("#", "").trim();
+  const normalized = String(hex || "")
+    .replace("#", "")
+    .trim();
   if (!/^[\da-fA-F]{6}$/.test(normalized)) return `rgba(15, 23, 42, ${alpha})`;
 
   const r = Number.parseInt(normalized.slice(0, 2), 16);
@@ -293,7 +367,12 @@ function hexToRgba(hex, alpha) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-function applyPopupCardTint(element, color, backgroundAlpha = 0.1, borderAlpha = 0.2) {
+function applyPopupCardTint(
+  element,
+  color,
+  backgroundAlpha = 0.1,
+  borderAlpha = 0.2,
+) {
   element.style.background = hexToRgba(color, backgroundAlpha);
   element.style.border = `1px solid ${hexToRgba(color, borderAlpha)}`;
 }
@@ -380,7 +459,7 @@ function buildPopupPhoneCard(hospital) {
   applyPopupCardTint(phones, hospital.color, 0.1, 0.18);
   appendTextLine(phones, [
     buildPhoneLink("Urgences :", hospital.phone_urgences),
-    buildPhoneLink("Spécialités :", hospital.phone_specialites)
+    buildPhoneLink("Spécialités :", hospital.phone_specialites),
   ]);
   return phones;
 }
@@ -393,30 +472,63 @@ function buildPopupRouteCard(hospital, travelEstimate) {
     (() => {
       const span = document.createElement("span");
       span.append(
-        Object.assign(document.createElement("strong"), { textContent: "Temps de trajet :" }),
-        document.createTextNode(` ${Math.round(travelEstimate.theoreticalDurationMin)} min`)
+        Object.assign(document.createElement("strong"), {
+          textContent: "Temps de trajet :",
+        }),
+        document.createTextNode(
+          ` ${Math.round(travelEstimate.theoreticalDurationMin)} min`,
+        ),
       );
       return span;
     })(),
     (() => {
       const span = document.createElement("span");
       span.append(
-        Object.assign(document.createElement("strong"), { textContent: "Distance :" }),
-        document.createTextNode(` ${travelEstimate.directDistanceKm.toFixed(1)} km`)
+        Object.assign(document.createElement("strong"), {
+          textContent: "Distance :",
+        }),
+        document.createTextNode(
+          ` ${travelEstimate.directDistanceKm.toFixed(1)} km`,
+        ),
       );
       return span;
-    })()
+    })(),
   ]);
   return routeInfo;
 }
 
+function buildPopupDisclaimerCard() {
+  const disclaimer = document.createElement("div");
+  disclaimer.className = "small";
+  disclaimer.style.marginTop = "10px";
+  disclaimer.style.padding = "10px 12px";
+  disclaimer.style.borderRadius = "12px";
+  disclaimer.style.background = "#fff7db";
+  disclaimer.style.border = "1px solid #f2d58a";
+  disclaimer.style.color = "#7a4b00";
+  const popupSpecialty = getOrientationSpecialty();
+
+  disclaimer.textContent =
+    popupSpecialty === "trauma"
+      ? "⚠️ Prérequis : traumatisme SANS deformation ni plaie chez patient STABLE ⚠️"
+      : popupSpecialty === "cardio_pneumo"
+        ? "⚠️ Prérequis : patient STABLE + ECG normal ⚠️"
+        : "⚠️ Prérequis : patient STABLE et SANS signe de gravite ⚠️";
+
+  return disclaimer;
+}
+
 function clearSelectionVisuals() {
   if (focusLayer) {
-    (Array.isArray(focusLayer) ? focusLayer : [focusLayer]).forEach(layer => map.removeLayer(layer));
+    (Array.isArray(focusLayer) ? focusLayer : [focusLayer]).forEach((layer) =>
+      map.removeLayer(layer),
+    );
     focusLayer = null;
   }
   if (routeLayer) {
-    (Array.isArray(routeLayer) ? routeLayer : [routeLayer]).forEach(layer => map.removeLayer(layer));
+    (Array.isArray(routeLayer) ? routeLayer : [routeLayer]).forEach((layer) =>
+      map.removeLayer(layer),
+    );
     routeLayer = null;
   }
 }
@@ -433,12 +545,22 @@ function closeOrientationPopup() {
 function detectSpecialty(text) {
   const t = simplify(text);
   if (!t) return "cardio_pneumo";
-  const cardio = ["douleur thoracique", "thoracique", "palpitation", "arythmie", "dyspnee", "dyspnée", "desaturation", "désaturation", "toux", "asthme", "bpco", "pneumo", "syncope"];
-  const gastro = ["abdomen", "abdominale", "colique nephretique", "colique néphrétique", "hematurie", "hématurie", "retention", "rétention", "dysurie", "digestif", "melena", "méléna", "hematemese", "hématémèse", "colique", "urologie", "gastro"];
-  const trauma = ["trauma", "traumatisme", "entorse", "cheville", "poignet", "genou", "epaule", "épaule", "chute", "contusion", "fracture", "plaie", "doigt"];
-  if (trauma.some(k => t.includes(simplify(k)))) return "trauma";
-  if (gastro.some(k => t.includes(simplify(k)))) return "gastro_uro";
-  if (cardio.some(k => t.includes(simplify(k)))) return "cardio_pneumo";
+
+  function getTermsByFiliere(filiere) {
+    return MOTIF_CATALOG.filter((item) => item.filiere === filiere).flatMap(
+      (item) => [item.label, ...(item.aliases || [])],
+    );
+  }
+
+  const trauma = getTermsByFiliere("trauma");
+  const gastro = getTermsByFiliere("gastro_uro");
+  const cardio = getTermsByFiliere("cardio_pneumo");
+  const divers = getTermsByFiliere("divers");
+
+  if (trauma.some((k) => t.includes(simplify(k)))) return "trauma";
+  if (gastro.some((k) => t.includes(simplify(k)))) return "gastro_uro";
+  if (cardio.some((k) => t.includes(simplify(k)))) return "cardio_pneumo";
+  if (divers.some((k) => t.includes(simplify(k)))) return "divers";
   return "divers";
 }
 
@@ -449,15 +571,22 @@ function generateCloudPoints(key, n) {
   const c = CLOUDS[key];
   const style = CLOUD_STYLE[key] || { spread: 0.7 };
   const spread = style.spread || 0.7;
-  const anchors = CLOUD_ANCHORS[key] || [{ lat: c.center[0], lng: c.center[1], w: 1 }];
+  const anchors = CLOUD_ANCHORS[key] || [
+    { lat: c.center[0], lng: c.center[1], w: 1 },
+  ];
   const totalW = anchors.reduce((s, a) => s + a.w, 0);
   const cumulative = [];
   let acc = 0;
-  anchors.forEach(a => { acc += a.w / totalW; cumulative.push(acc); });
-  const angle = c.angle * Math.PI / 180;
+  anchors.forEach((a) => {
+    acc += a.w / totalW;
+    cumulative.push(acc);
+  });
+  const angle = (c.angle * Math.PI) / 180;
 
   function pickAnchor(r) {
-    for (let i = 0; i < cumulative.length; i++) { if (r <= cumulative[i]) return anchors[i]; }
+    for (let i = 0; i < cumulative.length; i++) {
+      if (r <= cumulative[i]) return anchors[i];
+    }
     return anchors[anchors.length - 1];
   }
 
@@ -475,8 +604,8 @@ function generateCloudPoints(key, n) {
     const y = radius * Math.sin(theta) * localRy;
     const xr = x * Math.cos(angle) - y * Math.sin(angle);
     const yr = x * Math.sin(angle) + y * Math.cos(angle);
-    const jitterLat = (seededRand(i * 53 + key.length * 13) - 0.5) * c.ry * 0.10;
-    const jitterLng = (seededRand(i * 61 + key.length * 19) - 0.5) * c.rx * 0.10;
+    const jitterLat = (seededRand(i * 53 + key.length * 13) - 0.5) * c.ry * 0.1;
+    const jitterLng = (seededRand(i * 61 + key.length * 19) - 0.5) * c.rx * 0.1;
     pts.push([a.lat + yr + jitterLat, a.lng + xr + jitterLng]);
   }
   return pts;
@@ -489,32 +618,46 @@ function addHeatBlob(lat, lng, color, baseRadius, opacity) {
   const layers = [
     { r: 1.9, o: 0.16 },
     { r: 1.25, o: 0.22 },
-    { r: 0.72, o: 0.28 }
+    { r: 0.72, o: 0.28 },
   ];
   layers.forEach(({ r, o }) => {
-    heatLayers.push(L.circle([lat, lng], {
-      radius: baseRadius * r, stroke: false, fillColor: color, fillOpacity: opacity * o, interactive: false
-    }).addTo(map));
+    heatLayers.push(
+      L.circle([lat, lng], {
+        radius: baseRadius * r,
+        stroke: false,
+        fillColor: color,
+        fillOpacity: opacity * o,
+        interactive: false,
+      }).addTo(map),
+    );
   });
 }
 
 function addComboHeat(key, hospitalId) {
   const h = HOSPITALS[hospitalId];
-  const anchors = CLOUD_ANCHORS[key] || [{ lat: CLOUDS[key].center[0], lng: CLOUDS[key].center[1], w: 1 }];
+  const anchors = CLOUD_ANCHORS[key] || [
+    { lat: CLOUDS[key].center[0], lng: CLOUDS[key].center[1], w: 1 },
+  ];
   const style = CLOUD_STYLE[key] || { halo: 0.7 };
   const isMtp = key.startsWith("mtp_");
   const isLattes = key.startsWith("lattes");
   const baseRadius = isMtp ? 260 : isLattes ? 210 : 340;
   const opacity = isMtp ? 0.9 : 1.0;
 
-  anchors.forEach(a => {
+  anchors.forEach((a) => {
     const weightFactor = 0.75 + (a.w || 1) * 0.35;
     const radius = baseRadius * weightFactor * (style.halo || 0.7);
     addHeatBlob(a.lat, a.lng, h.color, radius, opacity);
   });
 
   const c = CLOUDS[key];
-  addHeatBlob(c.center[0], c.center[1], h.color, baseRadius * 0.92 * (style.halo || 0.7), opacity * 0.95);
+  addHeatBlob(
+    c.center[0],
+    c.center[1],
+    h.color,
+    baseRadius * 0.92 * (style.halo || 0.7),
+    opacity * 0.95,
+  );
 }
 
 // ─────────────────────────────────────────────
@@ -526,17 +669,39 @@ function addCloud(key, hospitalId, density) {
   const style = CLOUD_STYLE[key] || { density: density, halo: 0.7 };
   const haloRadius = Math.max(c.rx * 62000, c.ry * 82000) * (style.halo || 0.7);
 
-  haloLayers.push(L.circle([c.center[0], c.center[1]], {
-    radius: haloRadius, stroke: false, fillColor: h.color, fillOpacity: 0.09, interactive: false
-  }).addTo(map));
+  haloLayers.push(
+    L.circle([c.center[0], c.center[1]], {
+      radius: haloRadius,
+      stroke: false,
+      fillColor: h.color,
+      fillOpacity: 0.09,
+      interactive: false,
+    }).addTo(map),
+  );
 
   generateCloudPoints(key, style.density || density).forEach((pt, idx) => {
     const mod = idx % 12;
     const r = mod === 0 ? 3.4 : mod < 4 ? 2.8 : 2.2;
     // Glow
-    cloudLayers.push(L.circleMarker(pt, { radius: r + 3, stroke: false, fillColor: h.color, fillOpacity: 0.12, interactive: false }).addTo(map));
+    cloudLayers.push(
+      L.circleMarker(pt, {
+        radius: r + 3,
+        stroke: false,
+        fillColor: h.color,
+        fillOpacity: 0.12,
+        interactive: false,
+      }).addTo(map),
+    );
     // Point
-    cloudLayers.push(L.circleMarker(pt, { radius: r, stroke: false, fillColor: h.color, fillOpacity: mod === 0 ? 0.65 : 0.85, interactive: false }).addTo(map));
+    cloudLayers.push(
+      L.circleMarker(pt, {
+        radius: r,
+        stroke: false,
+        fillColor: h.color,
+        fillOpacity: mod === 0 ? 0.65 : 0.85,
+        interactive: false,
+      }).addTo(map),
+    );
   });
 }
 
@@ -548,19 +713,25 @@ function buildHospitalPopup(h) {
   root.append(
     buildPopupHeader(h, "Établissement"),
     buildPopupAddressBlock(h),
-    buildPopupPhoneCard(h)
+    buildPopupPhoneCard(h),
   );
   return root;
 }
 
-function buildOrientationPopupContent(areaLabel, hospitalId, symptom, travelEstimate) {
+function buildOrientationPopupContent(
+  areaLabel,
+  hospitalId,
+  symptom,
+  travelEstimate,
+) {
   const h = HOSPITALS[hospitalId];
   const root = document.createElement("div");
   root.append(
     buildPopupHeader(h, "Destination prioritaire"),
     buildPopupAddressBlock(h),
     buildPopupPhoneCard(h),
-    buildPopupRouteCard(h, travelEstimate)
+    buildPopupRouteCard(h, travelEstimate),
+    buildPopupDisclaimerCard(),
   );
   return root;
 }
@@ -581,15 +752,34 @@ function openOrientationPopup(areaLabel, hospitalId, symptom, travelEstimate) {
     maxWidth: 360,
   })
     .setLatLng([h.lat, h.lng])
-    .setContent(buildOrientationPopupContent(areaLabel, hospitalId, symptom, travelEstimate))
+    .setContent(
+      buildOrientationPopupContent(
+        areaLabel,
+        hospitalId,
+        symptom,
+        travelEstimate,
+      ),
+    )
     .openOn(map);
 }
 
 function buildHospitals() {
   clearLayers(hospitalLayers);
-  Object.values(HOSPITALS).forEach(h => {
-    const halo = L.circle([h.lat, h.lng], { radius: 700, stroke: false, fillColor: h.color, fillOpacity: 0.14, interactive: false }).addTo(map);
-    const marker = L.circleMarker([h.lat, h.lng], { radius: 8.5, color: "#fff", weight: 2.5, fillColor: h.color, fillOpacity: 1 })
+  Object.values(HOSPITALS).forEach((h) => {
+    const halo = L.circle([h.lat, h.lng], {
+      radius: 700,
+      stroke: false,
+      fillColor: h.color,
+      fillOpacity: 0.14,
+      interactive: false,
+    }).addTo(map);
+    const marker = L.circleMarker([h.lat, h.lng], {
+      radius: 8.5,
+      color: "#fff",
+      weight: 2.5,
+      fillColor: h.color,
+      fillOpacity: 1,
+    })
       .addTo(map)
       .bindPopup(buildHospitalPopup(h), { maxWidth: 320 });
     hospitalLayers.push(halo, marker);
@@ -601,17 +791,34 @@ function buildHospitals() {
 // ─────────────────────────────────────────────
 function updateLabelVisibility() {
   const z = map.getZoom();
-  document.querySelectorAll('.quarter-label').forEach(el => { el.style.opacity = z >= 12 ? '0.65' : '0'; });
-  document.querySelectorAll('.city-label').forEach(el => { el.style.opacity = z >= 11 ? '0.55' : '0.28'; });
+  document.querySelectorAll(".quarter-label").forEach((el) => {
+    el.style.opacity = z >= 12 ? "0.65" : "0";
+  });
+  document.querySelectorAll(".city-label").forEach((el) => {
+    el.style.opacity = z >= 11 ? "0.55" : "0.28";
+  });
 }
 
 function buildLabels() {
   clearLayers(labelLayers);
-  CITY_AREAS.filter(a => a.type === "commune").forEach(a => {
-    labelLayers.push(L.marker([a.lat, a.lng], { interactive: false, icon: L.divIcon({ className: "city-label", html: a.city }) }).addTo(map));
+  CITY_AREAS.filter((a) => a.type === "commune").forEach((a) => {
+    labelLayers.push(
+      L.marker([a.lat, a.lng], {
+        interactive: false,
+        icon: L.divIcon({ className: "city-label", html: a.city }),
+      }).addTo(map),
+    );
   });
-  MTP_SUBAREAS.forEach(a => {
-    labelLayers.push(L.marker([a.lat, a.lng], { interactive: false, icon: L.divIcon({ className: "quarter-label", html: a.label.replace("Montpellier - ", "") }) }).addTo(map));
+  MTP_SUBAREAS.forEach((a) => {
+    labelLayers.push(
+      L.marker([a.lat, a.lng], {
+        interactive: false,
+        icon: L.divIcon({
+          className: "quarter-label",
+          html: a.label.replace("Montpellier - ", ""),
+        }),
+      }).addTo(map),
+    );
   });
   updateLabelVisibility();
 }
@@ -621,13 +828,21 @@ function buildLabels() {
 // ─────────────────────────────────────────────
 function computeDiversAssignments() {
   diversAssignments = {};
-  [...CITY_AREAS, ...MTP_SUBAREAS].forEach(area => {
+  [...CITY_AREAS, ...MTP_SUBAREAS].forEach((area) => {
     diversAssignments[area.id] = resolveHospitalForArea(area, "divers", {});
   });
 }
 
 function getAreaHospital(area) {
-  return resolveHospitalForArea(area, activeSpecialty, diversAssignments);
+  return resolveHospitalForArea(area, mapSpecialty, diversAssignments);
+}
+
+function getOrientationHospital(area) {
+  return resolveHospitalForArea(
+    area,
+    getOrientationSpecialty(),
+    diversAssignments,
+  );
 }
 
 function estimateTheoreticalTravel(area, hospitalId) {
@@ -642,14 +857,16 @@ function estimateTheoreticalTravel(area, hospitalId) {
 // ─────────────────────────────────────────────
 function highlightCurrentArea(area) {
   if (focusLayer) {
-    (Array.isArray(focusLayer) ? focusLayer : [focusLayer]).forEach(layer => map.removeLayer(layer));
+    (Array.isArray(focusLayer) ? focusLayer : [focusLayer]).forEach((layer) =>
+      map.removeLayer(layer),
+    );
   }
   focusLayer = L.circleMarker([area.lat, area.lng], {
     radius: 9,
     color: "#ffffff",
     weight: 3,
     fillColor: "#0f172a",
-    fillOpacity: 0.9
+    fillOpacity: 0.9,
   }).addTo(map);
 }
 
@@ -667,7 +884,10 @@ function buildRoutePath(area, hospital) {
   const normalLat = -dLng / distance;
   const normalLng = dLat / distance;
   const curvature = Math.min(0.012, distance * 0.18);
-  const control = [midLat + normalLat * curvature, midLng + normalLng * curvature];
+  const control = [
+    midLat + normalLat * curvature,
+    midLng + normalLng * curvature,
+  ];
 
   return [start, control, end];
 }
@@ -688,7 +908,9 @@ function getOrientationViewportPadding() {
 
 function drawRoute(area, hospitalId) {
   if (routeLayer) {
-    (Array.isArray(routeLayer) ? routeLayer : [routeLayer]).forEach(layer => map.removeLayer(layer));
+    (Array.isArray(routeLayer) ? routeLayer : [routeLayer]).forEach((layer) =>
+      map.removeLayer(layer),
+    );
   }
   const h = HOSPITALS[hospitalId];
   const path = buildRoutePath(area, h);
@@ -697,7 +919,7 @@ function drawRoute(area, hospitalId) {
     weight: 8,
     opacity: 0.7,
     lineCap: "round",
-    lineJoin: "round"
+    lineJoin: "round",
   }).addTo(map);
   const main = L.polyline(path, {
     color: h.color,
@@ -705,21 +927,21 @@ function drawRoute(area, hospitalId) {
     opacity: 0.92,
     dashArray: "12,8",
     lineCap: "round",
-    lineJoin: "round"
+    lineJoin: "round",
   }).addTo(map);
   const startMarker = L.circleMarker([area.lat, area.lng], {
     radius: 5,
     color: "#ffffff",
     weight: 2,
     fillColor: "#0f172a",
-    fillOpacity: 1
+    fillOpacity: 1,
   }).addTo(map);
   const endMarker = L.circleMarker([h.lat, h.lng], {
     radius: 6,
     color: "#ffffff",
     weight: 2,
     fillColor: h.color,
-    fillOpacity: 1
+    fillOpacity: 1,
   }).addTo(map);
   routeLayer = [shadow, main, startMarker, endMarker];
 }
@@ -773,8 +995,9 @@ function updateDecision() {
     return;
   }
 
+  syncMapSpecialtyFromDetectedInput();
   closeOrientationPopup();
-  const hid = getAreaHospital(area);
+  const hid = getOrientationHospital(area);
   const areaLabel = area.label || area.city;
   const symptom = DOM.symptomInput.value.trim();
   const travelEstimate = estimateTheoreticalTravel(area, hid);
@@ -789,19 +1012,21 @@ function getCurrentArea() {
   if (!DOM.citySelect.value) return null;
   if (DOM.citySelect.value === "Montpellier") {
     if (!DOM.subzoneSelect.value) return null;
-    return MTP_SUBAREAS.find(a => a.id === DOM.subzoneSelect.value);
+    return MTP_SUBAREAS.find((a) => a.id === DOM.subzoneSelect.value);
   }
   if (DOM.citySelect.value === "Lattes") {
     if (!DOM.subzoneSelect.value) return null;
-    return CITY_AREAS.find(a => a.id === DOM.subzoneSelect.value);
+    return CITY_AREAS.find((a) => a.id === DOM.subzoneSelect.value);
   }
-  return CITY_AREAS.find(a => a.city === DOM.citySelect.value && a.type === "commune");
+  return CITY_AREAS.find(
+    (a) => a.city === DOM.citySelect.value && a.type === "commune",
+  );
 }
 
 function focusArea() {
   const area = getCurrentArea();
   if (!area) return;
-  const hid = getAreaHospital(area);
+  const hid = getOrientationHospital(area);
   zoomToBounds(area, hid);
 }
 
@@ -815,28 +1040,59 @@ function refreshMap() {
   computeDiversAssignments();
 
   const cloudHospitalMap = {
-    sud_ouest: getAreaHospital(CITY_AREAS.find(a => a.id === "saint_jean_de_vedas")),
-    ouest: getAreaHospital(CITY_AREAS.find(a => a.id === "murviel")),
-    nord: getAreaHospital(CITY_AREAS.find(a => a.id === "grabels")),
-    est: getAreaHospital(CITY_AREAS.find(a => a.id === "clapiers")),
-    sud_est: getAreaHospital(CITY_AREAS.find(a => a.id === "palavas")),
-    mauguio_only: getAreaHospital(CITY_AREAS.find(a => a.id === "mauguio")),
-    carnon_only: getAreaHospital(CITY_AREAS.find(a => a.id === "carnon")),
-    perols_only: getAreaHospital(CITY_AREAS.find(a => a.id === "perols")),
-    saint_aunes_only: getAreaHospital(CITY_AREAS.find(a => a.id === "saint_aunes")),
-    baillargues_only: getAreaHospital(CITY_AREAS.find(a => a.id === "baillargues")),
-    lattes_maurin: getAreaHospital(CITY_AREAS.find(a => a.id === "lattes-maurin")),
-    lattes_centre: getAreaHospital(CITY_AREAS.find(a => a.id === "lattes-centre")),
-    lattes_boirargues: getAreaHospital(CITY_AREAS.find(a => a.id === "lattes-boirargues")),
-    mtp_hf: getAreaHospital(MTP_SUBAREAS.find(a => a.id === "mtp_hf")),
-    mtp_mosson: getAreaHospital(MTP_SUBAREAS.find(a => a.id === "mtp_mosson")),
-    mtp_cevennes: getAreaHospital(MTP_SUBAREAS.find(a => a.id === "mtp_cevennes")),
-    mtp_pres_arenes: getAreaHospital(MTP_SUBAREAS.find(a => a.id === "mtp_pres_arenes")),
-    mtp_croix_argent: getAreaHospital(MTP_SUBAREAS.find(a => a.id === "mtp_croix_argent")),
-    mtp_millenaire: getAreaHospital(MTP_SUBAREAS.find(a => a.id === "mtp_millenaire")),
-    mtp_port_marianne: getAreaHospital(MTP_SUBAREAS.find(a => a.id === "mtp_port_marianne")),
-    mtp_centre_historique: getAreaHospital(MTP_SUBAREAS.find(a => a.id === "mtp_centre_historique")),
-    mtp_arceaux_gambetta: getAreaHospital(MTP_SUBAREAS.find(a => a.id === "mtp_arceaux_gambetta"))
+    sud_ouest: getAreaHospital(
+      CITY_AREAS.find((a) => a.id === "saint_jean_de_vedas"),
+    ),
+    ouest: getAreaHospital(CITY_AREAS.find((a) => a.id === "murviel")),
+    nord: getAreaHospital(CITY_AREAS.find((a) => a.id === "grabels")),
+    est: getAreaHospital(CITY_AREAS.find((a) => a.id === "clapiers")),
+    sud_est: getAreaHospital(CITY_AREAS.find((a) => a.id === "palavas")),
+    mauguio_only: getAreaHospital(CITY_AREAS.find((a) => a.id === "mauguio")),
+    carnon_only: getAreaHospital(CITY_AREAS.find((a) => a.id === "carnon")),
+    perols_only: getAreaHospital(CITY_AREAS.find((a) => a.id === "perols")),
+    saint_aunes_only: getAreaHospital(
+      CITY_AREAS.find((a) => a.id === "saint_aunes"),
+    ),
+    saint_bres_only: getAreaHospital(
+      CITY_AREAS.find((a) => a.id === "saint_bres"),
+    ),
+    baillargues_only: getAreaHospital(
+      CITY_AREAS.find((a) => a.id === "baillargues"),
+    ),
+    lattes_maurin: getAreaHospital(
+      CITY_AREAS.find((a) => a.id === "lattes-maurin"),
+    ),
+    lattes_centre: getAreaHospital(
+      CITY_AREAS.find((a) => a.id === "lattes-centre"),
+    ),
+    lattes_boirargues: getAreaHospital(
+      CITY_AREAS.find((a) => a.id === "lattes-boirargues"),
+    ),
+    mtp_hf: getAreaHospital(MTP_SUBAREAS.find((a) => a.id === "mtp_hf")),
+    mtp_mosson: getAreaHospital(
+      MTP_SUBAREAS.find((a) => a.id === "mtp_mosson"),
+    ),
+    mtp_cevennes: getAreaHospital(
+      MTP_SUBAREAS.find((a) => a.id === "mtp_cevennes"),
+    ),
+    mtp_pres_arenes: getAreaHospital(
+      MTP_SUBAREAS.find((a) => a.id === "mtp_pres_arenes"),
+    ),
+    mtp_croix_argent: getAreaHospital(
+      MTP_SUBAREAS.find((a) => a.id === "mtp_croix_argent"),
+    ),
+    mtp_millenaire: getAreaHospital(
+      MTP_SUBAREAS.find((a) => a.id === "mtp_millenaire"),
+    ),
+    mtp_port_marianne: getAreaHospital(
+      MTP_SUBAREAS.find((a) => a.id === "mtp_port_marianne"),
+    ),
+    mtp_centre_historique: getAreaHospital(
+      MTP_SUBAREAS.find((a) => a.id === "mtp_centre_historique"),
+    ),
+    mtp_arceaux_gambetta: getAreaHospital(
+      MTP_SUBAREAS.find((a) => a.id === "mtp_arceaux_gambetta"),
+    ),
   };
 
   Object.entries(cloudHospitalMap).forEach(([cloud, hid]) => {
@@ -853,45 +1109,55 @@ function refreshMap() {
 // UI — légende, chips, selects
 // ─────────────────────────────────────────────
 function renderLegend() {
-  DOM.legend.innerHTML = `<div style="font-weight:700;margin-bottom:6px">${SPECIALTIES.find(s => s.id === activeSpecialty).label}</div>`;
-  Object.values(HOSPITALS).forEach(h => {
+  DOM.legend.innerHTML = `<div style="font-weight:700;margin-bottom:6px">${SPECIALTIES.find((s) => s.id === mapSpecialty).label}</div>`;
+  Object.values(HOSPITALS).forEach((h) => {
     DOM.legend.innerHTML += `<div class="legend-item"><span class="legend-swatch" style="background:${h.color}"></span><span>${h.name}</span></div>`;
   });
 }
 
 function renderChips() {
   DOM.chips.innerHTML = "";
-  SPECIALTIES.forEach(s => {
+  SPECIALTIES.forEach((s) => {
     const btn = document.createElement("button");
-    btn.className = "chip" + (s.id === activeSpecialty ? " active" : "");
+    btn.className = "chip" + (s.id === mapSpecialty ? " active" : "");
     btn.textContent = s.label;
     btn.onclick = () => {
-      activeSpecialty = s.id;
+      mapSpecialty = s.id;
       renderChips();
       refreshMap();
-      updateDecision();
     };
     DOM.chips.appendChild(btn);
   });
 }
 
 function populateCitySelect() {
-  const cities = ["Montpellier", "Lattes", ...CITY_AREAS.filter(a => a.type === "commune").map(a => a.city)];
-  DOM.citySelect.innerHTML = `<option value="" selected>— Sélectionner —</option>` +
-    [...new Set(cities)].sort((a, b) => a.localeCompare(b, "fr")).map(c => `<option value="${c}">${c}</option>`).join("");
+  const cities = [
+    "Montpellier",
+    "Lattes",
+    ...CITY_AREAS.filter((a) => a.type === "commune").map((a) => a.city),
+  ];
+  DOM.citySelect.innerHTML =
+    `<option value="" selected>— Sélectionner —</option>` +
+    [...new Set(cities)]
+      .sort((a, b) => a.localeCompare(b, "fr"))
+      .map((c) => `<option value="${c}">${c}</option>`)
+      .join("");
 }
 
 function updateSubzoneOptions() {
   if (DOM.citySelect.value === "Montpellier") {
     DOM.subzoneWrap.classList.remove("hidden");
-    DOM.subzoneSelect.innerHTML = `<option value="" selected>— Sélectionner un quartier —</option>` +
-      MTP_SUBAREAS.map(a => `<option value="${a.id}">${a.label}</option>`).join("");
+    DOM.subzoneSelect.innerHTML =
+      `<option value="" selected>— Sélectionner un quartier —</option>` +
+      MTP_SUBAREAS.map(
+        (a) => `<option value="${a.id}">${a.label}</option>`,
+      ).join("");
   } else if (DOM.citySelect.value === "Lattes") {
     DOM.subzoneWrap.classList.remove("hidden");
-    DOM.subzoneSelect.innerHTML = `<option value="" selected>— Sélectionner un secteur —</option>` +
-      CITY_AREAS
-        .filter(area => area.type === "lattes")
-        .map(area => `<option value="${area.id}">${area.label}</option>`)
+    DOM.subzoneSelect.innerHTML =
+      `<option value="" selected>— Sélectionner un secteur —</option>` +
+      CITY_AREAS.filter((area) => area.type === "lattes")
+        .map((area) => `<option value="${area.id}">${area.label}</option>`)
         .join("");
   } else {
     DOM.subzoneWrap.classList.add("hidden");
@@ -909,28 +1175,37 @@ function renderSuggestions(query) {
     return;
   }
 
-  const matches = getRankedMatches(MOTIF_CATALOG, q, item => item.label).slice(0, 8);
+  const matches = getRankedMatches(MOTIF_CATALOG, q, (item) => [
+    item.label,
+    ...(item.aliases || []),
+  ]).slice(0, 8);
   if (!matches.length) {
     closeSymptomSuggestions();
     return;
   }
 
-  DOM.suggestBox.innerHTML = matches.map((item, idx) =>
-    `<div id="symptom-option-${idx}" class="suggest-item" role="option" aria-selected="false" data-idx="${idx}" data-label="${item.label}" data-filiere="${item.filiere}">
+  DOM.suggestBox.innerHTML = matches
+    .map(
+      (item, idx) =>
+        `<div id="symptom-option-${idx}" class="suggest-item" role="option" aria-selected="false" data-idx="${idx}" data-label="${item.label}" data-filiere="${item.filiere}">
       ${item.label}<span class="suggest-cat">${filiereLabelById(item.filiere)}</span>
-    </div>`
-  ).join("");
+    </div>`,
+    )
+    .join("");
   symptomSuggestionIndex = -1;
   setSuggestBoxState(DOM.symptomInput, DOM.suggestBox, true);
   setActiveSuggestion(DOM.symptomInput, DOM.suggestBox, symptomSuggestionIndex);
-  DOM.suggestBox.querySelectorAll(".suggest-item").forEach(el => {
-    el.addEventListener("click", () => applySuggestion(el.dataset.label, el.dataset.filiere));
+  DOM.suggestBox.querySelectorAll(".suggest-item").forEach((el) => {
+    el.addEventListener("click", () =>
+      applySuggestion(el.dataset.label, el.dataset.filiere),
+    );
   });
 }
 
 function applySuggestion(label, filiere) {
   DOM.symptomInput.value = label;
   setDetectedSpecialtyIndicator(filiere);
+  syncMapSpecialtyFromDetectedInput(label);
   closeSymptomSuggestions();
 }
 
@@ -941,40 +1216,46 @@ const CITY_SUGGESTIONS = Array.from(
   new Map(
     [
       { label: "Montpellier", category: "Commune" },
-      ...[...new Set(CITY_AREAS.map(a => a.city))].map(city => ({
+      ...[...new Set(CITY_AREAS.map((a) => a.city))].map((city) => ({
         label: city,
         category: "Commune",
       })),
-      ...CITY_AREAS
-        .filter(area => area.type === "lattes" && area.label)
-        .map(area => ({
+      ...CITY_AREAS.filter((area) => area.type === "lattes" && area.label).map(
+        (area) => ({
           label: area.label,
           category: "Secteur Lattes",
-        })),
-      ...MTP_SUBAREAS.flatMap(area => [
+        }),
+      ),
+      ...MTP_SUBAREAS.flatMap((area) => [
         {
           label: area.label,
           category: "Quartier Montpellier",
         },
-        ...(area.aliases || []).map(name => ({
+        ...(area.aliases || []).map((name) => ({
           label: name,
           category: "Quartier Montpellier",
         })),
       ]),
-    ].map(entry => [simplify(entry.label), entry])
-  ).values()
+    ].map((entry) => [simplify(entry.label), entry]),
+  ).values(),
 );
 
 const CITY_NAME_BY_KEY = new Map(
-  [...new Set(CITY_AREAS.map(a => a.city)), "Montpellier", "Lattes"].map(city => [simplify(city), city])
+  [...new Set(CITY_AREAS.map((a) => a.city)), "Montpellier", "Lattes"].map(
+    (city) => [simplify(city), city],
+  ),
 );
 
 const MTP_SUBAREA_BY_KEY = new Map(
-  MTP_SUBAREAS.flatMap(area => [area.label, ...(area.aliases || [])].map(name => [simplify(name), area]))
+  MTP_SUBAREAS.flatMap((area) =>
+    [area.label, ...(area.aliases || [])].map((name) => [simplify(name), area]),
+  ),
 );
 
 const LATTES_AREA_BY_KEY = new Map(
-  CITY_AREAS.filter(area => area.type === "lattes" && area.label).map(area => [simplify(area.label), area])
+  CITY_AREAS.filter((area) => area.type === "lattes" && area.label).map(
+    (area) => [simplify(area.label), area],
+  ),
 );
 
 function syncSelectionFromCityInput(rawValue) {
@@ -1037,7 +1318,7 @@ function renderCitySuggestions(query) {
   const matches = getRankedMatches(
     CITY_SUGGESTIONS,
     q,
-    suggestion => suggestion.label
+    (suggestion) => suggestion.label,
   ).slice(0, 10);
 
   if (!matches.length) {
@@ -1045,14 +1326,17 @@ function renderCitySuggestions(query) {
     return;
   }
 
-  DOM.citySuggestBox.innerHTML = matches.map((suggestion, idx) => (
-    `<div id="city-option-${idx}" class="suggest-item" role="option" aria-selected="false" data-city="${escapeHtml(suggestion.label)}">${escapeHtml(suggestion.label)}<span class="suggest-cat">${escapeHtml(suggestion.category)}</span></div>`
-  )).join("");
+  DOM.citySuggestBox.innerHTML = matches
+    .map(
+      (suggestion, idx) =>
+        `<div id="city-option-${idx}" class="suggest-item" role="option" aria-selected="false" data-city="${escapeHtml(suggestion.label)}">${escapeHtml(suggestion.label)}<span class="suggest-cat">${escapeHtml(suggestion.category)}</span></div>`,
+    )
+    .join("");
   citySuggestionIndex = -1;
   setSuggestBoxState(DOM.cityInput, DOM.citySuggestBox, true);
   setActiveSuggestion(DOM.cityInput, DOM.citySuggestBox, citySuggestionIndex);
 
-  DOM.citySuggestBox.querySelectorAll(".suggest-item").forEach(el => {
+  DOM.citySuggestBox.querySelectorAll(".suggest-item").forEach((el) => {
     el.addEventListener("click", () => applyCitySelection(el.dataset.city));
   });
 }
@@ -1062,6 +1346,7 @@ function renderCitySuggestions(query) {
 // ─────────────────────────────────────────────
 DOM.symptomInput.addEventListener("input", () => {
   syncDetectedSpecialtyIndicator(DOM.symptomInput.value);
+  syncMapSpecialtyFromDetectedInput(DOM.symptomInput.value);
   renderSuggestions(DOM.symptomInput.value);
 });
 DOM.cityInput.addEventListener("input", () => {
@@ -1081,7 +1366,7 @@ DOM.cityInput.addEventListener("keydown", (e) => {
       DOM.cityInput,
       DOM.citySuggestBox,
       citySuggestionIndex,
-      1
+      1,
     );
     return;
   }
@@ -1091,7 +1376,7 @@ DOM.cityInput.addEventListener("keydown", (e) => {
       DOM.cityInput,
       DOM.citySuggestBox,
       citySuggestionIndex,
-      -1
+      -1,
     );
     return;
   }
@@ -1124,7 +1409,7 @@ DOM.symptomInput.addEventListener("keydown", (e) => {
       DOM.symptomInput,
       DOM.suggestBox,
       symptomSuggestionIndex,
-      1
+      1,
     );
     return;
   }
@@ -1134,7 +1419,7 @@ DOM.symptomInput.addEventListener("keydown", (e) => {
       DOM.symptomInput,
       DOM.suggestBox,
       symptomSuggestionIndex,
-      -1
+      -1,
     );
     return;
   }
@@ -1153,9 +1438,6 @@ DOM.symptomInput.addEventListener("keydown", (e) => {
 });
 
 DOM.regulateBtn.addEventListener("click", () => {
-  activeSpecialty = inferDetectedSpecialty(DOM.symptomInput.value) || "divers";
-  renderChips();
-  refreshMap();
   updateDecision();
 });
 
@@ -1182,11 +1464,12 @@ DOM.subzoneSelect.addEventListener("change", updateDecision);
 
 // Fermer les suggest-box au clic extérieur
 document.addEventListener("click", (e) => {
-  if (!DOM.symptomInput.parentElement.contains(e.target)) closeSymptomSuggestions();
+  if (!DOM.symptomInput.parentElement.contains(e.target))
+    closeSymptomSuggestions();
   if (!DOM.cityInput.parentElement.contains(e.target)) closeCitySuggestions();
 });
 
-map.on('zoomend', updateLabelVisibility);
+map.on("zoomend", updateLabelVisibility);
 
 // ─────────────────────────────────────────────
 // INITIALISATION AU CHARGEMENT
@@ -1202,6 +1485,13 @@ document.addEventListener("DOMContentLoaded", () => {
       decisionSection.style.display = "none";
     }
   }
+  const sidebarNote = document.querySelector(".panel .note");
+  if (sidebarNote) {
+    const disclaimerSection = sidebarNote.closest(".section");
+    if (disclaimerSection) {
+      disclaimerSection.style.display = "none";
+    }
+  }
   renderChips();
   setDetectedSpecialtyIndicator("");
   populateCitySelect();
@@ -1209,11 +1499,23 @@ document.addEventListener("DOMContentLoaded", () => {
   refreshMap();
   updateDecision();
   fitAggloBounds();
-  setTimeout(() => { try { map.invalidateSize(); } catch (e) { } }, 150);
+  setTimeout(() => {
+    try {
+      map.invalidateSize();
+    } catch (e) {}
+  }, 150);
 });
 
-window.addEventListener("load", () => { try { map.invalidateSize(); } catch (e) { } });
-window.addEventListener("resize", () => { try { map.invalidateSize(); } catch (e) { } });
+window.addEventListener("load", () => {
+  try {
+    map.invalidateSize();
+  } catch (e) {}
+});
+window.addEventListener("resize", () => {
+  try {
+    map.invalidateSize();
+  } catch (e) {}
+});
 
 // Gestion erreurs globale
 window.addEventListener("error", (ev) => {
@@ -1221,7 +1523,9 @@ window.addEventListener("error", (ev) => {
   if (!panel || document.getElementById("appErrorBanner")) return;
   const div = document.createElement("div");
   div.id = "appErrorBanner";
-  div.style.cssText = "margin:12px 18px 0;padding:10px 12px;border:1px solid #fecaca;border-radius:12px;background:#fef2f2;color:#991b1b;font-size:12px;";
-  div.textContent = "Une erreur JavaScript a été détectée. Vérifie la console du navigateur.";
+  div.style.cssText =
+    "margin:12px 18px 0;padding:10px 12px;border:1px solid #fecaca;border-radius:12px;background:#fef2f2;color:#991b1b;font-size:12px;";
+  div.textContent =
+    "Une erreur JavaScript a été détectée. Vérifie la console du navigateur.";
   panel.insertBefore(div, panel.children[1] || null);
 });

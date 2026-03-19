@@ -75,7 +75,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "lapeyronie",
     name: "Hôpital Lapeyronie",
-    color: "#ef476f",
+    color: "#ff0054",
     location: {
       lat: 43.6349,
       lng: 3.8624,
@@ -117,7 +117,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "millenaire",
     name: "Clinique du Millénaire",
-    color: "#e63946",
+    color: "#d7263d",
     location: {
       lat: 43.6049,
       lng: 3.9189,
@@ -213,28 +213,107 @@ const SPECIALTIES = [
 // CATALOGUE MOTIFS / SYMPTÔMES
 // ─────────────────────────────────────────────
 const MOTIF_CATALOG = [
+  {
+    label: "Malaise",
+    filiere: "divers",
+    aliases: ["Perte de connaissance"],
+  },
+  {
+    label: "Altération de l'état général",
+    filiere: "divers",
+    aliases: ["AEG", "Asthénie", "Fatigue intense"],
+  },
+  {
+    label: "Douleurs diffuses",
+    filiere: "divers",
+    aliases: ["Polyalgies", "Douleurs multiples"],
+  },
+  {
+    label: "Fièvre isolée",
+    filiere: "divers",
+    aliases: ["Hyperthermie", "Syndrome grippal", "Syndrome fébrile"],
+  },
+  {
+    label: "Crise d'angoisse",
+    filiere: "divers",
+    aliases: ["Attaque de panique", "Anxiété aiguë", "Crise d'anxiété"],
+  },
+  {
+    label: "Éruption cutanée",
+    filiere: "divers",
+    aliases: ["Rash", "Urticaire", "Allergie cutanée"],
+  },
+  {
+    label: "Réaction allergique",
+    filiere: "divers",
+    aliases: ["Allergie", "Œdème", "Oedeme", "Gonflement"],
+  },
+  {
+    label: "Dorsalgie / lombalgie",
+    filiere: "divers",
+    aliases: ["Mal de dos", "Lumbago", "Douleur lombaire non traumatique"],
+  },
+  {
+    label: "Trouble glycémique",
+    filiere: "divers",
+    aliases: ["Hypoglycémie", "Malaise diabétique"],
+  },
   { label: "Douleur thoracique", filiere: "cardio_pneumo" },
   { label: "Dyspnée", filiere: "cardio_pneumo" },
+  { label: "Toux", filiere: "cardio_pneumo" },
+  { label: "Hémoptysie", filiere: "cardio_pneumo" },
+  {
+    label: "Désaturation",
+    filiere: "cardio_pneumo",
+    aliases: ["Desaturation"],
+  },
   { label: "Palpitations", filiere: "cardio_pneumo" },
   { label: "Tachycardie", filiere: "cardio_pneumo" },
   { label: "Bradycardie", filiere: "cardio_pneumo" },
-  { label: "Malaise", filiere: "divers" },
   { label: "Lipothymie", filiere: "cardio_pneumo" },
+  {
+    label: "HTA",
+    filiere: "cardio_pneumo",
+    aliases: ["Poussée hypertensive", "Pic tensionnel"],
+  },
   { label: "Douleur abdominale", filiere: "gastro_uro" },
   { label: "Vomissements", filiere: "gastro_uro" },
-  { label: "Diarrhée", filiere: "gastro_uro" },
+  {
+    label: "Diarrhées",
+    filiere: "gastro_uro",
+    aliases: ["Diarrhée", "Diarrhee"],
+  },
+  { label: "Hématémèse", filiere: "gastro_uro" },
+  { label: "Hémorragie digestive", filiere: "gastro_uro" },
   { label: "Rectorragies", filiere: "gastro_uro" },
   { label: "Méléna", filiere: "gastro_uro" },
+  { label: "Occlusion", filiere: "gastro_uro" },
   { label: "Colique néphrétique", filiere: "gastro_uro" },
-  { label: "Rétention urinaire", filiere: "gastro_uro" },
+  {
+    label: "Rétention urinaire",
+    filiere: "gastro_uro",
+    aliases: ["Globe vésical", "Globe urinaire"],
+  },
+  { label: "Hématurie", filiere: "gastro_uro" },
   { label: "Chute", filiere: "trauma" },
-  { label: "Traumatisme", filiere: "trauma" },
+  {
+    label: "Traumatisme",
+    filiere: "trauma",
+    aliases: ["TC", "Traumatisme crânien", "Traumatisme cranien"],
+  },
   { label: "Entorse", filiere: "trauma" },
+  { label: "Luxation", filiere: "trauma" },
+  {
+    label: "Fracture",
+    filiere: "trauma",
+    aliases: ["Déformation", "Deformation"],
+  },
   { label: "Plaie simple", filiere: "trauma" },
-  { label: "Altération de l'état général", filiere: "divers" },
-  { label: "Douleurs diffuses", filiere: "divers" },
-  { label: "Fièvre isolée", filiere: "divers" },
-  { label: "Crise d'angoisse", filiere: "divers" },
+  {
+    label: "Brûlure",
+    filiere: "trauma",
+    aliases: ["Brulure"],
+  },
 ];
 
 // ─────────────────────────────────────────────
@@ -833,6 +912,12 @@ const CLOUDS = {
     ry: 0.022,
     angle: 12,
   },
+  saint_bres_only: {
+    center: [43.6683, 4.03],
+    rx: 0.03,
+    ry: 0.022,
+    angle: 12,
+  },
   baillargues_only: {
     center: [43.6635, 4.0078],
     rx: 0.03,
@@ -886,6 +971,7 @@ const CLOUD_STYLE = {
   carnon_only: { density: 90, spread: 0.42, opacity: 0.6, halo: 0.5 },
   perols_only: { density: 100, spread: 0.43, opacity: 0.6, halo: 0.5 },
   saint_aunes_only: { density: 92, spread: 0.4, opacity: 0.6, halo: 0.46 },
+  saint_bres_only: { density: 92, spread: 0.4, opacity: 0.6, halo: 0.46 },
   baillargues_only: { density: 92, spread: 0.4, opacity: 0.6, halo: 0.46 },
   lattes_maurin: { density: 72, spread: 0.42, opacity: 0.62, halo: 0.4 },
   lattes_centre: { density: 86, spread: 0.43, opacity: 0.62, halo: 0.42 },
@@ -969,6 +1055,7 @@ const CLOUD_ANCHORS = {
   carnon_only: [{ lat: 43.5468, lng: 3.9796, w: 1.1 }],
   perols_only: [{ lat: 43.5622, lng: 3.9536, w: 1.1 }],
   saint_aunes_only: [{ lat: 43.6408, lng: 4.0088, w: 1.0 }],
+  saint_bres_only: [{ lat: 43.6683, lng: 4.03, w: 1.0 }],
   baillargues_only: [{ lat: 43.6635, lng: 4.0078, w: 1.0 }],
   lattes_maurin: [
     { lat: 43.571, lng: 3.864, w: 1.2 },
@@ -1034,7 +1121,7 @@ const CLOUD_ANCHORS = {
 // ─────────────────────────────────────────────
 const RULES = {
   cardio_pneumo: {
-    saint_roch: ["Palavas-les-Flots"],
+    saint_roch: [],
     saint_jean: [
       "Saint-Jean-de-Védas",
       "Villeneuve-lès-Maguelone",
@@ -1081,10 +1168,18 @@ const RULES = {
       "Saint-Geniès-des-Mourgues",
       "Montaud",
     ],
-    millenaire: [],
+    millenaire: [
+      "Carnon",
+      "Mauguio",
+      "Saint-Aunès",
+      "Pérols",
+      "Saint-Brès",
+      "Baillargues",
+      "Palavas-les-Flots",
+    ],
   },
   gastro_uro: {
-    saint_roch: ["Palavas-les-Flots"],
+    saint_roch: [],
     saint_jean: [
       "Saint-Jean-de-Védas",
       "Villeneuve-lès-Maguelone",
@@ -1095,6 +1190,7 @@ const RULES = {
       "Cournonsec",
       "Cournonterral",
       "Pignan",
+      "Palavas-les-Flots",
       "Saussan",
       "Lavérune",
       "Mireval",
@@ -1115,11 +1211,14 @@ const RULES = {
       "Montferrier-sur-Lez",
       "Prades-le-Lez",
       "Assas",
+    ],
+    parc: [
+      "Baillargues",
+      "Vendargues",
+      "Saint-Brès",
       "Clapiers",
       "Jacou",
       "Teyran",
-    ],
-    parc: [
       "Le Crès",
       "Castelnau-le-Lez",
       "Castries",
@@ -1127,14 +1226,13 @@ const RULES = {
       "Saint-Drézéry",
       "Beaulieu",
       "Restinclières",
-      "Vendargues",
       "Saint-Geniès-des-Mourgues",
       "Montaud",
     ],
-    millenaire: [],
+    millenaire: ["Carnon", "Mauguio", "Saint-Aunès", "Pérols"],
   },
   trauma: {
-    saint_roch: ["Palavas-les-Flots"],
+    saint_roch: ["Palavas-les-Flots", "Carnon", "Pérols"],
     saint_jean: [
       "Saint-Jean-de-Védas",
       "Villeneuve-lès-Maguelone",
@@ -1165,11 +1263,11 @@ const RULES = {
       "Montferrier-sur-Lez",
       "Prades-le-Lez",
       "Assas",
+    ],
+    parc: [
       "Clapiers",
       "Jacou",
       "Teyran",
-    ],
-    parc: [
       "Le Crès",
       "Castelnau-le-Lez",
       "Castries",
@@ -1180,6 +1278,10 @@ const RULES = {
       "Vendargues",
       "Saint-Geniès-des-Mourgues",
       "Montaud",
+      "Mauguio",
+      "Saint-Aunès",
+      "Saint-Brès",
+      "Baillargues",
     ],
     millenaire: [],
   },
@@ -1219,6 +1321,42 @@ const MTP_RULES = {
   },
 };
 
+const MTP_AREA_RULES = {
+  cardio_pneumo: {
+    mtp_centre_historique: "lapeyronie",
+    mtp_hf: "lapeyronie",
+    mtp_mosson: "lapeyronie",
+    mtp_pres_arenes: "saint_roch",
+    mtp_croix_argent: "saint_roch",
+    mtp_cevennes: "beausoleil",
+    mtp_arceaux_gambetta: "beausoleil",
+    mtp_port_marianne: "millenaire",
+    mtp_millenaire: "millenaire",
+  },
+  gastro_uro: {
+    mtp_centre_historique: "lapeyronie",
+    mtp_hf: "lapeyronie",
+    mtp_mosson: "lapeyronie",
+    mtp_pres_arenes: "beausoleil",
+    mtp_croix_argent: "saint_roch",
+    mtp_cevennes: "beausoleil",
+    mtp_arceaux_gambetta: "beausoleil",
+    mtp_port_marianne: "millenaire",
+    mtp_millenaire: "millenaire",
+  },
+  trauma: {
+    mtp_centre_historique: "lapeyronie",
+    mtp_hf: "lapeyronie",
+    mtp_mosson: "lapeyronie",
+    mtp_pres_arenes: "saint_roch",
+    mtp_croix_argent: "saint_roch",
+    mtp_cevennes: "beausoleil",
+    mtp_arceaux_gambetta: "beausoleil",
+    mtp_port_marianne: "saint_roch",
+    mtp_millenaire: "saint_roch",
+  },
+};
+
 const DIVERS_MTP_RULES = {
   mtp_centre_historique: "lapeyronie",
   mtp_hf: "lapeyronie",
@@ -1252,11 +1390,12 @@ const DIVERS_CITY_RULES = {
   ],
   saint_roch: ["Palavas-les-Flots"],
   beausoleil: ["Murviel-lès-Montpellier", "Saint-Georges-d'Orques", "Juvignac"],
-  millenaire: ["Carnon", "Mauguio", "Saint-Aunès", "Saint-Brès", "Pérols"],
+  millenaire: ["Carnon", "Mauguio", "Saint-Aunès", "Pérols"],
   parc: [
     "Castelnau-le-Lez",
     "Baillargues",
     "Vendargues",
+    "Saint-Brès",
     "Clapiers",
     "Jacou",
     "Teyran",
@@ -1299,16 +1438,16 @@ const SPECIAL_AREA_RULES = {
   },
   saint_bres: {
     cardio_pneumo: "millenaire",
-    gastro_uro: "millenaire",
+    gastro_uro: "parc",
     trauma: "parc",
   },
   carnon: {
     cardio_pneumo: "millenaire",
     gastro_uro: "millenaire",
-    trauma: "millenaire",
+    trauma: "saint_roch",
   },
   baillargues: {
-    cardio_pneumo: "parc",
+    cardio_pneumo: "millenaire",
     gastro_uro: "parc",
     trauma: "parc",
   },
@@ -1329,6 +1468,9 @@ function resolveHospitalForArea(area, specialty, diversAssignments = {}) {
   }
 
   if (area.id.startsWith("mtp_")) {
+    if (MTP_AREA_RULES[specialty] && MTP_AREA_RULES[specialty][area.id]) {
+      return MTP_AREA_RULES[specialty][area.id];
+    }
     return (MTP_RULES[specialty] || {})[area.bucket] || "lapeyronie";
   }
 
@@ -1337,11 +1479,13 @@ function resolveHospitalForArea(area, specialty, diversAssignments = {}) {
   }
 
   if (area.id === "lattes-maurin") {
-    return "saint_roch";
+    return specialty === "gastro_uro" ? "saint_jean" : "saint_roch";
   }
 
   if (area.id === "lattes-centre") {
-    return "saint_roch";
+    return ["cardio_pneumo", "gastro_uro"].includes(specialty)
+      ? "millenaire"
+      : "saint_roch";
   }
 
   if (area.id === "lattes-boirargues") {
