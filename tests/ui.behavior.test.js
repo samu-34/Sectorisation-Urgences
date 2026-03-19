@@ -14,8 +14,6 @@ test("la saisie d'une commune exacte synchronise la selection interne et produit
   assert.equal(exports.DOM.citySelect.value, "Juvignac");
   assert.equal(exports.DOM.subzoneSelect.value, "");
   assert.equal(exports.getCurrentArea().id, "juvignac");
-  assert.match(exports.DOM.decisionCard.textContent, /Clinique Beausoleil/);
-  assert.match(exports.DOM.toolbar.textContent, /Juvignac/);
   assert.notEqual(exports.getInternalState().routeLayer, null);
 });
 
@@ -30,8 +28,7 @@ test("la saisie d'un quartier de Montpellier selectionne la bonne sous-zone", ()
   assert.equal(exports.DOM.citySelect.value, "Montpellier");
   assert.equal(exports.DOM.subzoneSelect.value, "mtp_mosson");
   assert.equal(exports.getCurrentArea().id, "mtp_mosson");
-  assert.match(exports.DOM.decisionCard.textContent, /Hôpital Lapeyronie/);
-  assert.match(exports.DOM.toolbar.textContent, /Montpellier - Mosson/);
+  assert.notEqual(exports.getInternalState().routeLayer, null);
 });
 
 test("un alias de quartier intramuros selectionne la sous-zone la plus pertinente", () => {
@@ -45,8 +42,7 @@ test("un alias de quartier intramuros selectionne la sous-zone la plus pertinent
   assert.equal(exports.DOM.citySelect.value, "Montpellier");
   assert.equal(exports.DOM.subzoneSelect.value, "mtp_port_marianne");
   assert.equal(exports.getCurrentArea().id, "mtp_port_marianne");
-  assert.match(exports.DOM.decisionCard.textContent, /Clinique du Millénaire/);
-  assert.match(exports.DOM.toolbar.textContent, /Montpellier - Port Marianne/);
+  assert.notEqual(exports.getInternalState().routeLayer, null);
 });
 
 test("la saisie d'un secteur de Lattes selectionne la bonne sous-zone", () => {
@@ -60,8 +56,26 @@ test("la saisie d'un secteur de Lattes selectionne la bonne sous-zone", () => {
   assert.equal(exports.DOM.citySelect.value, "Lattes");
   assert.equal(exports.DOM.subzoneSelect.value, "lattes-boirargues");
   assert.equal(exports.getCurrentArea().id, "lattes-boirargues");
-  assert.match(exports.DOM.decisionCard.textContent, /Clinique du Millénaire/);
-  assert.match(exports.DOM.toolbar.textContent, /Lattes - Boirargues/);
+  assert.notEqual(exports.getInternalState().routeLayer, null);
+});
+
+test("Mauguio avec un motif traumato oriente vers la Clinique du Parc", () => {
+  const { exports } = createAppHarness();
+
+  exports.DOM.cityInput.value = "Mauguio";
+  const matched = exports.syncSelectionFromCityInput(exports.DOM.cityInput.value);
+  exports.DOM.symptomInput.value = "entorse";
+  exports.updateDecision();
+
+  assert.equal(matched, true);
+  assert.equal(exports.getCurrentArea().id, "mauguio");
+  assert.notEqual(exports.getInternalState().routeLayer, null);
+  assert.equal(
+    exports.getInternalState().orientationPopup.content.textContent.includes(
+      "Clinique du Parc",
+    ),
+    true,
+  );
 });
 
 test("le bouton Effacer reinitialise la selection, la decision et la carte", () => {
@@ -80,6 +94,4 @@ test("le bouton Effacer reinitialise la selection, la decision et la carte", () 
   assert.equal(exports.DOM.detectedSpecialty.value, "");
   assert.equal(exports.getInternalState().routeLayer, null);
   assert.equal(exports.getInternalState().focusLayer, null);
-  assert.match(exports.DOM.decisionCard.textContent, /Aucune décision disponible/);
-  assert.equal(exports.DOM.toolbar.textContent, "Carte interactive chargée.");
 });

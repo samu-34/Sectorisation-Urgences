@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#17313b" />
     <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: https://*.tile.openstreetmap.org https://tile.openstreetmap.org; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'"
+    />
+    <meta
       name="description"
       content="MediMap — Outil d'aide à l'orientation médicale par sectorisation territoriale (Hérault)"
     />
@@ -40,7 +44,7 @@
         <div class="panel-header">
           <div class="panel-header-top">
             <div>
-              <h1>Sectorisation Urgences 34</h1>
+              <h1>Sectorisation - Urgences</h1>
               <div class="subtitle">Agglomération Montpellier</div>
             </div>
             <div class="header-logos" aria-label="Partenaires">
@@ -141,30 +145,6 @@
           </div>
         </div>
 
-        <!-- Orientation proposée -->
-        <div class="section">
-          <h2>Orientation proposée</h2>
-          <div id="decisionCard" class="card">
-            <div class="small">Aucune décision disponible.</div>
-          </div>
-        </div>
-
-        <!-- Disclaimer -->
-        <div class="section">
-          <h2>Disclaimer</h2>
-          <div class="note">
-            <strong>Périmètre d'usage</strong><br />
-            Filières destinées aux
-            <strong>patients stables, sans signe de gravité</strong>, avec
-            <strong>stabilité hémodynamique</strong>.<br />
-            Pour la traumatologie : <strong>sans déformation</strong> et
-            <strong>sans effraction cutanée</strong>.<br />
-            La filière <strong>Classique</strong> applique une répartition
-            <strong>équilibrée</strong> selon distance et densité de population
-            estimée.
-          </div>
-        </div>
-
         <!-- Filières -->
         <div class="section">
           <h2>Filières</h2>
@@ -177,15 +157,18 @@
 
       <!-- ═══════════ MAP ═══════════ -->
       <div class="map-wrap">
-        <div class="toolbar" id="toolbarText"></div>
         <div id="map"></div>
         <div class="legend" id="legend"></div>
       </div>
     </div>
 
-    <!-- Scripts : data d'abord, puis Leaflet, puis app -->
+    <!-- Scripts : data d'abord, puis domaine / UI, puis Leaflet, puis app -->
     <script src="data.js?v=20260319-0920"></script>
+    <script src="domain.js?v=20260319-0920"></script>
+    <script src="application.js?v=20260319-0920"></script>
+    <script src="autocomplete.js?v=20260319-0920"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="map-renderer.js?v=20260319-0920"></script>
     <script src="app.js?v=20260319-0920"></script>
   </body>
 </html>

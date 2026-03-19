@@ -33,7 +33,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "saint_jean",
     name: "Clinique Saint - Jean Sud de France",
-    color: "#fd5901",
+    color: "#ff4800",
     location: {
       lat: 43.5747,
       lng: 3.8258,
@@ -117,7 +117,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "millenaire",
     name: "Clinique du Millénaire",
-    color: "#ee6055",
+    color: "#e70e02",
     location: {
       lat: 43.6049,
       lng: 3.9189,
@@ -894,6 +894,38 @@ const MTP_SUBAREAS = [
   },
 ];
 
+const ALL_AREAS = Object.freeze([...CITY_AREAS, ...MTP_SUBAREAS]);
+
+const AREA_BY_ID = Object.freeze(
+  Object.fromEntries(ALL_AREAS.map((area) => [area.id, area])),
+);
+
+const MAP_CLOUD_AREA_IDS = Object.freeze({
+  sud_ouest: "saint_jean_de_vedas",
+  ouest: "murviel",
+  nord: "grabels",
+  est: "clapiers",
+  sud_est: "palavas",
+  mauguio_only: "mauguio",
+  carnon_only: "carnon",
+  perols_only: "perols",
+  saint_aunes_only: "saint_aunes",
+  saint_bres_only: "saint_bres",
+  baillargues_only: "baillargues",
+  lattes_maurin: "lattes-maurin",
+  lattes_centre: "lattes-centre",
+  lattes_boirargues: "lattes-boirargues",
+  mtp_hf: "mtp_hf",
+  mtp_mosson: "mtp_mosson",
+  mtp_cevennes: "mtp_cevennes",
+  mtp_pres_arenes: "mtp_pres_arenes",
+  mtp_croix_argent: "mtp_croix_argent",
+  mtp_millenaire: "mtp_millenaire",
+  mtp_port_marianne: "mtp_port_marianne",
+  mtp_centre_historique: "mtp_centre_historique",
+  mtp_arceaux_gambetta: "mtp_arceaux_gambetta",
+});
+
 // ─────────────────────────────────────────────
 // NUAGES DE POINTS — configuration géométrique
 // ─────────────────────────────────────────────
@@ -1178,15 +1210,7 @@ const RULES = {
       "Saint-Geniès-des-Mourgues",
       "Montaud",
     ],
-    millenaire: [
-      "Carnon",
-      "Mauguio",
-      "Saint-Aunès",
-      "Pérols",
-      "Saint-Brès",
-      "Baillargues",
-      "Palavas-les-Flots",
-    ],
+    millenaire: ["Palavas-les-Flots"],
   },
   gastro_uro: {
     saint_roch: [],
@@ -1223,9 +1247,7 @@ const RULES = {
       "Assas",
     ],
     parc: [
-      "Baillargues",
       "Vendargues",
-      "Saint-Brès",
       "Clapiers",
       "Jacou",
       "Teyran",
@@ -1239,10 +1261,10 @@ const RULES = {
       "Saint-Geniès-des-Mourgues",
       "Montaud",
     ],
-    millenaire: ["Carnon", "Mauguio", "Saint-Aunès", "Pérols"],
+    millenaire: [],
   },
   trauma: {
-    saint_roch: ["Palavas-les-Flots", "Carnon", "Pérols"],
+    saint_roch: ["Palavas-les-Flots"],
     saint_jean: [
       "Saint-Jean-de-Védas",
       "Villeneuve-lès-Maguelone",
@@ -1288,10 +1310,6 @@ const RULES = {
       "Vendargues",
       "Saint-Geniès-des-Mourgues",
       "Montaud",
-      "Mauguio",
-      "Saint-Aunès",
-      "Saint-Brès",
-      "Baillargues",
     ],
     millenaire: [],
   },
@@ -1331,59 +1349,152 @@ const MTP_RULES = {
   },
 };
 
-const MTP_AREA_RULES = {
-  cardio_pneumo: {
-    mtp_centre_historique: "lapeyronie",
-    mtp_hf: "lapeyronie",
-    mtp_mosson: "lapeyronie",
-    mtp_pres_arenes: "saint_roch",
-    mtp_croix_argent: "saint_roch",
-    mtp_cevennes: "beausoleil",
-    mtp_arceaux_gambetta: "beausoleil",
-    mtp_port_marianne: "millenaire",
-    mtp_millenaire: "millenaire",
-  },
-  gastro_uro: {
-    mtp_centre_historique: "lapeyronie",
-    mtp_hf: "lapeyronie",
-    mtp_mosson: "lapeyronie",
-    mtp_pres_arenes: "beausoleil",
-    mtp_croix_argent: "saint_roch",
-    mtp_cevennes: "beausoleil",
-    mtp_arceaux_gambetta: "beausoleil",
-    mtp_port_marianne: "millenaire",
-    mtp_millenaire: "millenaire",
-  },
-  trauma: {
-    mtp_centre_historique: "lapeyronie",
-    mtp_hf: "lapeyronie",
-    mtp_mosson: "lapeyronie",
-    mtp_pres_arenes: "saint_roch",
-    mtp_croix_argent: "saint_roch",
-    mtp_cevennes: "beausoleil",
-    mtp_arceaux_gambetta: "beausoleil",
-    mtp_port_marianne: "saint_roch",
-    mtp_millenaire: "saint_roch",
-  },
-};
+const AREA_SPECIALTY_RULES = Object.freeze({
+  mtp_centre_historique: Object.freeze({
+    divers: "lapeyronie",
+    cardio_pneumo: "lapeyronie",
+    gastro_uro: "lapeyronie",
+    trauma: "lapeyronie",
+  }),
+  mtp_hf: Object.freeze({
+    divers: "lapeyronie",
+    cardio_pneumo: "lapeyronie",
+    gastro_uro: "lapeyronie",
+    trauma: "lapeyronie",
+  }),
+  mtp_mosson: Object.freeze({
+    divers: "lapeyronie",
+    cardio_pneumo: "lapeyronie",
+    gastro_uro: "lapeyronie",
+    trauma: "lapeyronie",
+  }),
+  mtp_pres_arenes: Object.freeze({
+    divers: "saint_roch",
+    cardio_pneumo: "saint_roch",
+    gastro_uro: "beausoleil",
+    trauma: "saint_roch",
+  }),
+  mtp_croix_argent: Object.freeze({
+    divers: "saint_roch",
+    cardio_pneumo: "saint_roch",
+    gastro_uro: "saint_roch",
+    trauma: "saint_roch",
+  }),
+  mtp_cevennes: Object.freeze({
+    divers: "beausoleil",
+    cardio_pneumo: "beausoleil",
+    gastro_uro: "beausoleil",
+    trauma: "beausoleil",
+  }),
+  mtp_arceaux_gambetta: Object.freeze({
+    divers: "beausoleil",
+    cardio_pneumo: "beausoleil",
+    gastro_uro: "beausoleil",
+    trauma: "beausoleil",
+  }),
+  mtp_port_marianne: Object.freeze({
+    divers: "millenaire",
+    cardio_pneumo: "millenaire",
+    gastro_uro: "millenaire",
+    trauma: "saint_roch",
+  }),
+  mtp_millenaire: Object.freeze({
+    divers: "millenaire",
+    cardio_pneumo: "millenaire",
+    gastro_uro: "millenaire",
+    trauma: "saint_roch",
+  }),
+  "lattes-maurin": Object.freeze({
+    divers: "saint_roch",
+    cardio_pneumo: "saint_roch",
+    gastro_uro: "saint_jean",
+    trauma: "saint_roch",
+  }),
+  "lattes-centre": Object.freeze({
+    divers: "saint_roch",
+    cardio_pneumo: "millenaire",
+    gastro_uro: "millenaire",
+    trauma: "saint_roch",
+  }),
+  "lattes-boirargues": Object.freeze({
+    divers: "millenaire",
+    cardio_pneumo: "millenaire",
+    gastro_uro: "millenaire",
+    trauma: "saint_roch",
+  }),
+  mauguio: Object.freeze({
+    divers: "millenaire",
+    cardio_pneumo: "millenaire",
+    gastro_uro: "millenaire",
+    trauma: "parc",
+  }),
+  perols: Object.freeze({
+    divers: "millenaire",
+    cardio_pneumo: "millenaire",
+    gastro_uro: "millenaire",
+    trauma: "saint_roch",
+  }),
+  saint_aunes: Object.freeze({
+    divers: "millenaire",
+    cardio_pneumo: "millenaire",
+    gastro_uro: "millenaire",
+    trauma: "parc",
+  }),
+  saint_bres: Object.freeze({
+    divers: "parc",
+    cardio_pneumo: "millenaire",
+    gastro_uro: "parc",
+    trauma: "parc",
+  }),
+  carnon: Object.freeze({
+    divers: "millenaire",
+    cardio_pneumo: "millenaire",
+    gastro_uro: "millenaire",
+    trauma: "saint_roch",
+  }),
+  baillargues: Object.freeze({
+    divers: "parc",
+    cardio_pneumo: "millenaire",
+    gastro_uro: "parc",
+    trauma: "parc",
+  }),
+});
 
-const DIVERS_MTP_RULES = {
-  mtp_centre_historique: "lapeyronie",
-  mtp_hf: "lapeyronie",
-  mtp_mosson: "lapeyronie",
-  mtp_pres_arenes: "saint_roch",
-  mtp_croix_argent: "saint_roch",
-  mtp_cevennes: "beausoleil",
-  mtp_arceaux_gambetta: "beausoleil",
-  mtp_port_marianne: "millenaire",
-  mtp_millenaire: "millenaire",
-};
+function pickAreaRulesForSpecialty(specialty, areaFilter) {
+  return Object.freeze(
+    Object.fromEntries(
+      Object.entries(AREA_SPECIALTY_RULES)
+        .filter(([areaId]) => areaFilter(areaId))
+        .map(([areaId, rules]) => [areaId, rules[specialty]])
+        .filter(([, hospitalId]) => Boolean(hospitalId)),
+    ),
+  );
+}
 
-const DIVERS_AREA_RULES = {
-  "lattes-centre": "saint_roch",
-  "lattes-boirargues": "millenaire",
-  "lattes-maurin": "saint_roch",
-};
+const MTP_AREA_RULES = Object.freeze({
+  cardio_pneumo: pickAreaRulesForSpecialty(
+    "cardio_pneumo",
+    (areaId) => areaId.startsWith("mtp_"),
+  ),
+  gastro_uro: pickAreaRulesForSpecialty(
+    "gastro_uro",
+    (areaId) => areaId.startsWith("mtp_"),
+  ),
+  trauma: pickAreaRulesForSpecialty(
+    "trauma",
+    (areaId) => areaId.startsWith("mtp_"),
+  ),
+});
+
+const DIVERS_MTP_RULES = pickAreaRulesForSpecialty(
+  "divers",
+  (areaId) => areaId.startsWith("mtp_"),
+);
+
+const DIVERS_AREA_RULES = pickAreaRulesForSpecialty(
+  "divers",
+  (areaId) => areaId.startsWith("lattes-"),
+);
 
 const DIVERS_CITY_RULES = {
   lapeyronie: [
@@ -1400,12 +1511,10 @@ const DIVERS_CITY_RULES = {
   ],
   saint_roch: ["Palavas-les-Flots"],
   beausoleil: ["Murviel-lès-Montpellier", "Saint-Georges-d'Orques", "Juvignac"],
-  millenaire: ["Carnon", "Mauguio", "Saint-Aunès", "Pérols"],
+  millenaire: [],
   parc: [
     "Castelnau-le-Lez",
-    "Baillargues",
     "Vendargues",
-    "Saint-Brès",
     "Clapiers",
     "Jacou",
     "Teyran",
@@ -1434,75 +1543,46 @@ const DIVERS_CITY_RULES = {
   ],
 };
 
-const SPECIAL_AREA_RULES = {
-  mauguio: { cardio_pneumo: "millenaire", gastro_uro: "millenaire" },
-  perols: {
-    cardio_pneumo: "millenaire",
-    gastro_uro: "millenaire",
-    trauma: "saint_roch",
-  },
-  saint_aunes: {
-    cardio_pneumo: "millenaire",
-    gastro_uro: "millenaire",
-    trauma: "parc",
-  },
-  saint_bres: {
-    cardio_pneumo: "millenaire",
-    gastro_uro: "parc",
-    trauma: "parc",
-  },
-  carnon: {
-    cardio_pneumo: "millenaire",
-    gastro_uro: "millenaire",
-    trauma: "saint_roch",
-  },
-  baillargues: {
-    cardio_pneumo: "millenaire",
-    gastro_uro: "parc",
-    trauma: "parc",
-  },
-};
+const SPECIAL_AREA_RULES = Object.freeze(
+  Object.fromEntries(
+    Object.entries(AREA_SPECIALTY_RULES)
+      .filter(
+        ([areaId]) =>
+          !areaId.startsWith("mtp_") && !areaId.startsWith("lattes-"),
+      )
+      .map(([areaId, rules]) => [
+        areaId,
+        Object.freeze(
+          Object.fromEntries(
+            Object.entries(rules).filter(([specialty]) => specialty !== "divers"),
+          ),
+        ),
+      ]),
+  ),
+);
+
+const CITY_RULES_BY_SPECIALTY = Object.freeze({
+  divers: DIVERS_CITY_RULES,
+  cardio_pneumo: RULES.cardio_pneumo,
+  gastro_uro: RULES.gastro_uro,
+  trauma: RULES.trauma,
+});
 
 function resolveHospitalForArea(area, specialty, diversAssignments = {}) {
   if (!area || !specialty) return "lapeyronie";
 
-  if (specialty === "divers") {
-    if (DIVERS_MTP_RULES[area.id]) return DIVERS_MTP_RULES[area.id];
-    if (DIVERS_AREA_RULES[area.id]) return DIVERS_AREA_RULES[area.id];
-
-    for (const [hospitalId, cities] of Object.entries(DIVERS_CITY_RULES)) {
-      if (cities.includes(area.city)) return hospitalId;
-    }
-
-    return "lapeyronie";
+  const explicitAreaRules = AREA_SPECIALTY_RULES[area.id];
+  if (explicitAreaRules && explicitAreaRules[specialty]) {
+    return explicitAreaRules[specialty];
   }
 
   if (area.id.startsWith("mtp_")) {
-    if (MTP_AREA_RULES[specialty] && MTP_AREA_RULES[specialty][area.id]) {
-      return MTP_AREA_RULES[specialty][area.id];
-    }
     return (MTP_RULES[specialty] || {})[area.bucket] || "lapeyronie";
   }
 
-  if (SPECIAL_AREA_RULES[area.id] && SPECIAL_AREA_RULES[area.id][specialty]) {
-    return SPECIAL_AREA_RULES[area.id][specialty];
-  }
-
-  if (area.id === "lattes-maurin") {
-    return specialty === "gastro_uro" ? "saint_jean" : "saint_roch";
-  }
-
-  if (area.id === "lattes-centre") {
-    return ["cardio_pneumo", "gastro_uro"].includes(specialty)
-      ? "millenaire"
-      : "saint_roch";
-  }
-
-  if (area.id === "lattes-boirargues") {
-    return specialty === "trauma" ? "saint_roch" : "millenaire";
-  }
-
-  for (const [hospitalId, list] of Object.entries(RULES[specialty] || {})) {
+  for (const [hospitalId, list] of Object.entries(
+    CITY_RULES_BY_SPECIALTY[specialty] || {},
+  )) {
     if (list.includes(area.city)) return hospitalId;
   }
 

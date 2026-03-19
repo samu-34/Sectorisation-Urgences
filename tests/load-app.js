@@ -112,6 +112,23 @@ class FakeElement extends FakeNode {
     this.id = "";
   }
 
+  setAttribute(name, value) {
+    this.attributes[name] = String(value);
+    if (name === "class") {
+      this.className = value;
+    }
+  }
+
+  getAttribute(name) {
+    return Object.prototype.hasOwnProperty.call(this.attributes, name)
+      ? this.attributes[name]
+      : null;
+  }
+
+  removeAttribute(name) {
+    delete this.attributes[name];
+  }
+
   set className(value) {
     this.classList.setFromString(value);
   }
@@ -220,6 +237,19 @@ class FakeElement extends FakeNode {
     if (target === this) return true;
     return this.children.some((child) => child instanceof FakeElement && child.contains(target));
   }
+
+  closest(selector) {
+    if (!selector.startsWith(".")) return null;
+    const className = selector.slice(1);
+    let current = this;
+    while (current) {
+      if (current.classList && current.classList.contains(className)) {
+        return current;
+      }
+      current = current.parentElement;
+    }
+    return null;
+  }
 }
 
 class FakeDocument {
@@ -278,6 +308,14 @@ class FakeDocument {
 }
 
 function createLeafletStub() {
+  function createControlClass(definition = {}) {
+    return class {
+      constructor(options = {}) {
+        this.options = { ...(definition.options || {}), ...options };
+      }
+    };
+  }
+
   function makeLayer(type, payload = {}) {
     return {
       type,
@@ -300,6 +338,7 @@ function createLeafletStub() {
       return {
         _layers: [],
         _listeners: new Map(),
+        _controls: [],
         _zoom: 10,
         setView() {
           return this;
@@ -307,18 +346,56 @@ function createLeafletStub() {
         getZoom() {
           return this._zoom;
         },
+        getSize() {
+          return { x: 1280, y: 720 };
+        },
         removeLayer(layer) {
           this._layers = this._layers.filter((item) => item !== layer);
         },
         fitBounds(bounds, options) {
           this._lastBounds = bounds;
           this._lastFitOptions = options;
+          return this;
         },
         on(type, listener) {
           this._listeners.set(type, listener);
+          return this;
         },
-        invalidateSize() {}
+        addControl(control) {
+          this._controls.push(control);
+          return this;
+        },
+        closePopup(popup) {
+          this._lastClosedPopup = popup;
+          return this;
+        },
+        invalidateSize() {
+          return this;
+        }
       };
+    },
+    Control: {
+      extend(definition) {
+        return createControlClass(definition);
+      }
+    },
+    DomUtil: {
+      create(tagName, className = "", container = null) {
+        const element = new FakeElement(tagName);
+        element.className = className;
+        if (container) {
+          container.appendChild(element);
+        }
+        return element;
+      }
+    },
+    DomEvent: {
+      disableClickPropagation() {},
+      disableScrollPropagation() {},
+      on(element, type, listener) {
+        element.addEventListener(type, listener);
+      },
+      stop() {}
     },
     tileLayer() {
       return makeLayer("tileLayer");
@@ -343,6 +420,24 @@ function createLeafletStub() {
         points: [a, b],
         extend(point) {
           this.points.push(point);
+        }
+      };
+    },
+    popup(options = {}) {
+      return {
+        options,
+        setLatLng(latlng) {
+          this.latlng = latlng;
+          return this;
+        },
+        setContent(content) {
+          this.content = content;
+          return this;
+        },
+        openOn(map) {
+          this.map = map;
+          map._lastPopup = this;
+          return this;
         }
       };
     }
@@ -383,9 +478,17 @@ function createAppHarness() {
   context.globalThis = context;
 
   const dataSource = fs.readFileSync(path.join(__dirname, "..", "data.js"), "utf8");
+  const domainSource = fs.readFileSync(path.join(__dirname, "..", "domain.js"), "utf8");
+  const applicationSource = fs.readFileSync(path.join(__dirname, "..", "application.js"), "utf8");
+  const autocompleteSource = fs.readFileSync(path.join(__dirname, "..", "autocomplete.js"), "utf8");
+  const mapRendererSource = fs.readFileSync(path.join(__dirname, "..", "map-renderer.js"), "utf8");
   const appSource = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
 
   vm.runInContext(dataSource, context, { filename: "data.js" });
+  vm.runInContext(domainSource, context, { filename: "domain.js" });
+  vm.runInContext(applicationSource, context, { filename: "application.js" });
+  vm.runInContext(autocompleteSource, context, { filename: "autocomplete.js" });
+  vm.runInContext(mapRendererSource, context, { filename: "map-renderer.js" });
   vm.runInContext(
     `${appSource}
 globalThis.__APP_EXPORTS__ = {
@@ -394,9 +497,11 @@ globalThis.__APP_EXPORTS__ = {
   updateDecision,
   getCurrentArea,
   resetDecisionState,
-  renderToolbar,
-  buildDecisionCard,
-  getInternalState: () => ({ activeSpecialty, routeLayer, focusLayer })
+  getApplicationState: () => appController.getState(),
+  getInternalState: () => ({
+    ...appController.getState(),
+    ...mapRenderer.getState()
+  })
 };`,
     context,
     { filename: "app.js" }

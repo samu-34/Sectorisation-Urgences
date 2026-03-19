@@ -120,7 +120,7 @@ body {
 }
 .section h2 {
   margin: 0 0 10px;
-  font-size: 16px;
+  font-size: 18px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--muted);
@@ -150,7 +150,7 @@ body {
 
 label {
   display: block;
-  font-size: 12px;
+  font-size: 16px;
   color: var(--muted);
   margin-bottom: 5px;
   font-weight: 600;
@@ -169,6 +169,13 @@ select {
     border-color 0.2s,
     box-shadow 0.2s;
 }
+
+#symptomInput,
+#cityInput,
+#detectedSpecialty {
+  background: #f6fafc;
+}
+
 input:focus,
 select:focus {
   outline: none;
@@ -239,7 +246,7 @@ button:active {
   border-radius: var(--radius-pill);
   padding: 7px 12px;
   background: #fff;
-  font-size: 13px;
+  font-size: 15px;
   cursor: pointer;
   transition: all 0.15s;
   font-weight: 500;

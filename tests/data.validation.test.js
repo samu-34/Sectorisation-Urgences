@@ -178,7 +178,7 @@ test("circonstanciel follows the configured territorial sectorisation", () => {
     mtp_port_marianne: "millenaire",
     mtp_millenaire: "millenaire",
     carnon: "millenaire",
-    saint_bres: "millenaire",
+    saint_bres: "parc",
     "lattes-boirargues": "millenaire",
     baillargues: "parc",
     vendargues: "parc",
