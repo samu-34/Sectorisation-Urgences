@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#17313b" />
+  <meta name="description" content="MediMap — Outil d'aide à l'orientation médicale par sectorisation territoriale (Hérault)" />
+  <link rel="icon" href="favicon.svg?v=20260319-0920" type="image/svg+xml" />
+  <title>MediMap — Sectorisation médicale Hérault</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- App CSS -->
+  <link rel="stylesheet" href="style.css?v=20260319-0920" />
+</head>
+<body>
+  <noscript>
+    <div style="padding:12px 16px;background:#fff4e5;color:#7a4b00;border-bottom:1px solid #f0d39a">
+      Cette application nécessite JavaScript pour fonctionner correctement.
+    </div>
+  </noscript>
+
+  <div class="app">
+    <!-- ═══════════ SIDEBAR PANEL ═══════════ -->
+    <aside class="panel">
+
+      <!-- Header -->
+      <div class="panel-header">
+        <h1>MediMap</h1>
+        <div class="subtitle">Sectorisation médicale — Hérault · Aide à l'orientation</div>
+        <div class="badge-row" id="quickBadges"></div>
+      </div>
+
+      <!-- Console de régulation -->
+      <div class="section">
+        <h2>Console de régulation</h2>
+        <div class="soft-box">
+          <div class="stack">
+
+            <!-- Symptôme -->
+            <div>
+              <label for="symptomInput">Symptôme / motif principal</label>
+              <div class="autocomplete-wrap">
+                <input id="symptomInput" type="text" placeholder="Rechercher un motif…" autocomplete="off" />
+                <div id="suggestBox" class="suggest-box hidden"></div>
+              </div>
+            </div>
+
+            <!-- Commune -->
+            <div>
+              <label for="cityInput">Commune</label>
+              <div class="autocomplete-wrap">
+                <input id="cityInput" type="text" placeholder="Rechercher une commune ou un quartier…" autocomplete="off" />
+                <div id="citySuggestBox" class="suggest-box hidden"></div>
+                <select id="citySelect" class="hidden"></select>
+              </div>
+            </div>
+
+            <!-- Sous-zone (Montpellier / Lattes) -->
+            <div id="subzoneWrap" class="hidden">
+              <label for="subzoneSelect">Quartier / secteur fin</label>
+              <select id="subzoneSelect"></select>
+            </div>
+
+            <!-- Filière -->
+            <div>
+              <label for="detectedSpecialty">Filière retenue</label>
+              <select id="detectedSpecialty"></select>
+            </div>
+
+            <!-- Boutons action -->
+            <div class="row">
+              <button id="focusBtn" class="btn-danger">Effacer</button>
+              <button id="regulateBtn" class="btn-primary">Orientation</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Orientation proposée -->
+      <div class="section">
+        <h2>Orientation proposée</h2>
+        <div id="decisionCard" class="card">
+          <div class="small">Aucune décision disponible.</div>
+        </div>
+      </div>
+
+      <!-- Disclaimer -->
+      <div class="section">
+        <h2>Disclaimer</h2>
+        <div class="note">
+          <strong>Périmètre d'usage</strong><br>
+          Filières destinées aux <strong>patients stables, sans signe de gravité</strong>, avec <strong>stabilité hémodynamique</strong>.<br>
+          Pour la traumatologie : <strong>sans déformation</strong> et <strong>sans effraction cutanée</strong>.<br>
+          La filière <strong>Circonstanciel</strong> applique une répartition <strong>équilibrée</strong> selon distance et densité de population estimée.
+        </div>
+      </div>
+
+      <!-- Filières -->
+      <div class="section">
+        <h2>Filières</h2>
+        <div class="chips" id="chips"></div>
+      </div>
+
+      <!-- Footer -->
+      <div class="panel-footer">
+        MediMap v1.0 · Carte interactive Leaflet/OSM · Données de sectorisation territoriale
+      </div>
+    </aside>
+
+    <!-- ═══════════ MAP ═══════════ -->
+    <div class="map-wrap">
+      <div class="toolbar" id="toolbarText"></div>
+      <div id="map"></div>
+      <div class="legend" id="legend"></div>
+    </div>
+  </div>
+
+  <!-- Scripts : data d'abord, puis Leaflet, puis app -->
+  <script src="data.js?v=20260319-0920"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="app.js?v=20260319-0920"></script>
+</body>
+</html>
