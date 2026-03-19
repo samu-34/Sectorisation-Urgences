@@ -74,7 +74,7 @@ const HOSPITAL_RECORDS = [
   },
   {
     id: "lapeyronie",
-    name: "CHU Montpellier – Hôpital Lapeyronie",
+    name: "Hôpital Lapeyronie",
     color: "#ef476f",
     location: {
       lat: 43.6349,
@@ -851,7 +851,12 @@ const CLOUDS = {
   mtp_mosson: { center: [43.62, 3.816], rx: 0.034, ry: 0.022, angle: -8 },
   mtp_cevennes: { center: [43.603, 3.839], rx: 0.03, ry: 0.02, angle: 4 },
   mtp_pres_arenes: { center: [43.592, 3.882], rx: 0.028, ry: 0.019, angle: 10 },
-  mtp_croix_argent: { center: [43.585, 3.865], rx: 0.028, ry: 0.019, angle: -6 },
+  mtp_croix_argent: {
+    center: [43.585, 3.865],
+    rx: 0.028,
+    ry: 0.019,
+    angle: -6,
+  },
   mtp_millenaire: { center: [43.614, 3.928], rx: 0.03, ry: 0.018, angle: 18 },
   mtp_port_marianne: { center: [43.6, 3.898], rx: 0.026, ry: 0.018, angle: 14 },
   mtp_centre_historique: {
@@ -1246,18 +1251,8 @@ const DIVERS_CITY_RULES = {
     "Assas",
   ],
   saint_roch: ["Palavas-les-Flots"],
-  beausoleil: [
-    "Murviel-lès-Montpellier",
-    "Saint-Georges-d'Orques",
-    "Juvignac",
-  ],
-  millenaire: [
-    "Carnon",
-    "Mauguio",
-    "Saint-Aunès",
-    "Saint-Brès",
-    "Pérols",
-  ],
+  beausoleil: ["Murviel-lès-Montpellier", "Saint-Georges-d'Orques", "Juvignac"],
+  millenaire: ["Carnon", "Mauguio", "Saint-Aunès", "Saint-Brès", "Pérols"],
   parc: [
     "Castelnau-le-Lez",
     "Baillargues",

@@ -212,7 +212,7 @@ button:active { transform: scale(0.98); }
   display: inline-block;
   border-radius: var(--radius-pill);
   padding: 3px 9px;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   background: var(--primary-soft);
   color: var(--primary-dark);
@@ -310,15 +310,19 @@ button:active { transform: scale(0.98); }
 
 .legend {
   position: absolute;
-  right: 12px; bottom: 12px;
+  left: 12px;
+  bottom: 12px;
   z-index: 1000;
-  background: #fff;
+  background: rgba(255, 255, 255, .92);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 10px 12px;
   font-size: 12px;
-  max-width: 360px;
+  max-width: 300px;
+  max-height: min(38vh, 360px);
+  overflow-y: auto;
+  backdrop-filter: blur(6px);
 }
 .legend .legend-item { display: flex; gap: 8px; align-items: center; margin: 5px 0; }
 .legend-swatch {
@@ -365,7 +369,13 @@ button:active { transform: scale(0.98); }
   .section { padding: 12px 14px; }
   .soft-box { padding: 12px; }
   .toolbar { max-width: 280px; font-size: 11px; }
-  .legend { max-width: 260px; }
+  .legend {
+    left: 10px;
+    bottom: 10px;
+    max-width: 240px;
+    max-height: 30vh;
+    font-size: 11px;
+  }
 }
 
 /* ─── Leaflet Popup Override ─── */
@@ -380,7 +390,7 @@ button:active { transform: scale(0.98); }
 }
 .popup-hospital-name {
   font-weight: 700;
-  font-size: 14px;
+  font-size: 18px;
   margin-bottom: 4px;
 }
 .popup-phone {

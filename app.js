@@ -26,7 +26,6 @@ const DOM = {
   detectedSpecialty: document.getElementById("detectedSpecialty"),
   decisionCard: document.getElementById("decisionCard"),
   legend: document.getElementById("legend"),
-  toolbar: document.getElementById("toolbarText"),
   symptomInput: document.getElementById("symptomInput"),
   suggestBox: document.getElementById("suggestBox"),
   citySuggestBox: document.getElementById("citySuggestBox"),
@@ -46,6 +45,7 @@ let hospitalLayers = [];
 let labelLayers = [];
 let focusLayer = null;
 let routeLayer = null;
+let orientationPopup = null;
 let symptomSuggestionIndex = -1;
 let citySuggestionIndex = -1;
 
@@ -221,6 +221,33 @@ function normalizePhoneHref(value) {
   return String(value ?? "").replace(/[^\d+]/g, "");
 }
 
+function getPopupAddress(hospital) {
+  const city = String(hospital?.city || "").trim();
+  const address = String(hospital?.address || "").trim();
+  const cityPrefix = `${city} · `;
+
+  if (city && address.startsWith(cityPrefix)) {
+    return address.slice(cityPrefix.length);
+  }
+
+  return address;
+}
+
+function hexToRgba(hex, alpha) {
+  const normalized = String(hex || "").replace("#", "").trim();
+  if (!/^[\da-fA-F]{6}$/.test(normalized)) return `rgba(15, 23, 42, ${alpha})`;
+
+  const r = Number.parseInt(normalized.slice(0, 2), 16);
+  const g = Number.parseInt(normalized.slice(2, 4), 16);
+  const b = Number.parseInt(normalized.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function applyPopupCardTint(element, color, backgroundAlpha = 0.1, borderAlpha = 0.2) {
+  element.style.background = hexToRgba(color, backgroundAlpha);
+  element.style.border = `1px solid ${hexToRgba(color, borderAlpha)}`;
+}
+
 function appendTextLine(container, parts = []) {
   parts.forEach((part, index) => {
     if (part instanceof Node) {
@@ -255,98 +282,82 @@ function buildInfoRow(label, value) {
   return row;
 }
 
-function buildEmptyDecisionMessage(message) {
-  const row = document.createElement("div");
-  row.className = "small";
-  row.textContent = message;
-  return row;
-}
-
-function buildDecisionCard(areaLabel, hospitalId, symptom, travelEstimate) {
-  const h = HOSPITALS[hospitalId];
-  const card = document.createDocumentFragment();
-
+function buildPopupHeader(hospital, pillText) {
   const header = document.createElement("div");
   header.className = "card-flex";
-
-  const headerText = document.createElement("div");
-  const pill = document.createElement("div");
-  pill.className = "pill";
-  pill.textContent = "Destination prioritaire";
-  const title = document.createElement("h3");
-  title.textContent = h.name;
-  headerText.append(pill, title);
+  header.style.marginBottom = "8px";
 
   const dot = document.createElement("span");
   dot.className = "dot-color";
-  dot.style.background = h.color;
+  dot.style.background = hospital.color;
+  dot.style.marginTop = "0";
 
-  header.append(headerText, dot);
-  card.appendChild(header);
+  const headerText = document.createElement("div");
+  const pillRow = document.createElement("div");
+  pillRow.style.display = "flex";
+  pillRow.style.alignItems = "center";
+  pillRow.style.gap = "8px";
 
-  card.appendChild(buildInfoRow("Motif :", symptom || "Non precise"));
-  card.appendChild(buildInfoRow("Zone analysée :", areaLabel));
-  card.appendChild(buildInfoRow("Filière :", SPECIALTIES.find(s => s.id === activeSpecialty).label));
-  card.appendChild(buildInfoRow("Règle :", "sectorisation territoriale appliquée"));
+  const pill = document.createElement("div");
+  pill.className = "pill";
+  pill.textContent = pillText;
+  pill.style.background = hexToRgba(hospital.color, 0.14);
+  pill.style.color = hospital.color;
+  pill.style.border = `1px solid ${hexToRgba(hospital.color, 0.28)}`;
 
-  const establishmentRow = buildInfoRow("Établissement :", `${h.city} · ${h.address}`);
-  establishmentRow.style.marginTop = "8px";
-  card.appendChild(establishmentRow);
+  const title = document.createElement("div");
+  title.className = "popup-hospital-name";
+  title.textContent = hospital.name;
 
-  const contactBlock = document.createElement("div");
-  contactBlock.className = "contact-block small";
-  appendTextLine(contactBlock, [
-    buildPhoneLink("📞 Urgences :", h.phone_urgences),
-    buildPhoneLink("📞 Spécialités :", h.phone_specialites)
-  ]);
-  card.appendChild(contactBlock);
+  pillRow.append(dot, pill);
+  headerText.append(pillRow, title);
+  header.append(headerText);
 
-  if (travelEstimate) {
-    const routeInfo = document.createElement("div");
-    routeInfo.className = "route-info small";
-    appendTextLine(routeInfo, [
-      (() => {
-        const span = document.createElement("span");
-        span.append(
-          Object.assign(document.createElement("strong"), { textContent: "⏱ Temps theorique :" }),
-          document.createTextNode(` ${Math.round(travelEstimate.theoreticalDurationMin)} min`)
-        );
-        return span;
-      })(),
-      (() => {
-        const span = document.createElement("span");
-        span.append(
-          Object.assign(document.createElement("strong"), { textContent: "📏 Distance a vol d'oiseau :" }),
-          document.createTextNode(` ${travelEstimate.directDistanceKm.toFixed(1)} km`)
-        );
-        return span;
-      })()
-    ]);
-    card.appendChild(routeInfo);
-  }
-
-  return card;
+  return header;
 }
 
-function renderToolbar(areaLabel, hospitalId, travelEstimate) {
-  DOM.toolbar.replaceChildren();
+function buildPopupAddressBlock(hospital) {
+  const details = document.createElement("div");
+  const addressRow = buildInfoRow("Adresse :", getPopupAddress(hospital));
+  addressRow.style.marginTop = "8px";
+  details.append(addressRow);
+  return details;
+}
 
-  const specialtyStrong = document.createElement("strong");
-  specialtyStrong.textContent = SPECIALTIES.find(s => s.id === activeSpecialty).label;
-  DOM.toolbar.appendChild(specialtyStrong);
-  DOM.toolbar.appendChild(document.createElement("br"));
-  DOM.toolbar.appendChild(document.createTextNode(areaLabel));
-  DOM.toolbar.appendChild(document.createElement("br"));
+function buildPopupPhoneCard(hospital) {
+  const phones = document.createElement("div");
+  phones.className = "contact-block popup-phone";
+  applyPopupCardTint(phones, hospital.color, 0.1, 0.18);
+  appendTextLine(phones, [
+    buildPhoneLink("Urgences :", hospital.phone_urgences),
+    buildPhoneLink("Spécialités :", hospital.phone_specialites)
+  ]);
+  return phones;
+}
 
-  const hospitalSpan = document.createElement("span");
-  hospitalSpan.style.color = HOSPITALS[hospitalId].color;
-  hospitalSpan.style.fontWeight = "700";
-  hospitalSpan.textContent = HOSPITALS[hospitalId].name;
-  DOM.toolbar.appendChild(hospitalSpan);
-  DOM.toolbar.appendChild(document.createElement("br"));
-  DOM.toolbar.appendChild(
-    document.createTextNode(`Temps theorique ${Math.round(travelEstimate.theoreticalDurationMin)} min · ${travelEstimate.directDistanceKm.toFixed(1)} km a vol d'oiseau`)
-  );
+function buildPopupRouteCard(hospital, travelEstimate) {
+  const routeInfo = document.createElement("div");
+  routeInfo.className = "route-info small";
+  applyPopupCardTint(routeInfo, hospital.color, 0.05, 0.16);
+  appendTextLine(routeInfo, [
+    (() => {
+      const span = document.createElement("span");
+      span.append(
+        Object.assign(document.createElement("strong"), { textContent: "Temps theorique :" }),
+        document.createTextNode(` ${Math.round(travelEstimate.theoreticalDurationMin)} min`)
+      );
+      return span;
+    })(),
+    (() => {
+      const span = document.createElement("span");
+      span.append(
+        Object.assign(document.createElement("strong"), { textContent: "Distance a vol d'oiseau :" }),
+        document.createTextNode(` ${travelEstimate.directDistanceKm.toFixed(1)} km`)
+      );
+      return span;
+    })()
+  ]);
+  return routeInfo;
 }
 
 function clearSelectionVisuals() {
@@ -358,6 +369,12 @@ function clearSelectionVisuals() {
     (Array.isArray(routeLayer) ? routeLayer : [routeLayer]).forEach(layer => map.removeLayer(layer));
     routeLayer = null;
   }
+}
+
+function closeOrientationPopup() {
+  if (!orientationPopup) return;
+  map.closePopup(orientationPopup);
+  orientationPopup = null;
 }
 
 // ─────────────────────────────────────────────
@@ -478,26 +495,44 @@ function addCloud(key, hospitalId, density) {
 // ─────────────────────────────────────────────
 function buildHospitalPopup(h) {
   const root = document.createElement("div");
-
-  const title = document.createElement("div");
-  title.className = "popup-hospital-name";
-  title.textContent = h.name;
-
-  const meta = document.createElement("div");
-  meta.style.fontSize = "12px";
-  meta.style.color = "#5d7680";
-  meta.style.marginBottom = "4px";
-  meta.textContent = `${h.city} · ${h.address}`;
-
-  const phones = document.createElement("div");
-  phones.className = "popup-phone";
-  appendTextLine(phones, [
-    buildPhoneLink("📞 Urgences :", h.phone_urgences),
-    buildPhoneLink("📞 Spécialités :", h.phone_specialites)
-  ]);
-
-  root.append(title, meta, phones);
+  root.append(
+    buildPopupHeader(h, "Établissement"),
+    buildPopupAddressBlock(h),
+    buildPopupPhoneCard(h)
+  );
   return root;
+}
+
+function buildOrientationPopupContent(areaLabel, hospitalId, symptom, travelEstimate) {
+  const h = HOSPITALS[hospitalId];
+  const root = document.createElement("div");
+  root.append(
+    buildPopupHeader(h, "Destination prioritaire"),
+    buildPopupAddressBlock(h),
+    buildPopupPhoneCard(h),
+    buildPopupRouteCard(h, travelEstimate)
+  );
+  return root;
+}
+
+function openOrientationPopup(areaLabel, hospitalId, symptom, travelEstimate) {
+  closeOrientationPopup();
+  const h = HOSPITALS[hospitalId];
+  const viewportPadding = getOrientationViewportPadding();
+  orientationPopup = L.popup({
+    closeButton: true,
+    autoClose: false,
+    closeOnClick: false,
+    autoPan: true,
+    keepInView: true,
+    autoPanPaddingTopLeft: viewportPadding.paddingTopLeft,
+    autoPanPaddingBottomRight: viewportPadding.paddingBottomRight,
+    offset: [0, -14],
+    maxWidth: 360,
+  })
+    .setLatLng([h.lat, h.lng])
+    .setContent(buildOrientationPopupContent(areaLabel, hospitalId, symptom, travelEstimate))
+    .openOn(map);
 }
 
 function buildHospitals() {
@@ -587,6 +622,20 @@ function buildRoutePath(area, hospital) {
   return [start, control, end];
 }
 
+function getOrientationViewportPadding() {
+  const size = map.getSize();
+  return {
+    paddingTopLeft: [
+      70,
+      Math.max(220, Math.min(340, Math.round(size.y * 0.28))),
+    ],
+    paddingBottomRight: [
+      Math.max(200, Math.min(460, Math.round(size.x * 0.26))),
+      Math.max(120, Math.min(240, Math.round(size.y * 0.16))),
+    ],
+  };
+}
+
 function drawRoute(area, hospitalId) {
   if (routeLayer) {
     (Array.isArray(routeLayer) ? routeLayer : [routeLayer]).forEach(layer => map.removeLayer(layer));
@@ -630,17 +679,17 @@ function drawRoute(area, hospitalId) {
  */
 function zoomToBounds(area, hospitalId) {
   const h = HOSPITALS[hospitalId];
-  const c = CLOUDS[area.cloud];
-  const bounds = L.latLngBounds(
-    [c.center[0], c.center[1]],
-    [h.lat, h.lng]
-  );
-  // Ajouter aussi le point patient
+  const routePath = buildRoutePath(area, h);
+  const bounds = L.latLngBounds(routePath);
   bounds.extend([area.lat, area.lng]);
-  if (Array.isArray(area.bounds)) {
-    area.bounds.forEach(point => bounds.extend(point));
+  bounds.extend([h.lat, h.lng]);
+  if (area.lat === h.lat && area.lng === h.lng) {
+    bounds.extend([area.lat + 0.005, area.lng + 0.005]);
   }
-  map.fitBounds(bounds, { padding: [60, 60], maxZoom: 14 });
+  map.fitBounds(bounds, {
+    ...getOrientationViewportPadding(),
+    maxZoom: 14,
+  });
 }
 
 // ─────────────────────────────────────────────
@@ -659,10 +708,9 @@ function getSelectionPrompt() {
   return "Sélectionnez une commune ou un quartier valide.";
 }
 
-function resetDecisionState(toolbarText = "Carte interactive chargée.") {
+function resetDecisionState() {
+  closeOrientationPopup();
   clearSelectionVisuals();
-  DOM.decisionCard.replaceChildren(buildEmptyDecisionMessage("Aucune décision disponible."));
-  DOM.toolbar.textContent = toolbarText;
 }
 
 // ─────────────────────────────────────────────
@@ -671,18 +719,20 @@ function resetDecisionState(toolbarText = "Carte interactive chargée.") {
 function updateDecision() {
   const area = getCurrentArea();
   if (!area) {
-    resetDecisionState(getSelectionPrompt());
+    resetDecisionState();
     return;
   }
+
+  closeOrientationPopup();
   const hid = getAreaHospital(area);
+  const areaLabel = area.label || area.city;
+  const symptom = DOM.symptomInput.value.trim();
   const travelEstimate = estimateTheoreticalTravel(area, hid);
-  DOM.decisionCard.replaceChildren(buildDecisionCard(area.label || area.city, hid, DOM.symptomInput.value.trim(), travelEstimate));
-  renderToolbar(area.label || area.city, hid, travelEstimate);
 
   highlightCurrentArea(area);
   drawRoute(area, hid);
-  // Zoom entre zone patient et hôpital
   zoomToBounds(area, hid);
+  openOrientationPopup(areaLabel, hid, symptom, travelEstimate);
 }
 
 function getCurrentArea() {
@@ -1068,7 +1118,7 @@ DOM.focusBtn.addEventListener("click", () => {
   closeSymptomSuggestions();
   closeCitySuggestions();
   updateSubzoneOptions();
-  resetDecisionState("Carte interactive chargée.");
+  resetDecisionState();
   map.fitBounds([[43.47, 3.67], [43.75, 4.08]]);
 });
 
@@ -1092,7 +1142,16 @@ map.on('zoomend', updateLabelVisibility);
 // INITIALISATION AU CHARGEMENT
 // ─────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
-  DOM.toolbar.innerHTML = "Carte interactive chargée.";
+  const toolbar = document.getElementById("toolbarText");
+  if (toolbar) {
+    toolbar.style.display = "none";
+  }
+  if (DOM.decisionCard) {
+    const decisionSection = DOM.decisionCard.closest(".section");
+    if (decisionSection) {
+      decisionSection.style.display = "none";
+    }
+  }
   renderChips();
   setDetectedSpecialtyIndicator("");
   populateCitySelect();
