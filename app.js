@@ -175,14 +175,14 @@ const autocomplete = MediMapAutocomplete.createAutocompleteController({
   cityItems: appController.getCitySuggestions(),
   onSymptomPick(label) {
     DOM.symptomInput.value = label;
-    applySymptomInput(label);
+    updateDecision();
   },
   onCityPick: applyCitySelection,
 });
 
 DOM.symptomInput.addEventListener("input", () => {
-  applySymptomInput(DOM.symptomInput.value);
   autocomplete.renderSymptomSuggestions(DOM.symptomInput.value);
+  updateDecision();
 });
 
 DOM.cityInput.addEventListener("input", () => {

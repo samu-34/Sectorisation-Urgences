@@ -529,10 +529,49 @@ button:active {
   border-radius: var(--radius) !important;
   box-shadow: var(--shadow) !important;
 }
+.destination-flag-icon {
+  background: transparent !important;
+  border: 0 !important;
+}
+.destination-flag-wrap {
+  width: 28px;
+  height: 36px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  filter: drop-shadow(0 4px 8px rgba(15, 23, 42, 0.22));
+}
+.destination-flag-wrap svg {
+  display: block;
+  overflow: visible;
+}
 .leaflet-popup-content {
   margin: 12px 14px !important;
   font-size: 13px !important;
   line-height: 1.5 !important;
+}
+.leaflet-container a.leaflet-popup-close-button {
+  top: 8px !important;
+  right: 8px !important;
+  width: 34px !important;
+  height: 34px !important;
+  padding: 0 !important;
+  border-radius: 999px;
+  color: #c1121f !important;
+  font-size: 26px !important;
+  font-weight: 800;
+  line-height: 34px !important;
+  text-align: center;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.leaflet-container a.leaflet-popup-close-button:hover,
+.leaflet-container a.leaflet-popup-close-button:focus {
+  background: #fde7ea;
+  color: #9b0f1a !important;
+  box-shadow: 0 0 0 3px rgba(193, 18, 31, 0.14);
 }
 .popup-hospital-name {
   font-weight: 700;

@@ -545,17 +545,21 @@
       return root;
     }
 
-    function getOrientationViewportPadding() {
+    function getOrientationViewportPadding({ reserveRouteView = false } = {}) {
       const size = map.getSize();
+      const topPadding = reserveRouteView
+        ? Math.max(280, Math.min(420, Math.round(size.y * 0.36)))
+        : Math.max(220, Math.min(340, Math.round(size.y * 0.28)));
+      const rightPadding = reserveRouteView
+        ? Math.max(250, Math.min(520, Math.round(size.x * 0.32)))
+        : Math.max(200, Math.min(460, Math.round(size.x * 0.26)));
+      const bottomPadding = reserveRouteView
+        ? Math.max(150, Math.min(280, Math.round(size.y * 0.2)))
+        : Math.max(120, Math.min(240, Math.round(size.y * 0.16)));
+
       return {
-        paddingTopLeft: [
-          70,
-          Math.max(220, Math.min(340, Math.round(size.y * 0.28))),
-        ],
-        paddingBottomRight: [
-          Math.max(200, Math.min(460, Math.round(size.x * 0.26))),
-          Math.max(120, Math.min(240, Math.round(size.y * 0.16))),
-        ],
+        paddingTopLeft: [reserveRouteView ? 90 : 70, topPadding],
+        paddingBottomRight: [rightPadding, bottomPadding],
       };
     }
 
@@ -661,6 +665,36 @@
       return [start, control, end];
     }
 
+    function buildDestinationFlagIcon(hospital) {
+      const fill = escapeHtml(hospital.color);
+      const label = escapeHtml(`Destination ${hospital.name}`);
+
+      return L.divIcon({
+        className: "destination-flag-icon",
+        iconSize: [28, 36],
+        iconAnchor: [10, 34],
+        popupAnchor: [0, -30],
+        html: `
+          <div class="destination-flag-wrap" aria-label="${label}" role="img">
+            <svg viewBox="0 0 28 36" width="28" height="36" aria-hidden="true">
+              <path
+                d="M9 3.5c0-.83.67-1.5 1.5-1.5S12 2.67 12 3.5V5h8.7c1.28 0 2.08 1.39 1.45 2.5l-1.32 2.32c-.27.47-.27 1.04 0 1.5l1.32 2.32c.63 1.11-.17 2.5-1.45 2.5H12v9.36c0 .46-.21.89-.56 1.17l-1.86 1.48c-.98.78-2.43.08-2.43-1.17V3.5Z"
+                fill="${fill}"
+                stroke="#ffffff"
+                stroke-width="2"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M10.5 31.5c2.4 0 4.35 1.42 4.35 3.17S12.9 37.84 10.5 37.84 6.15 36.42 6.15 34.67s1.95-3.17 4.35-3.17Z"
+                transform="translate(0 -2)"
+                fill="rgba(15, 23, 42, 0.18)"
+              />
+            </svg>
+          </div>
+        `,
+      });
+    }
+
     function drawRoute(area, hospitalId) {
       if (routeLayer) {
         (Array.isArray(routeLayer) ? routeLayer : [routeLayer]).forEach((layer) =>
@@ -691,12 +725,9 @@
         fillColor: "#0f172a",
         fillOpacity: 1,
       }).addTo(map);
-      const endMarker = L.circleMarker([hospital.lat, hospital.lng], {
-        radius: 6,
-        color: "#ffffff",
-        weight: 2,
-        fillColor: hospital.color,
-        fillOpacity: 1,
+      const endMarker = L.marker([hospital.lat, hospital.lng], {
+        icon: buildDestinationFlagIcon(hospital),
+        keyboard: false,
       }).addTo(map);
       routeLayer = [shadow, main, startMarker, endMarker];
     }
@@ -716,18 +747,19 @@
       }).addTo(map);
     }
 
-    function zoomToBounds(area, hospitalId) {
+    function zoomToBounds(area, hospitalId, { reserveRouteView = false } = {}) {
       const hospital = HOSPITALS[hospitalId];
       const routePath = buildRoutePath(area, hospital);
       const bounds = L.latLngBounds(routePath);
+      const viewportPadding = getOrientationViewportPadding({ reserveRouteView });
       bounds.extend([area.lat, area.lng]);
       bounds.extend([hospital.lat, hospital.lng]);
       if (area.lat === hospital.lat && area.lng === hospital.lng) {
         bounds.extend([area.lat + 0.005, area.lng + 0.005]);
       }
       map.fitBounds(bounds, {
-        ...getOrientationViewportPadding(),
-        maxZoom: 14,
+        ...viewportPadding,
+        maxZoom: reserveRouteView ? 13 : 14,
       });
     }
 
@@ -779,6 +811,12 @@
       drawRoute(area, hospitalId);
       zoomToBounds(area, hospitalId);
       openOrientationPopup(hospitalId, travelEstimate);
+      // Re-cadre ensuite avec plus de marge pour garder tout le trajet visible
+      // une fois que l'autopan de la popup a fini de repositionner la carte.
+      setTimeout(() => {
+        if (!orientationPopup) return;
+        zoomToBounds(area, hospitalId, { reserveRouteView: true });
+      }, 0);
     }
 
     function resetDecisionState() {

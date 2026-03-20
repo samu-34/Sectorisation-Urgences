@@ -78,6 +78,35 @@ test("Mauguio avec un motif traumato oriente vers la Clinique du Parc", () => {
   );
 });
 
+test("changer le motif recalcule l'orientation quand la filiere bascule", () => {
+  const { exports } = createAppHarness();
+
+  exports.DOM.cityInput.value = "Carnon";
+  const matched = exports.syncSelectionFromCityInput(exports.DOM.cityInput.value);
+  exports.DOM.symptomInput.value = "traumatisme";
+  exports.DOM.symptomInput.dispatchEvent({ type: "input" });
+
+  assert.equal(matched, true);
+  assert.equal(exports.getCurrentArea().id, "carnon");
+  assert.equal(
+    exports.getInternalState().orientationPopup.content.textContent.includes(
+      "Clinique Saint-Roch",
+    ),
+    true,
+  );
+
+  exports.DOM.symptomInput.value = "vomissements";
+  exports.DOM.symptomInput.dispatchEvent({ type: "input" });
+
+  assert.equal(exports.getApplicationState().mapSpecialty, "gastro_uro");
+  assert.equal(
+    exports.getInternalState().orientationPopup.content.textContent.includes(
+      "Clinique du Millénaire",
+    ),
+    true,
+  );
+});
+
 test("le bouton Effacer reinitialise la selection, la decision et la carte", () => {
   const { exports } = createAppHarness();
 
