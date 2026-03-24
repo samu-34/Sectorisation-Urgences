@@ -190,7 +190,7 @@ test("circonstanciel follows the configured territorial sectorisation", () => {
   Object.entries(expectedAssignments).forEach(([areaId, hospitalId]) => {
     const area = areaById.get(areaId);
     assert.ok(area, `Missing area ${areaId}`);
-    assert.equal(resolveHospitalForArea(area, "divers", {}), hospitalId, `Unexpected divers hospital for ${areaId}`);
+    assert.equal(resolveHospitalForArea(area, "divers"), hospitalId, `Unexpected divers hospital for ${areaId}`);
   });
 });
 
@@ -199,7 +199,7 @@ test("every configured area resolves to a valid hospital for every specialty", (
 
   allAreas.forEach((area) => {
     SPECIALTIES.forEach(({ id: specialty }) => {
-      const hospitalId = resolveHospitalForArea(area, specialty, { [area.id]: "lapeyronie" });
+      const hospitalId = resolveHospitalForArea(area, specialty);
       assert.ok(KNOWN_HOSPITAL_IDS.has(hospitalId), `Area ${area.id} resolves to unknown hospital ${hospitalId} for ${specialty}`);
     });
   });

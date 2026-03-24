@@ -9,49 +9,6 @@
 // ─────────────────────────────────────────────
 const HOSPITAL_RECORDS = [
   {
-    id: "saint_roch",
-    name: "Clinique Saint-Roch",
-    color: "#06d6a0",
-    location: {
-      lat: 43.582811,
-      lng: 3.861684,
-      city: "Montpellier",
-      address:
-        "560 Av. du Colonel André Pavelet dit Villars, 34000 Montpellier",
-    },
-    phones: {
-      urgences: "04 67 61 27 27",
-      specialites: "04 67 61 48 00",
-    },
-    source: {
-      label: "Référentiel MediMap",
-      note: "Coordonnées recalées sur le géocodage de l'adresse",
-    },
-    verified_at: "2026-03-24",
-    verification_status: "reviewed",
-  },
-  {
-    id: "saint_jean",
-    name: "Clinique Saint - Jean Sud de France",
-    color: "#ff4800",
-    location: {
-      lat: 43.570217,
-      lng: 3.835075,
-      city: "Saint-Jean-de-Védas",
-      address: "1 place de l'Europe, 34430 Saint-Jean-de-Védas",
-    },
-    phones: {
-      urgences: "04 67 61 20 04",
-      specialites: "04 67 61 44 00",
-    },
-    source: {
-      label: "Référentiel MediMap",
-      note: "Coordonnées recalées sur le géocodage de l'adresse",
-    },
-    verified_at: "2026-03-24",
-    verification_status: "reviewed",
-  },
-  {
     id: "beausoleil",
     name: "Clinique Beausoleil",
     color: "#f5a201",
@@ -73,18 +30,18 @@ const HOSPITAL_RECORDS = [
     verification_status: "reviewed",
   },
   {
-    id: "lapeyronie",
-    name: "Hôpital Lapeyronie",
-    color: "#ff0054",
+    id: "millenaire",
+    name: "Clinique du Millénaire",
+    color: "#e70e02",
     location: {
-      lat: 43.629886,
-      lng: 3.851481,
+      lat: 43.601962,
+      lng: 3.913786,
       city: "Montpellier",
-      address: "371 avenue du Doyen Gaston Giraud, 34090 Montpellier",
+      address: "220 boulevard Pénélope, 34960 Montpellier",
     },
     phones: {
-      urgences: "04 67 33 95 02",
-      specialites: "04 67 33 67 33",
+      urgences: "04 99 53 63 73",
+      specialites: "04 99 75 60 00",
     },
     source: {
       label: "Référentiel MediMap",
@@ -115,18 +72,61 @@ const HOSPITAL_RECORDS = [
     verification_status: "reviewed",
   },
   {
-    id: "millenaire",
-    name: "Clinique du Millénaire",
-    color: "#e70e02",
+    id: "saint_roch",
+    name: "Clinique Saint-Roch",
+    color: "#06d6a0",
     location: {
-      lat: 43.601962,
-      lng: 3.913786,
+      lat: 43.582811,
+      lng: 3.861684,
       city: "Montpellier",
-      address: "220 boulevard Pénélope, 34960 Montpellier",
+      address:
+        "560 Av. du Colonel André Pavelet dit Villars, 34000 Montpellier",
     },
     phones: {
-      urgences: "04 99 53 63 73",
-      specialites: "04 99 75 60 00",
+      urgences: "04 67 61 27 27",
+      specialites: "04 67 61 48 00",
+    },
+    source: {
+      label: "Référentiel MediMap",
+      note: "Coordonnées recalées sur le géocodage de l'adresse",
+    },
+    verified_at: "2026-03-24",
+    verification_status: "reviewed",
+  },
+  {
+    id: "saint_jean",
+    name: "Clinique Saint-Jean",
+    color: "#ff4800",
+    location: {
+      lat: 43.570217,
+      lng: 3.835075,
+      city: "Saint-Jean-de-Védas",
+      address: "1 place de l'Europe, 34430 Saint-Jean-de-Védas",
+    },
+    phones: {
+      urgences: "04 67 61 20 04",
+      specialites: "04 67 61 44 00",
+    },
+    source: {
+      label: "Référentiel MediMap",
+      note: "Coordonnées recalées sur le géocodage de l'adresse",
+    },
+    verified_at: "2026-03-24",
+    verification_status: "reviewed",
+  },
+  {
+    id: "lapeyronie",
+    name: "Hôpital Lapeyronie",
+    color: "#ff0054",
+    location: {
+      lat: 43.629886,
+      lng: 3.851481,
+      city: "Montpellier",
+      address: "371 avenue du Doyen Gaston Giraud, 34090 Montpellier",
+    },
+    phones: {
+      urgences: "04 67 33 95 02",
+      specialites: "04 67 33 67 33",
     },
     source: {
       label: "Référentiel MediMap",
@@ -1472,28 +1472,23 @@ function pickAreaRulesForSpecialty(specialty, areaFilter) {
 }
 
 const MTP_AREA_RULES = Object.freeze({
-  cardio_pneumo: pickAreaRulesForSpecialty(
-    "cardio_pneumo",
-    (areaId) => areaId.startsWith("mtp_"),
+  cardio_pneumo: pickAreaRulesForSpecialty("cardio_pneumo", (areaId) =>
+    areaId.startsWith("mtp_"),
   ),
-  gastro_uro: pickAreaRulesForSpecialty(
-    "gastro_uro",
-    (areaId) => areaId.startsWith("mtp_"),
+  gastro_uro: pickAreaRulesForSpecialty("gastro_uro", (areaId) =>
+    areaId.startsWith("mtp_"),
   ),
-  trauma: pickAreaRulesForSpecialty(
-    "trauma",
-    (areaId) => areaId.startsWith("mtp_"),
+  trauma: pickAreaRulesForSpecialty("trauma", (areaId) =>
+    areaId.startsWith("mtp_"),
   ),
 });
 
-const DIVERS_MTP_RULES = pickAreaRulesForSpecialty(
-  "divers",
-  (areaId) => areaId.startsWith("mtp_"),
+const DIVERS_MTP_RULES = pickAreaRulesForSpecialty("divers", (areaId) =>
+  areaId.startsWith("mtp_"),
 );
 
-const DIVERS_AREA_RULES = pickAreaRulesForSpecialty(
-  "divers",
-  (areaId) => areaId.startsWith("lattes-"),
+const DIVERS_AREA_RULES = pickAreaRulesForSpecialty("divers", (areaId) =>
+  areaId.startsWith("lattes-"),
 );
 
 const DIVERS_CITY_RULES = {
@@ -1554,7 +1549,9 @@ const SPECIAL_AREA_RULES = Object.freeze(
         areaId,
         Object.freeze(
           Object.fromEntries(
-            Object.entries(rules).filter(([specialty]) => specialty !== "divers"),
+            Object.entries(rules).filter(
+              ([specialty]) => specialty !== "divers",
+            ),
           ),
         ),
       ]),
@@ -1568,7 +1565,7 @@ const CITY_RULES_BY_SPECIALTY = Object.freeze({
   trauma: RULES.trauma,
 });
 
-function resolveHospitalForArea(area, specialty, diversAssignments = {}) {
+function resolveHospitalForArea(area, specialty) {
   if (!area || !specialty) return "lapeyronie";
 
   const explicitAreaRules = AREA_SPECIALTY_RULES[area.id];

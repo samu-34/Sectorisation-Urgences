@@ -57,13 +57,7 @@
       detectedSpecialty: "",
       mapSpecialty: "divers",
       originPoint: null,
-      diversAssignments: domain.computeDiversAssignments(),
     };
-
-    function computeDiversAssignments() {
-      state.diversAssignments = domain.computeDiversAssignments();
-      return { ...state.diversAssignments };
-    }
 
     function resolveCurrentArea() {
       return domain.resolveAreaFromSelection(state.cityValue, state.subzoneValue);
@@ -116,7 +110,6 @@
               precision: state.originPoint.precision,
             }
           : null,
-        diversAssignments: { ...state.diversAssignments },
         currentArea: resolveCurrentArea(),
       };
     }
@@ -237,13 +230,7 @@
       }
 
       const mapSpecialtyChanged = syncMapSpecialtyFromDetected();
-      computeDiversAssignments();
-
-      const hospitalId = domain.resolveOrientationHospital(
-        area,
-        state.symptomInputValue,
-        state.diversAssignments,
-      );
+      const hospitalId = domain.resolveOrientationHospital(area, state.symptomInputValue);
       const originPoint =
         state.originPoint || {
           lat: area.lat,
@@ -269,18 +256,12 @@
     }
 
     function refreshSectorisationMap() {
-      computeDiversAssignments();
-
       return {
         specialtyId: state.mapSpecialty,
         cloudHospitalMap: Object.fromEntries(
           Object.entries(MAP_CLOUD_AREA_IDS).map(([cloudKey, areaId]) => [
             cloudKey,
-            domain.resolveMapHospital(
-              AREA_BY_ID[areaId],
-              state.mapSpecialty,
-              state.diversAssignments,
-            ),
+            domain.resolveMapHospital(AREA_BY_ID[areaId], state.mapSpecialty),
           ]),
         ),
         state: getState(),
@@ -296,7 +277,6 @@
       state.detectedSpecialty = "";
       state.originPoint = null;
       state.mapSpecialty = preservedMapSpecialty;
-      computeDiversAssignments();
 
       return {
         subzoneModel: getSubzoneModel(""),

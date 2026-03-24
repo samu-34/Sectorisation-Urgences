@@ -22,9 +22,45 @@
       .trim();
   }
 
-  function getMatchRank(label, query) {
-    const normalizedLabel = simplify(label);
-    const normalizedQuery = simplify(query);
+  function createPreparedSearchLabels(rawLabels) {
+    const labels = Array.isArray(rawLabels) ? rawLabels : [rawLabels];
+    return labels
+      .filter(Boolean)
+      .map((label) => {
+        const normalizedLabel = simplify(label);
+        return {
+          label,
+          normalizedLabel,
+          words: normalizedLabel.split(/[\s-]+/),
+        };
+      });
+  }
+
+  const PREPARED_SEARCH_LABEL_CACHE = new WeakMap();
+
+  function getPreparedSearchLabels(item, rawLabels) {
+    if (!item || (typeof item !== "object" && typeof item !== "function")) {
+      return createPreparedSearchLabels(rawLabels);
+    }
+
+    const labels = Array.isArray(rawLabels) ? rawLabels : [rawLabels];
+    const cacheSignature = labels.filter(Boolean).join("\u0001");
+    const cached = PREPARED_SEARCH_LABEL_CACHE.get(item);
+
+    if (cached && cached.signature === cacheSignature) {
+      return cached.preparedLabels;
+    }
+
+    const preparedLabels = createPreparedSearchLabels(labels);
+    PREPARED_SEARCH_LABEL_CACHE.set(item, {
+      signature: cacheSignature,
+      preparedLabels,
+    });
+    return preparedLabels;
+  }
+
+  function getMatchRank(preparedLabel, normalizedQuery) {
+    const normalizedLabel = preparedLabel.normalizedLabel;
 
     if (!normalizedQuery || !normalizedLabel.includes(normalizedQuery)) {
       return null;
@@ -38,9 +74,9 @@
       return { score: 1, index: 0, length: normalizedLabel.length };
     }
 
-    const wordIndex = normalizedLabel
-      .split(/[\s-]+/)
-      .findIndex((word) => word.startsWith(normalizedQuery));
+    const wordIndex = preparedLabel.words.findIndex((word) =>
+      word.startsWith(normalizedQuery),
+    );
 
     if (wordIndex >= 0) {
       return {
@@ -58,13 +94,20 @@
   }
 
   function getRankedMatches(items, query, getLabel) {
+    const normalizedQuery = simplify(query);
+    if (!normalizedQuery) {
+      return [];
+    }
+
     return items
       .map((item, sourceIndex) => {
         const rawLabels = getLabel(item);
-        const labels = Array.isArray(rawLabels) ? rawLabels : [rawLabels];
-        const rankedLabels = labels
-          .filter(Boolean)
-          .map((label) => ({ label, rank: getMatchRank(label, query) }))
+        const preparedLabels = getPreparedSearchLabels(item, rawLabels);
+        const rankedLabels = preparedLabels
+          .map((preparedLabel) => ({
+            label: preparedLabel.label,
+            rank: getMatchRank(preparedLabel, normalizedQuery),
+          }))
           .filter((entry) => entry.rank !== null)
           .sort((a, b) => {
             if (a.rank.score !== b.rank.score) return a.rank.score - b.rank.score;
@@ -95,32 +138,42 @@
     return found ? found.label : id;
   }
 
+  const DETECTION_SPECIALTY_ORDER = Object.freeze([
+    "trauma",
+    "gastro_uro",
+    "cardio_pneumo",
+    "divers",
+  ]);
+  const DETECTION_TERMS_BY_SPECIALTY = Object.freeze(
+    Object.fromEntries(
+      DETECTION_SPECIALTY_ORDER.map((specialty) => [
+        specialty,
+        Object.freeze(
+          [
+            ...new Set(
+              MOTIF_CATALOG.filter((item) => item.filiere === specialty)
+                .flatMap((item) => [item.label, ...(item.aliases || [])])
+                .map((term) => simplify(term))
+                .filter(Boolean),
+            ),
+          ],
+        ),
+      ]),
+    ),
+  );
+
   function detectSpecialty(text) {
     const normalizedText = simplify(text);
     if (!normalizedText) return "cardio_pneumo";
 
-    function getTermsByFiliere(filiere) {
-      return MOTIF_CATALOG.filter((item) => item.filiere === filiere).flatMap(
-        (item) => [item.label, ...(item.aliases || [])],
-      );
-    }
-
-    const trauma = getTermsByFiliere("trauma");
-    const gastro = getTermsByFiliere("gastro_uro");
-    const cardio = getTermsByFiliere("cardio_pneumo");
-    const divers = getTermsByFiliere("divers");
-
-    if (trauma.some((term) => normalizedText.includes(simplify(term)))) {
-      return "trauma";
-    }
-    if (gastro.some((term) => normalizedText.includes(simplify(term)))) {
-      return "gastro_uro";
-    }
-    if (cardio.some((term) => normalizedText.includes(simplify(term)))) {
-      return "cardio_pneumo";
-    }
-    if (divers.some((term) => normalizedText.includes(simplify(term)))) {
-      return "divers";
+    for (const specialty of DETECTION_SPECIALTY_ORDER) {
+      if (
+        DETECTION_TERMS_BY_SPECIALTY[specialty].some((term) =>
+          normalizedText.includes(term),
+        )
+      ) {
+        return specialty;
+      }
     }
     return "divers";
   }
@@ -585,21 +638,17 @@
   function computeDiversAssignments() {
     const assignments = {};
     ALL_AREAS.forEach((area) => {
-      assignments[area.id] = resolveHospitalForArea(area, "divers", {});
+      assignments[area.id] = resolveHospitalForArea(area, "divers");
     });
     return assignments;
   }
 
-  function resolveMapHospital(area, specialty, diversAssignments = {}) {
-    return resolveHospitalForArea(area, specialty, diversAssignments);
+  function resolveMapHospital(area, specialty) {
+    return resolveHospitalForArea(area, specialty);
   }
 
-  function resolveOrientationHospital(area, symptomText, diversAssignments = {}) {
-    return resolveHospitalForArea(
-      area,
-      inferDetectedSpecialty(symptomText) || "divers",
-      diversAssignments,
-    );
+  function resolveOrientationHospital(area, symptomText) {
+    return resolveHospitalForArea(area, inferDetectedSpecialty(symptomText) || "divers");
   }
 
   function distanceKm(lat1, lng1, lat2, lng2) {

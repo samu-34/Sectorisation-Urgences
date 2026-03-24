@@ -94,11 +94,7 @@ test("resolveAreaFromSelection and orientation helpers stay coherent", () => {
   const diversAssignments = MediMapDomain.computeDiversAssignments();
   assert.equal(diversAssignments.saint_bres, "parc");
   assert.equal(
-    MediMapDomain.resolveOrientationHospital(
-      boirargues,
-      "traumatisme du poignet",
-      diversAssignments,
-    ),
+    MediMapDomain.resolveOrientationHospital(boirargues, "traumatisme du poignet"),
     "saint_roch",
   );
 
@@ -112,15 +108,10 @@ test("resolveAreaFromSelection and orientation helpers stay coherent", () => {
 
 test("Mauguio en traumatologie oriente vers la Clinique du Parc", () => {
   const mauguio = MediMapDomain.resolveAreaFromSelection("Mauguio", "");
-  const diversAssignments = MediMapDomain.computeDiversAssignments();
 
   assert.equal(mauguio.id, "mauguio");
   assert.equal(
-    MediMapDomain.resolveOrientationHospital(
-      mauguio,
-      "entorse de cheville",
-      diversAssignments,
-    ),
+    MediMapDomain.resolveOrientationHospital(mauguio, "entorse de cheville"),
     "parc",
   );
 });

@@ -1,7 +1,8 @@
 /**
  * MediMap — app.js
  * Couche UI : branche le DOM, l'autocomplete et Leaflet aux cas d'usage applicatifs
- * Dépend de data.js, domain.js, application.js, autocomplete.js et map-renderer.js
+ * Dépend de data.js, domain.js, application.js, autocomplete.js,
+ * city-input-controller.js et map-renderer.js
  */
 
 const DOM = {
@@ -23,33 +24,30 @@ const {
   simplify,
   getRankedMatches,
   filiereLabelById,
-  looksLikeMontpellierAddress,
-  resolveMontpellierGeocodeCandidate,
 } = MediMapDomain;
 const appController = MediMapApplication.createAppController();
-const REMOTE_CITY_SUGGESTION_DEBOUNCE_MS = 1100;
-let citySuggestionRequestId = 0;
-let citySuggestionAbortController = null;
-let citySuggestionDebounceTimer = null;
-let remoteCitySuggestions = [];
-let cityResolutionRequestId = 0;
-let cityResolutionAbortController = null;
 
 const mapRenderer = MediMapMapRenderer.createMapRenderer({
   mapElementId: "map",
   legendElement: DOM.legend,
   getOrientationSpecialty: () => appController.getOrientationSpecialty(),
   onOrientationPopupClose() {
-    appController.resetSession();
-    cancelPendingCitySuggestions();
-    cancelPendingCityResolution();
-    autocomplete.closeAllSuggestions();
-    renderSelectionState();
-    DOM.symptomInput.value = "";
-    renderDetectedSpecialtyIndicator();
-    resetDecisionState();
+    resetSessionUi();
   },
 });
+
+function resetSessionUi({ resetMapView = false } = {}) {
+  cityInputController.cancelPendingWork();
+  appController.resetSession();
+  autocomplete.closeAllSuggestions();
+  renderSelectionState();
+  DOM.symptomInput.value = "";
+  renderDetectedSpecialtyIndicator();
+  resetDecisionState();
+  if (resetMapView) {
+    mapRenderer.setDefaultMapView();
+  }
+}
 
 function renderDetectedSpecialtyIndicator() {
   const { detectedSpecialty } = appController.getState();
@@ -151,237 +149,6 @@ function applySymptomInput(text, options = {}) {
   return result;
 }
 
-function cancelPendingCitySuggestions() {
-  if (citySuggestionDebounceTimer !== null) {
-    clearTimeout(citySuggestionDebounceTimer);
-    citySuggestionDebounceTimer = null;
-  }
-  citySuggestionRequestId += 1;
-  remoteCitySuggestions = [];
-  if (citySuggestionAbortController) {
-    citySuggestionAbortController.abort();
-    citySuggestionAbortController = null;
-  }
-}
-
-function cancelPendingCityResolution() {
-  cityResolutionRequestId += 1;
-  if (cityResolutionAbortController) {
-    cityResolutionAbortController.abort();
-    cityResolutionAbortController = null;
-  }
-}
-
-function syncSelectionFromCityInput(rawValue) {
-  const result = appController.selectCityInput(rawValue);
-  renderSelectionState();
-  return result.selection.matched;
-}
-
-function renderCitySuggestions(query) {
-  autocomplete.renderCitySuggestions(query, {
-    extraItems: remoteCitySuggestions,
-  });
-}
-
-function canResolveRemoteAddress() {
-  return typeof fetch === "function";
-}
-
-function buildMontpellierGeocodeUrl(rawValue, { limit = 5 } = {}) {
-  const trimmed = String(rawValue || "").trim();
-  const query = simplify(trimmed).includes("montpellier")
-    ? trimmed
-    : `${trimmed}, Montpellier`;
-  return `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=${limit}&countrycodes=fr&accept-language=fr&q=${encodeURIComponent(query)}`;
-}
-
-function buildMontpellierAddressSuggestion(candidate) {
-  const selection = resolveMontpellierGeocodeCandidate(candidate);
-  if (!selection.matched) {
-    return null;
-  }
-
-  const address = candidate.address || {};
-  const streetName =
-    address.road ||
-    address.pedestrian ||
-    address.footway ||
-    address.cycleway ||
-    address.path ||
-    candidate.name ||
-    "";
-  const houseNumber = address.house_number || "";
-  const district =
-    address.suburb ||
-    address.neighbourhood ||
-    address.neighborhood ||
-    address.quarter ||
-    address.city_district ||
-    "";
-  const streetLabel = [houseNumber, streetName].filter(Boolean).join(" ").trim();
-  const labelParts = [
-    streetLabel || candidate.display_name || "Adresse Montpellier",
-    "Montpellier",
-    district ? `(${district})` : "",
-  ].filter(Boolean);
-
-  return {
-    label: labelParts.join(", ").replace(", (", " ("),
-    category: "Adresse Montpellier",
-    inputValue:
-      candidate.display_name ||
-      [streetLabel, "34000 Montpellier"].filter(Boolean).join(", "),
-    selection,
-  };
-}
-
-async function loadRemoteCitySuggestions(rawValue) {
-  const trimmed = String(rawValue || "").trim();
-  if (!trimmed || !looksLikeMontpellierAddress(trimmed) || !canResolveRemoteAddress()) {
-    return;
-  }
-
-  const requestId = citySuggestionRequestId;
-  const controller =
-    typeof AbortController === "function" ? new AbortController() : null;
-  citySuggestionAbortController = controller;
-
-  try {
-    const response = await fetch(buildMontpellierGeocodeUrl(trimmed, { limit: 6 }), {
-      signal: controller ? controller.signal : undefined,
-    });
-    if (!response.ok) {
-      return;
-    }
-
-    const payload = await response.json();
-    const candidates = Array.isArray(payload) ? payload : [];
-    if (
-      requestId !== citySuggestionRequestId ||
-      simplify(DOM.cityInput.value) !== simplify(trimmed)
-    ) {
-      return;
-    }
-
-    remoteCitySuggestions = Array.from(
-      new Map(
-        candidates
-          .map((candidate) => buildMontpellierAddressSuggestion(candidate))
-          .filter(Boolean)
-          .map((suggestion) => [simplify(suggestion.label), suggestion]),
-      ).values(),
-    ).slice(0, 5);
-
-    renderCitySuggestions(DOM.cityInput.value);
-  } catch (error) {
-    if (!error || error.name !== "AbortError") {
-      remoteCitySuggestions = [];
-    }
-  } finally {
-    if (requestId === citySuggestionRequestId) {
-      citySuggestionAbortController = null;
-    }
-  }
-}
-
-function scheduleRemoteCitySuggestions(rawValue) {
-  const trimmed = String(rawValue || "").trim();
-  if (
-    !trimmed ||
-    trimmed.length < 6 ||
-    !looksLikeMontpellierAddress(trimmed) ||
-    !canResolveRemoteAddress()
-  ) {
-    return;
-  }
-
-  citySuggestionDebounceTimer = window.setTimeout(() => {
-    citySuggestionDebounceTimer = null;
-    void loadRemoteCitySuggestions(trimmed);
-  }, REMOTE_CITY_SUGGESTION_DEBOUNCE_MS);
-}
-
-async function tryResolveMontpellierAddress(rawValue) {
-  const trimmed = String(rawValue || "").trim();
-  if (!trimmed || !looksLikeMontpellierAddress(trimmed) || !canResolveRemoteAddress()) {
-    return false;
-  }
-
-  if (appController.getCurrentArea()) {
-    return true;
-  }
-
-  cancelPendingCityResolution();
-  const requestId = cityResolutionRequestId;
-  const controller =
-    typeof AbortController === "function" ? new AbortController() : null;
-  cityResolutionAbortController = controller;
-
-  try {
-    const response = await fetch(buildMontpellierGeocodeUrl(trimmed), {
-      signal: controller ? controller.signal : undefined,
-    });
-    if (!response.ok) {
-      return false;
-    }
-
-    const payload = await response.json();
-    const candidates = Array.isArray(payload) ? payload : [];
-    if (
-      requestId !== cityResolutionRequestId ||
-      simplify(DOM.cityInput.value) !== simplify(trimmed)
-    ) {
-      return false;
-    }
-
-    for (const candidate of candidates) {
-      const selection = resolveMontpellierGeocodeCandidate(candidate);
-      if (!selection.matched) continue;
-
-      appController.applyResolvedSelection(selection, { inputValue: trimmed });
-      renderSelectionState();
-      return true;
-    }
-
-    return false;
-  } catch (error) {
-    if (error && error.name === "AbortError") {
-      return false;
-    }
-    return false;
-  } finally {
-    if (requestId === cityResolutionRequestId) {
-      cityResolutionAbortController = null;
-    }
-  }
-}
-
-async function syncSelectionFromCityInputWithFallback(rawValue) {
-  const matched = syncSelectionFromCityInput(rawValue);
-  if (!matched) {
-    await tryResolveMontpellierAddress(rawValue);
-  }
-  updateDecision();
-}
-
-function applyCitySelection(picked) {
-  cancelPendingCitySuggestions();
-  cancelPendingCityResolution();
-  if (picked && typeof picked === "object" && picked.selection) {
-    appController.applyResolvedSelection(picked.selection, {
-      inputValue: picked.inputValue || picked.label || "",
-    });
-  } else if (picked && typeof picked === "object") {
-    appController.selectCityInput(picked.inputValue || picked.label || "");
-  } else {
-    appController.selectCityInput(picked);
-  }
-  renderSelectionState();
-  autocomplete.closeCitySuggestions();
-  updateDecision();
-}
-
 function getCurrentArea() {
   return appController.getCurrentArea();
 }
@@ -407,6 +174,8 @@ function updateDecision() {
   mapRenderer.showOrientation(decision.orientation);
 }
 
+let cityInputController = null;
+
 const autocomplete = MediMapAutocomplete.createAutocompleteController({
   DOM,
   simplify,
@@ -418,8 +187,33 @@ const autocomplete = MediMapAutocomplete.createAutocompleteController({
     DOM.symptomInput.value = label;
     updateDecision();
   },
-  onCityPick: applyCitySelection,
+  onCityPick(picked) {
+    cityInputController.applyCitySelection(picked);
+  },
 });
+
+cityInputController = MediMapCityInput.createCityInputController({
+  DOM,
+  appController,
+  autocomplete,
+  simplify,
+  looksLikeMontpellierAddress: MediMapDomain.looksLikeMontpellierAddress,
+  resolveMontpellierGeocodeCandidate: MediMapDomain.resolveMontpellierGeocodeCandidate,
+  onSelectionStateChange() {
+    renderSelectionState();
+  },
+  onDecisionChange() {
+    updateDecision();
+  },
+});
+
+function syncSelectionFromCityInput(rawValue) {
+  return cityInputController.syncSelectionFromCityInput(rawValue);
+}
+
+async function syncSelectionFromCityInputWithFallback(rawValue) {
+  await cityInputController.syncSelectionFromCityInputWithFallback(rawValue);
+}
 
 DOM.symptomInput.addEventListener("input", () => {
   autocomplete.renderSymptomSuggestions(DOM.symptomInput.value);
@@ -427,20 +221,12 @@ DOM.symptomInput.addEventListener("input", () => {
 });
 
 DOM.cityInput.addEventListener("input", () => {
-  cancelPendingCitySuggestions();
-  cancelPendingCityResolution();
-  renderCitySuggestions(DOM.cityInput.value);
-  const matched = syncSelectionFromCityInput(DOM.cityInput.value);
-  updateDecision();
-  if (!matched) {
-    scheduleRemoteCitySuggestions(DOM.cityInput.value);
-  }
+  cityInputController.handleInput(DOM.cityInput.value);
 });
 
 DOM.cityInput.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
-    cancelPendingCitySuggestions();
-    autocomplete.closeCitySuggestions();
+    cityInputController.handleEscape();
     return;
   }
   if (event.key === "ArrowDown") {
@@ -461,14 +247,11 @@ DOM.cityInput.addEventListener("keydown", (event) => {
   }
 
   autocomplete.closeCitySuggestions();
-  void syncSelectionFromCityInputWithFallback(DOM.cityInput.value);
+  void cityInputController.handleSubmit(DOM.cityInput.value);
 });
 
 DOM.cityInput.addEventListener("blur", () => {
-  window.setTimeout(() => {
-    cancelPendingCitySuggestions();
-    void syncSelectionFromCityInputWithFallback(DOM.cityInput.value);
-  }, 0);
+  cityInputController.handleBlur(DOM.cityInput.value);
 });
 
 DOM.symptomInput.addEventListener("keydown", (event) => {
@@ -494,32 +277,22 @@ DOM.symptomInput.addEventListener("keydown", (event) => {
 });
 
 DOM.regulateBtn.addEventListener("click", () => {
-  void syncSelectionFromCityInputWithFallback(DOM.cityInput.value);
+  void cityInputController.handleSubmit(DOM.cityInput.value);
 });
 
 DOM.focusBtn.addEventListener("click", () => {
-  cancelPendingCitySuggestions();
-  cancelPendingCityResolution();
-  appController.resetSession();
-  autocomplete.closeAllSuggestions();
-  renderSelectionState();
-  DOM.symptomInput.value = "";
-  renderDetectedSpecialtyIndicator();
-  resetDecisionState();
-  mapRenderer.setDefaultMapView();
+  resetSessionUi({ resetMapView: true });
 });
 
 DOM.citySelect.addEventListener("change", () => {
-  cancelPendingCitySuggestions();
-  cancelPendingCityResolution();
+  cityInputController.cancelPendingWork();
   appController.selectCityValue(DOM.citySelect.value);
   renderSelectionState();
   updateDecision();
 });
 
 DOM.subzoneSelect.addEventListener("change", () => {
-  cancelPendingCitySuggestions();
-  cancelPendingCityResolution();
+  cityInputController.cancelPendingWork();
   appController.selectSubzone(DOM.subzoneSelect.value);
   renderSelectionState({ syncCityInput: false });
   updateDecision();

@@ -516,6 +516,18 @@ function createAppHarness({ fetchImpl, AbortControllerImpl } = {}) {
   const domainSource = fs.readFileSync(path.join(__dirname, "..", "domain.js"), "utf8");
   const applicationSource = fs.readFileSync(path.join(__dirname, "..", "application.js"), "utf8");
   const autocompleteSource = fs.readFileSync(path.join(__dirname, "..", "autocomplete.js"), "utf8");
+  const cityInputControllerSource = fs.readFileSync(
+    path.join(__dirname, "..", "city-input-controller.js"),
+    "utf8",
+  );
+  const mapRendererStaticSource = fs.readFileSync(
+    path.join(__dirname, "..", "map-renderer-static.js"),
+    "utf8",
+  );
+  const mapRendererLayoutSource = fs.readFileSync(
+    path.join(__dirname, "..", "map-renderer-layout.js"),
+    "utf8",
+  );
   const mapRendererSource = fs.readFileSync(path.join(__dirname, "..", "map-renderer.js"), "utf8");
   const appSource = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
 
@@ -528,6 +540,15 @@ function createAppHarness({ fetchImpl, AbortControllerImpl } = {}) {
   vm.runInContext(domainSource, context, { filename: "domain.js" });
   vm.runInContext(applicationSource, context, { filename: "application.js" });
   vm.runInContext(autocompleteSource, context, { filename: "autocomplete.js" });
+  vm.runInContext(cityInputControllerSource, context, {
+    filename: "city-input-controller.js",
+  });
+  vm.runInContext(mapRendererStaticSource, context, {
+    filename: "map-renderer-static.js",
+  });
+  vm.runInContext(mapRendererLayoutSource, context, {
+    filename: "map-renderer-layout.js",
+  });
   vm.runInContext(mapRendererSource, context, { filename: "map-renderer.js" });
   vm.runInContext(
     `${appSource}
