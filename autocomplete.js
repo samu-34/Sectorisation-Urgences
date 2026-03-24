@@ -18,6 +18,7 @@
   }) {
     let symptomSuggestionIndex = -1;
     let citySuggestionIndex = -1;
+    let currentCitySuggestions = [];
 
     function getSuggestItems(box) {
       return [...box.querySelectorAll(".suggest-item")];
@@ -55,6 +56,7 @@
     function closeCitySuggestions() {
       DOM.citySuggestBox.innerHTML = "";
       citySuggestionIndex = -1;
+      currentCitySuggestions = [];
       setSuggestBoxState(DOM.cityInput, DOM.citySuggestBox, false);
     }
 
@@ -147,33 +149,22 @@
       });
     }
 
-    function renderCitySuggestions(query) {
-      const normalizedQuery = simplify(query);
-      if (!normalizedQuery) {
+    function renderCitySuggestionEntries(entries) {
+      if (!entries.length) {
         closeCitySuggestions();
         return;
       }
 
-      const matches = getRankedMatches(
-        cityItems,
-        normalizedQuery,
-        (suggestion) => suggestion.label,
-      ).slice(0, 10);
-
-      if (!matches.length) {
-        closeCitySuggestions();
-        return;
-      }
-
+      currentCitySuggestions = entries.slice();
       clearBox(DOM.citySuggestBox);
       DOM.citySuggestBox.append(
-        ...matches.map((suggestion, idx) =>
+        ...entries.map((suggestion, idx) =>
           buildSuggestionItem({
             id: `city-option-${idx}`,
             label: suggestion.label,
             category: suggestion.category,
             dataset: {
-              city: suggestion.label,
+              index: String(idx),
             },
           }),
         ),
@@ -184,8 +175,38 @@
       setActiveSuggestion(DOM.cityInput, DOM.citySuggestBox, citySuggestionIndex);
 
       DOM.citySuggestBox.querySelectorAll(".suggest-item").forEach((element) => {
-        element.addEventListener("click", () => onCityPick(element.dataset.city));
+        element.addEventListener("click", () => {
+          const suggestion = currentCitySuggestions[Number(element.dataset.index)];
+          if (suggestion) {
+            onCityPick(suggestion);
+          }
+        });
       });
+    }
+
+    function renderCitySuggestions(query, { extraItems = [] } = {}) {
+      const normalizedQuery = simplify(query);
+      if (!normalizedQuery) {
+        closeCitySuggestions();
+        return;
+      }
+
+      const localMatches = getRankedMatches(
+        cityItems,
+        normalizedQuery,
+        (suggestion) => suggestion.label,
+      ).slice(0, 10);
+
+      const mergedEntries = Array.from(
+        new Map(
+          [...localMatches, ...extraItems].map((suggestion) => [
+            `${simplify(suggestion.label)}::${simplify(suggestion.category || "")}`,
+            suggestion,
+          ]),
+        ).values(),
+      ).slice(0, 10);
+
+      renderCitySuggestionEntries(mergedEntries);
     }
 
     function acceptActiveCitySuggestion() {
@@ -195,7 +216,11 @@
       if (!current || DOM.citySuggestBox.classList.contains("hidden")) {
         return false;
       }
-      onCityPick(current.dataset.city);
+      const suggestion = currentCitySuggestions[Number(current.dataset.index)];
+      if (!suggestion) {
+        return false;
+      }
+      onCityPick(suggestion);
       return true;
     }
 

@@ -36,6 +36,15 @@
       cityValue: selection.cityValue,
       subzoneValue: selection.subzoneValue,
       displayValue: selection.displayValue,
+      resolvedPoint: selection.resolvedPoint
+        ? {
+            lat: selection.resolvedPoint.lat,
+            lng: selection.resolvedPoint.lng,
+            label: selection.resolvedPoint.label,
+            precision: selection.resolvedPoint.precision,
+          }
+        : null,
+      isAddressSelection: Boolean(selection.isAddressSelection),
     };
   }
 
@@ -47,6 +56,7 @@
       symptomInputValue: "",
       detectedSpecialty: "",
       mapSpecialty: "divers",
+      originPoint: null,
       diversAssignments: domain.computeDiversAssignments(),
     };
 
@@ -98,6 +108,14 @@
         symptomInputValue: state.symptomInputValue,
         detectedSpecialty: state.detectedSpecialty,
         mapSpecialty: state.mapSpecialty,
+        originPoint: state.originPoint
+          ? {
+              lat: state.originPoint.lat,
+              lng: state.originPoint.lng,
+              label: state.originPoint.label,
+              precision: state.originPoint.precision,
+            }
+          : null,
         diversAssignments: { ...state.diversAssignments },
         currentArea: resolveCurrentArea(),
       };
@@ -122,10 +140,33 @@
     function selectCityInput(rawValue) {
       state.cityInputValue = String(rawValue ?? "");
       const selection = domain.resolveCitySelection(state.cityInputValue);
-      state.cityValue = selection.cityValue;
-      state.subzoneValue = selection.subzoneValue;
+      return applyResolvedSelection(selection, {
+        inputValue:
+          selection.matched && selection.displayValue
+            ? selection.displayValue
+            : state.cityInputValue,
+      });
+    }
 
-      if (selection.matched && selection.displayValue) {
+    function applyResolvedSelection(selection, { inputValue } = {}) {
+      state.cityValue = String(selection.cityValue || "");
+      state.subzoneValue = String(selection.subzoneValue || "");
+      state.originPoint = selection.resolvedPoint
+        ? {
+            lat: selection.resolvedPoint.lat,
+            lng: selection.resolvedPoint.lng,
+            label: selection.resolvedPoint.label,
+            precision: selection.resolvedPoint.precision,
+          }
+        : null;
+
+      if (inputValue !== undefined) {
+        state.cityInputValue = String(inputValue ?? "");
+      } else if (
+        selection.matched &&
+        selection.displayValue &&
+        !selection.isAddressSelection
+      ) {
         state.cityInputValue = selection.displayValue;
       }
 
@@ -141,6 +182,7 @@
       state.cityValue = String(cityValue || "");
       state.cityInputValue = state.cityValue;
       state.subzoneValue = "";
+      state.originPoint = null;
 
       return {
         subzoneModel: getSubzoneModel(state.cityValue),
@@ -151,6 +193,7 @@
 
     function selectSubzone(subzoneValue) {
       state.subzoneValue = String(subzoneValue || "");
+      state.originPoint = null;
       return {
         currentArea: resolveCurrentArea(),
         state: getState(),
@@ -201,14 +244,25 @@
         state.symptomInputValue,
         state.diversAssignments,
       );
+      const originPoint =
+        state.originPoint || {
+          lat: area.lat,
+          lng: area.lng,
+          label: area.label,
+          precision: "area",
+        };
 
       return {
         mapSpecialtyChanged,
         orientation: {
           area,
+          originPoint,
           hospitalId,
           symptom: state.symptomInputValue.trim(),
-          travelEstimate: domain.estimateTheoreticalTravel(area, hospitalId),
+          travelEstimate: domain.estimateTheoreticalTravelFromPoint(
+            originPoint,
+            hospitalId,
+          ),
         },
         state: getState(),
       };
@@ -240,6 +294,7 @@
       state.subzoneValue = "";
       state.symptomInputValue = "";
       state.detectedSpecialty = "";
+      state.originPoint = null;
       state.mapSpecialty = preservedMapSpecialty;
       computeDiversAssignments();
 
@@ -257,6 +312,7 @@
       getCurrentArea,
       getOrientationSpecialty,
       selectCityInput,
+      applyResolvedSelection,
       selectCityValue,
       selectSubzone,
       setSymptomInput,

@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#17313b" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.tile.openstreetmap.org https://tile.openstreetmap.org; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.tile.openstreetmap.org https://tile.openstreetmap.org; connect-src 'self' https://nominatim.openstreetmap.org; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'"
     />
     <meta
       name="description"
@@ -16,10 +16,7 @@
     <title>SAMU34 - Sectorisation Urgences</title>
 
     <!-- Leaflet CSS -->
-    <link
-      rel="stylesheet"
-      href="vendor/leaflet/leaflet.css?v=20260319-1735"
-    />
+    <link rel="stylesheet" href="vendor/leaflet/leaflet.css?v=20260319-1735" />
     <!-- App CSS -->
     <link rel="stylesheet" href="style.css?v=20260319-1735" />
   </head>
@@ -93,12 +90,12 @@
 
               <!-- Commune -->
               <div>
-                <label for="cityInput">Commune :</label>
+                <label for="cityInput">Localisation :</label>
                 <div class="autocomplete-wrap">
                   <input
                     id="cityInput"
                     type="text"
-                    placeholder="Rechercher une commune / quartier …"
+                    placeholder="Commune / Quartier ou Adresse dans Montpellier  …"
                     autocomplete="off"
                     role="combobox"
                     aria-autocomplete="list"
@@ -164,6 +161,7 @@
 
     <!-- Scripts : data d'abord, puis domaine / UI, puis Leaflet, puis app -->
     <script src="data.js?v=20260319-1735"></script>
+    <script src="generated/montpellier_street_index.js?v=20260324-1621"></script>
     <script src="domain.js?v=20260319-1735"></script>
     <script src="application.js?v=20260319-1735"></script>
     <script src="autocomplete.js?v=20260319-1735"></script>

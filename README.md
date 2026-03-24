@@ -17,6 +17,8 @@ metier statiques, maintenues dans [data.js](./data.js).
 - detection automatique de la filiere a partir d'un catalogue de motifs
 - autocompletion des motifs, communes, quartiers de Montpellier et secteurs de
   Lattes
+- prise en charge locale des rues et adresses Montpellier intramuros a partir
+  d'une base officielle transformee en index de rues
 - affichage cartographique de la sectorisation par filiere
 - proposition d'une destination prioritaire avec focus carte et trace visuelle
 - affichage des coordonnees etablissements, numeros utiles et estimation
@@ -43,6 +45,9 @@ Les metadonnees etablissements incluent une date de verification
 - application front statique: [index.html](./index.html),
   [style.css](./style.css), [app.js](./app.js), [application.js](./application.js),
   [domain.js](./domain.js), [data.js](./data.js)
+- base locale adresses Montpellier: [`db/montpellier_addresses.sqlite`](./db/montpellier_addresses.sqlite)
+- index rues -> sous-zone charge par le front: [`generated/montpellier_street_index.js`](./generated/montpellier_street_index.js)
+- script de construction data: [`scripts/build_montpellier_address_db.py`](./scripts/build_montpellier_address_db.py)
 - carte: Leaflet 1.9.4 embarque localement dans [`vendor/leaflet/`](./vendor/leaflet)
 - fond de carte: tuiles OpenStreetMap
 - serveur local de dev sans cache: [dev_server.py](./dev_server.py)
@@ -58,6 +63,10 @@ Les metadonnees etablissements incluent une date de verification
 ├── application.js    # cas d'usage applicatifs
 ├── domain.js         # regles metier pures
 ├── data.js           # referentiel metier et sectorisation declarative
+├── data_sources/     # sources open data Montpellier utilisees pour la base locale
+├── db/               # schema SQLite + base locale adresses Montpellier
+├── generated/        # artefacts generes pour le front (index de rues)
+├── scripts/          # scripts de construction / regeneration des donnees
 ├── dev_server.py     # serveur statique local sans cache
 ├── vendor/leaflet/   # distribution Leaflet embarquee
 ├── tests/            # tests data + comportements UI
@@ -109,6 +118,25 @@ Couverture actuelle:
 - verification du comportement principal de l'UI via un harnais DOM / Leaflet
   simule
 
+## Base adresses Montpellier
+
+La base locale repose sur:
+
+1. le jeu officiel point-adresse de la Ville de Montpellier
+2. le jeu officiel des sous-quartiers de Montpellier
+3. une correspondance de ces sous-quartiers vers les `9` sous-zones MediMap
+
+Construction / regeneration:
+
+```bash
+python3 scripts/build_montpellier_address_db.py
+```
+
+Le script produit:
+
+- [`db/montpellier_addresses.sqlite`](./db/montpellier_addresses.sqlite) avec les adresses et leur rattachement de sous-zone
+- [`generated/montpellier_street_index.js`](./generated/montpellier_street_index.js) charge par le front pour resoudre une rue comme `rue Joffre`
+
 ## Deploiement GitHub Pages
 
 Le projet peut etre publie tel quel sur GitHub Pages car:
@@ -134,8 +162,8 @@ Comme les liens sont relatifs, aucun changement de `basePath` n'est necessaire p
 ## Utilisation
 
 1. saisir un motif d'appel dans `Motif d'appel`
-2. saisir une commune, un quartier de Montpellier, un secteur de Lattes ou un
-   alias reconnu
+2. saisir une commune, un quartier de Montpellier, une adresse Montpellier
+   intramuros, un secteur de Lattes ou un alias reconnu
 3. verifier la filiere detectee dans `Filiere`
 4. cliquer sur `Orientation` si necessaire
 5. consulter la destination proposee sur la carte et dans le popup
@@ -143,6 +171,13 @@ Comme les liens sont relatifs, aucun changement de `basePath` n'est necessaire p
 
 Les puces de filiere permettent aussi d'afficher la sectorisation cartographique
 par specialite, independamment de la saisie courante.
+
+Pour les adresses Montpellier, l'application:
+
+1. tente d'abord une resolution locale a partir du quartier, de la rue ou d'un
+   repere de voie deja connu
+2. s'appuie sur l'index de rues genere depuis la base locale Montpellier
+3. ignore le numero de voie pour privilegier le rattachement territorial
 
 ## Referentiel technique et metier
 

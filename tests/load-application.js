@@ -4,6 +4,7 @@ const vm = require("node:vm");
 
 function loadApplicationExports() {
   const dataPath = path.join(__dirname, "..", "data.js");
+  const streetIndexPath = path.join(__dirname, "..", "generated", "montpellier_street_index.js");
   const domainPath = path.join(__dirname, "..", "domain.js");
   const applicationPath = path.join(__dirname, "..", "application.js");
 
@@ -13,6 +14,11 @@ function loadApplicationExports() {
   vm.runInContext(fs.readFileSync(dataPath, "utf8"), context, {
     filename: dataPath,
   });
+  if (fs.existsSync(streetIndexPath)) {
+    vm.runInContext(fs.readFileSync(streetIndexPath, "utf8"), context, {
+      filename: streetIndexPath,
+    });
+  }
   vm.runInContext(fs.readFileSync(domainPath, "utf8"), context, {
     filename: domainPath,
   });

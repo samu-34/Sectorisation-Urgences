@@ -341,6 +341,8 @@ function createLeafletStub() {
         _controls: [],
         _zoom: 10,
         setView() {
+          const listeners = this._listeners.get("moveend") || [];
+          listeners.forEach((listener) => listener());
           return this;
         },
         getZoom() {
@@ -355,10 +357,23 @@ function createLeafletStub() {
         fitBounds(bounds, options) {
           this._lastBounds = bounds;
           this._lastFitOptions = options;
+          const listeners = this._listeners.get("moveend") || [];
+          listeners.forEach((listener) => listener());
           return this;
         },
+        latLngToContainerPoint(latlng) {
+          const value = Array.isArray(latlng)
+            ? { lat: latlng[0], lng: latlng[1] }
+            : latlng;
+          return {
+            x: 640 + (value.lng - 3.87) * 20000,
+            y: 360 - (value.lat - 43.61) * 20000,
+          };
+        },
         on(type, listener) {
-          this._listeners.set(type, listener);
+          const list = this._listeners.get(type) || [];
+          list.push(listener);
+          this._listeners.set(type, list);
           return this;
         },
         addControl(control) {
@@ -367,6 +382,8 @@ function createLeafletStub() {
         },
         closePopup(popup) {
           this._lastClosedPopup = popup;
+          const listeners = this._listeners.get("popupclose") || [];
+          listeners.forEach((listener) => listener({ popup }));
           return this;
         },
         invalidateSize() {
@@ -424,8 +441,12 @@ function createLeafletStub() {
       };
     },
     popup(options = {}) {
+      const element = new FakeElement("div");
+      element.offsetWidth = 320;
+      element.offsetHeight = 220;
       return {
         options,
+        _container: element,
         setLatLng(latlng) {
           this.latlng = latlng;
           return this;
@@ -434,18 +455,28 @@ function createLeafletStub() {
           this.content = content;
           return this;
         },
+        update() {
+          this.updated = true;
+          return this;
+        },
         openOn(map) {
           this.map = map;
           map._lastPopup = this;
           return this;
+        },
+        getElement() {
+          return this._container;
         }
       };
     }
   };
 }
 
-function createAppHarness() {
+function createAppHarness({ fetchImpl, AbortControllerImpl } = {}) {
   const document = new FakeDocument();
+  const legendElement = document.getElementById("legend");
+  legendElement.offsetWidth = 280;
+  legendElement.offsetHeight = 190;
   const windowListeners = new Map();
   const windowObject = {
     addEventListener(type, listener) {
@@ -462,7 +493,8 @@ function createAppHarness() {
       fn();
       return 0;
     },
-    clearTimeout() {}
+    clearTimeout() {},
+    fetch: fetchImpl
   };
 
   const context = vm.createContext({
@@ -472,12 +504,15 @@ function createAppHarness() {
     globalThis: null,
     Node: FakeNode,
     L: createLeafletStub(),
+    fetch: fetchImpl,
+    AbortController: AbortControllerImpl,
     setTimeout: windowObject.setTimeout,
     clearTimeout: windowObject.clearTimeout
   });
   context.globalThis = context;
 
   const dataSource = fs.readFileSync(path.join(__dirname, "..", "data.js"), "utf8");
+  const streetIndexPath = path.join(__dirname, "..", "generated", "montpellier_street_index.js");
   const domainSource = fs.readFileSync(path.join(__dirname, "..", "domain.js"), "utf8");
   const applicationSource = fs.readFileSync(path.join(__dirname, "..", "application.js"), "utf8");
   const autocompleteSource = fs.readFileSync(path.join(__dirname, "..", "autocomplete.js"), "utf8");
@@ -485,6 +520,11 @@ function createAppHarness() {
   const appSource = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
 
   vm.runInContext(dataSource, context, { filename: "data.js" });
+  if (fs.existsSync(streetIndexPath)) {
+    vm.runInContext(fs.readFileSync(streetIndexPath, "utf8"), context, {
+      filename: "generated/montpellier_street_index.js",
+    });
+  }
   vm.runInContext(domainSource, context, { filename: "domain.js" });
   vm.runInContext(applicationSource, context, { filename: "application.js" });
   vm.runInContext(autocompleteSource, context, { filename: "autocomplete.js" });

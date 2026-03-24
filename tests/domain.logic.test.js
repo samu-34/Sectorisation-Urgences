@@ -39,6 +39,48 @@ test("resolveCitySelection handles commune, alias and unknown inputs", () => {
   assert.equal(unknown.displayValue, "");
 });
 
+test("Montpellier address helpers resolve local address forms and geocoded candidates", () => {
+  assert.equal(
+    MediMapDomain.looksLikeMontpellierAddress("12 rue de la Pompignane, 34000 Montpellier"),
+    true,
+  );
+  assert.equal(MediMapDomain.looksLikeMontpellierAddress("Juvignac"), false);
+
+  const localAddress = MediMapDomain.resolveCitySelection("10 rue Joffre");
+  assert.equal(localAddress.matched, true);
+  assert.equal(localAddress.cityValue, "Montpellier");
+  assert.equal(localAddress.subzoneValue, "mtp_centre_historique");
+  assert.equal(localAddress.resolvedPoint !== null, true);
+  assert.equal(localAddress.isAddressSelection, true);
+  assert.equal(localAddress.resolvedPoint.precision, "address");
+
+  const joffre = MediMapDomain.resolveCitySelection("rue Joffre");
+  assert.equal(joffre.matched, true);
+  assert.equal(joffre.cityValue, "Montpellier");
+  assert.equal(joffre.subzoneValue, "mtp_centre_historique");
+  assert.equal(joffre.resolvedPoint !== null, true);
+  assert.equal(joffre.resolvedPoint.precision, "street");
+
+  const byLabel = MediMapDomain.resolveMontpellierGeocodeCandidate({
+    address: {
+      city: "Montpellier",
+      suburb: "Antigone",
+    },
+  });
+  assert.equal(byLabel.matched, true);
+  assert.equal(byLabel.subzoneValue, "mtp_port_marianne");
+
+  const byCoordinates = MediMapDomain.resolveMontpellierGeocodeCandidate({
+    lat: "43.5865",
+    lon: "3.858",
+    address: {
+      city: "Montpellier",
+    },
+  });
+  assert.equal(byCoordinates.matched, true);
+  assert.equal(byCoordinates.subzoneValue, "mtp_croix_argent");
+});
+
 test("resolveAreaFromSelection and orientation helpers stay coherent", () => {
   const juvignac = MediMapDomain.resolveAreaFromSelection("Juvignac", "");
   assert.equal(juvignac.id, "juvignac");

@@ -11,6 +11,7 @@
     mapElementId = "map",
     legendElement = null,
     getOrientationSpecialty = () => "divers",
+    onOrientationPopupClose = null,
   } = {}) {
     const map = L.map(mapElementId, { zoomControl: true }).setView(
       [43.61, 3.87],
@@ -29,6 +30,24 @@
     let focusLayer = null;
     let routeLayer = null;
     let orientationPopup = null;
+    let orientationPopupPlacement = null;
+    let orientationPopupHospitalId = null;
+    let skipNextOrientationPopupCloseCallback = false;
+
+    const ORIENTATION_POPUP_CLASS = "orientation-popup";
+    const ORIENTATION_POPUP_PLACEMENTS = ["right", "left"];
+    const ORIENTATION_POPUP_GAP_PX = 18;
+    const ORIENTATION_POPUP_VIEWPORT_MARGIN_PX = 16;
+    const ORIENTATION_POPUP_FALLBACK_SIZE = Object.freeze({
+      width: 320,
+      height: 220,
+    });
+    const LEGEND_FALLBACK_SIZE = Object.freeze({
+      width: 280,
+      height: 190,
+      left: 12,
+      bottom: 12,
+    });
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 19,
@@ -378,10 +397,309 @@
       }
     }
 
-    function closeOrientationPopup() {
-      if (!orientationPopup) return;
-      map.closePopup(orientationPopup);
+    function handleOrientationPopupClosed(popup) {
+      if (!popup || popup !== orientationPopup) {
+        skipNextOrientationPopupCloseCallback = false;
+        return;
+      }
+
+      const shouldNotifyApp = !skipNextOrientationPopupCloseCallback;
+      skipNextOrientationPopupCloseCallback = false;
       orientationPopup = null;
+      orientationPopupPlacement = null;
+      orientationPopupHospitalId = null;
+      clearSelectionVisuals();
+
+      if (shouldNotifyApp && typeof onOrientationPopupClose === "function") {
+        onOrientationPopupClose();
+      }
+    }
+
+    function closeOrientationPopup({ notifyApp = false } = {}) {
+      if (!orientationPopup) return;
+      skipNextOrientationPopupCloseCallback = !notifyApp;
+      map.closePopup(orientationPopup);
+    }
+
+    function projectLatLngToContainerPoint(latlng) {
+      if (typeof map.latLngToContainerPoint === "function") {
+        const point = map.latLngToContainerPoint(latlng);
+        return { x: point.x, y: point.y };
+      }
+
+      const size = map.getSize();
+      const lat = Array.isArray(latlng) ? latlng[0] : latlng.lat;
+      const lng = Array.isArray(latlng) ? latlng[1] : latlng.lng;
+      const centerLat = 43.61;
+      const centerLng = 3.87;
+      const scale = 18000;
+
+      return {
+        x: size.x / 2 + (lng - centerLng) * scale,
+        y: size.y / 2 - (lat - centerLat) * scale,
+      };
+    }
+
+    function getPopupElement(popup) {
+      if (!popup) return null;
+      if (typeof popup.getElement === "function") {
+        return popup.getElement();
+      }
+      return popup._container || null;
+    }
+
+    function getPopupElementSize(popup) {
+      const element = getPopupElement(popup);
+      const width =
+        Number(element?.offsetWidth) || ORIENTATION_POPUP_FALLBACK_SIZE.width;
+      const height =
+        Number(element?.offsetHeight) || ORIENTATION_POPUP_FALLBACK_SIZE.height;
+
+      return { width, height };
+    }
+
+    function getLegendViewportBox(viewportSize = map.getSize()) {
+      if (!legendElement || legendElement.classList?.contains("hidden")) {
+        return null;
+      }
+
+      const width = Number(legendElement.offsetWidth) || LEGEND_FALLBACK_SIZE.width;
+      const height = Number(legendElement.offsetHeight) || LEGEND_FALLBACK_SIZE.height;
+      const left = LEGEND_FALLBACK_SIZE.left;
+      const bottom = LEGEND_FALLBACK_SIZE.bottom;
+
+      return {
+        left,
+        top: viewportSize.y - height - bottom,
+        right: left + width,
+        bottom: viewportSize.y - bottom,
+        width,
+        height,
+      };
+    }
+
+    function boxesIntersect(firstBox, secondBox) {
+      if (!firstBox || !secondBox) return false;
+      return !(
+        firstBox.right <= secondBox.left ||
+        firstBox.left >= secondBox.right ||
+        firstBox.bottom <= secondBox.top ||
+        firstBox.top >= secondBox.bottom
+      );
+    }
+
+    function getOppositePopupPlacement(placement) {
+      return placement === "left" ? "right" : "left";
+    }
+
+    function getPreferredOrientationPopupPlacement(area, hospital, originPoint = null) {
+      const routePath = buildRoutePath(area, hospital, originPoint);
+      const endPoint = projectLatLngToContainerPoint(routePath[routePath.length - 1]);
+      const previousPoint = projectLatLngToContainerPoint(
+        routePath[Math.max(0, routePath.length - 2)],
+      );
+      const dx = endPoint.x - previousPoint.x;
+
+      if (Math.abs(dx) < 6) {
+        const originPointOnScreen = projectLatLngToContainerPoint(routePath[0]);
+        return endPoint.x >= originPointOnScreen.x ? "right" : "left";
+      }
+
+      return dx >= 0 ? "right" : "left";
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function resolvePopupCenteredTop(
+      point,
+      size,
+      placement,
+      viewportSize = map.getSize(),
+    ) {
+      let centeredTop = clamp(
+        point.y - size.height / 2,
+        ORIENTATION_POPUP_VIEWPORT_MARGIN_PX,
+        viewportSize.y - size.height - ORIENTATION_POPUP_VIEWPORT_MARGIN_PX,
+      );
+      const legendBox = getLegendViewportBox(viewportSize);
+
+      if (placement === "left" && legendBox) {
+        const popupLeft =
+          point.x - size.width - ORIENTATION_POPUP_GAP_PX - 20;
+        const popupBox = {
+          left: popupLeft,
+          top: centeredTop,
+          right: popupLeft + size.width,
+          bottom: centeredTop + size.height,
+        };
+        if (boxesIntersect(popupBox, legendBox)) {
+          centeredTop = clamp(
+            legendBox.top - size.height - 14,
+            ORIENTATION_POPUP_VIEWPORT_MARGIN_PX,
+            viewportSize.y - size.height - ORIENTATION_POPUP_VIEWPORT_MARGIN_PX,
+          );
+        }
+      }
+
+      return centeredTop;
+    }
+
+    function buildPopupScreenBox(point, size, placement, viewportSize = map.getSize()) {
+      const tipSpan = 20;
+      const centeredTop = resolvePopupCenteredTop(
+        point,
+        size,
+        placement,
+        viewportSize,
+      );
+
+      switch (placement) {
+        case "right":
+          return {
+            left: point.x + ORIENTATION_POPUP_GAP_PX + tipSpan,
+            top: centeredTop,
+          };
+        case "left":
+          return {
+            left: point.x - size.width - ORIENTATION_POPUP_GAP_PX - tipSpan,
+            top: centeredTop,
+          };
+        default:
+          return {
+            left: point.x + ORIENTATION_POPUP_GAP_PX + tipSpan,
+            top: centeredTop,
+          };
+      }
+    }
+
+    function doesPopupBoxFitViewport(box, size, viewportSize) {
+      return (
+        box.left >= ORIENTATION_POPUP_VIEWPORT_MARGIN_PX &&
+        box.top >= ORIENTATION_POPUP_VIEWPORT_MARGIN_PX &&
+        box.left + size.width <=
+          viewportSize.x - ORIENTATION_POPUP_VIEWPORT_MARGIN_PX &&
+        box.top + size.height <=
+          viewportSize.y - ORIENTATION_POPUP_VIEWPORT_MARGIN_PX
+      );
+    }
+
+    function scorePopupBox(box, size, viewportSize) {
+      const visibleWidth = Math.max(
+        0,
+        Math.min(box.left + size.width, viewportSize.x) - Math.max(box.left, 0),
+      );
+      const visibleHeight = Math.max(
+        0,
+        Math.min(box.top + size.height, viewportSize.y) - Math.max(box.top, 0),
+      );
+      return visibleWidth * visibleHeight;
+    }
+
+    function resolveOrientationPopupPlacement(
+      area,
+      hospital,
+      originPoint = null,
+      preferredPlacement = "right",
+    ) {
+      const placementOrder = [
+        preferredPlacement,
+        getOppositePopupPlacement(preferredPlacement),
+      ];
+      const popupSize = getPopupElementSize(orientationPopup);
+      const markerPoint = projectLatLngToContainerPoint([hospital.lat, hospital.lng]);
+      const viewportSize = map.getSize();
+      let bestPlacement = placementOrder[0];
+      let bestScore = -1;
+
+      placementOrder.forEach((placement) => {
+        const box = buildPopupScreenBox(
+          markerPoint,
+          popupSize,
+          placement,
+          viewportSize,
+        );
+        if (doesPopupBoxFitViewport(box, popupSize, viewportSize)) {
+          bestPlacement = placement;
+          bestScore = Number.POSITIVE_INFINITY;
+          return;
+        }
+        const score = scorePopupBox(box, popupSize, viewportSize);
+        if (score > bestScore) {
+          bestPlacement = placement;
+          bestScore = score;
+        }
+      });
+
+      return ORIENTATION_POPUP_PLACEMENTS.includes(bestPlacement)
+        ? bestPlacement
+        : "right";
+    }
+
+    function getRouteArrivalScreenVector(area, hospital, originPoint = null) {
+      const routePath = buildRoutePath(area, hospital, originPoint);
+      const endPoint = projectLatLngToContainerPoint(routePath[routePath.length - 1]);
+      const previousPoint = projectLatLngToContainerPoint(
+        routePath[Math.max(0, routePath.length - 2)],
+      );
+
+      return {
+        dx: endPoint.x - previousPoint.x,
+        dy: endPoint.y - previousPoint.y,
+      };
+    }
+
+    function getOrientationPopupOffset(size, placement) {
+      const tipHalfHeight = 10;
+      const horizontalShift = Math.round(size.width / 2 + ORIENTATION_POPUP_GAP_PX);
+      const verticalShift = Math.round(size.height / 2 + tipHalfHeight);
+
+      return placement === "left"
+        ? [-horizontalShift, verticalShift]
+        : [horizontalShift, verticalShift];
+    }
+
+    function positionOrientationPopup(hospitalId, placement) {
+      if (!orientationPopup) return;
+
+      const popupElement = getPopupElement(orientationPopup);
+      const popupSize = getPopupElementSize(orientationPopup);
+      const markerPoint = projectLatLngToContainerPoint([
+        HOSPITALS[hospitalId].lat,
+        HOSPITALS[hospitalId].lng,
+      ]);
+      const centeredTop = resolvePopupCenteredTop(
+        markerPoint,
+        popupSize,
+        placement,
+        map.getSize(),
+      );
+      const rawCenteredTop = clamp(
+        markerPoint.y - popupSize.height / 2,
+        ORIENTATION_POPUP_VIEWPORT_MARGIN_PX,
+        map.getSize().y - popupSize.height - ORIENTATION_POPUP_VIEWPORT_MARGIN_PX,
+      );
+      const offset = getOrientationPopupOffset(popupSize, placement);
+
+      orientationPopup.options.offset = offset;
+      if (typeof orientationPopup.update === "function") {
+        orientationPopup.update();
+      } else {
+        orientationPopup.setLatLng([HOSPITALS[hospitalId].lat, HOSPITALS[hospitalId].lng]);
+      }
+
+      if (!popupElement) return;
+
+      popupElement.classList.add(ORIENTATION_POPUP_CLASS);
+      ORIENTATION_POPUP_PLACEMENTS.forEach((placementName) => {
+        popupElement.classList.remove(`${ORIENTATION_POPUP_CLASS}--${placementName}`);
+      });
+      popupElement.classList.add(`${ORIENTATION_POPUP_CLASS}--${placement}`);
+      popupElement.style.left = "";
+      popupElement.style.top = "";
+      popupElement.style.bottom = "";
+      popupElement.style.marginTop = `${Math.round(centeredTop - rawCenteredTop)}px`;
     }
 
     function seededRand(seed) {
@@ -545,42 +863,86 @@
       return root;
     }
 
-    function getOrientationViewportPadding({ reserveRouteView = false } = {}) {
+    function getOrientationViewportPadding({
+      reserveRouteView = false,
+      popupPlacement = "right",
+      area = null,
+      hospital = null,
+      originPoint = null,
+    } = {}) {
       const size = map.getSize();
-      const topPadding = reserveRouteView
-        ? Math.max(280, Math.min(420, Math.round(size.y * 0.36)))
-        : Math.max(220, Math.min(340, Math.round(size.y * 0.28)));
-      const rightPadding = reserveRouteView
+      const popupSize = reserveRouteView
+        ? getPopupElementSize(orientationPopup)
+        : ORIENTATION_POPUP_FALLBACK_SIZE;
+      const sidePadding = Math.max(
+        popupSize.width + ORIENTATION_POPUP_GAP_PX + 44,
+        reserveRouteView
         ? Math.max(250, Math.min(520, Math.round(size.x * 0.32)))
-        : Math.max(200, Math.min(460, Math.round(size.x * 0.26)));
+        : Math.max(200, Math.min(460, Math.round(size.x * 0.26))),
+      );
       const bottomPadding = reserveRouteView
         ? Math.max(150, Math.min(280, Math.round(size.y * 0.2)))
         : Math.max(120, Math.min(240, Math.round(size.y * 0.16)));
+      const paddingTopLeft = [reserveRouteView ? 90 : 70, reserveRouteView ? 118 : 96];
+      const paddingBottomRight = [
+        reserveRouteView ? 180 : 140,
+        reserveRouteView ? 118 : 96,
+      ];
+
+      if (area && hospital) {
+        const { dy } = getRouteArrivalScreenVector(area, hospital, originPoint);
+        const verticalBias = clamp(
+          Math.round(Math.abs(dy) * (reserveRouteView ? 0.35 : 0.24)),
+          reserveRouteView ? 32 : 20,
+          reserveRouteView ? 140 : 90,
+        );
+
+        if (dy < -10) {
+          paddingTopLeft[1] += verticalBias;
+        } else if (dy > 10) {
+          paddingBottomRight[1] += verticalBias;
+        }
+      }
+
+      if (popupPlacement === "right") {
+        paddingBottomRight[0] = sidePadding;
+        paddingBottomRight[1] = Math.max(paddingBottomRight[1], bottomPadding);
+      } else if (popupPlacement === "left") {
+        paddingTopLeft[0] = sidePadding;
+        paddingBottomRight[1] = Math.max(paddingBottomRight[1], bottomPadding);
+        const legendBox = getLegendViewportBox(size);
+        if (legendBox) {
+          paddingBottomRight[1] = Math.max(
+            paddingBottomRight[1],
+            legendBox.height + LEGEND_FALLBACK_SIZE.bottom + 24,
+          );
+        }
+      }
 
       return {
-        paddingTopLeft: [reserveRouteView ? 90 : 70, topPadding],
-        paddingBottomRight: [rightPadding, bottomPadding],
+        paddingTopLeft,
+        paddingBottomRight,
       };
     }
 
-    function openOrientationPopup(hospitalId, travelEstimate) {
+    function openOrientationPopup(hospitalId, travelEstimate, popupPlacement = "right") {
       closeOrientationPopup();
-      const hospital = HOSPITALS[hospitalId];
-      const viewportPadding = getOrientationViewportPadding();
       orientationPopup = L.popup({
         closeButton: true,
         autoClose: false,
         closeOnClick: false,
-        autoPan: true,
-        keepInView: true,
-        autoPanPaddingTopLeft: viewportPadding.paddingTopLeft,
-        autoPanPaddingBottomRight: viewportPadding.paddingBottomRight,
-        offset: [0, -14],
+        autoPan: false,
+        keepInView: false,
+        className: `${ORIENTATION_POPUP_CLASS} ${ORIENTATION_POPUP_CLASS}--${popupPlacement}`,
+        offset: [0, 0],
         maxWidth: 360,
       })
-        .setLatLng([hospital.lat, hospital.lng])
+        .setLatLng([HOSPITALS[hospitalId].lat, HOSPITALS[hospitalId].lng])
         .setContent(buildOrientationPopupContent(hospitalId, travelEstimate))
         .openOn(map);
+      orientationPopupHospitalId = hospitalId;
+      orientationPopupPlacement = popupPlacement;
+      positionOrientationPopup(hospitalId, popupPlacement);
     }
 
     function buildHospitals() {
@@ -643,8 +1005,13 @@
       updateLabelVisibility();
     }
 
-    function buildRoutePath(area, hospital) {
-      const start = [area.lat, area.lng];
+    function getOriginCoordinates(originPoint, area) {
+      const origin = originPoint || area;
+      return [origin.lat, origin.lng];
+    }
+
+    function buildRoutePath(area, hospital, originPoint = null) {
+      const start = getOriginCoordinates(originPoint, area);
       const end = [hospital.lat, hospital.lng];
       const dLat = end[0] - start[0];
       const dLng = end[1] - start[1];
@@ -672,7 +1039,7 @@
       return L.divIcon({
         className: "destination-flag-icon",
         iconSize: [28, 36],
-        iconAnchor: [10, 34],
+        iconAnchor: [14, 34],
         popupAnchor: [0, -30],
         html: `
           <div class="destination-flag-wrap" aria-label="${label}" role="img">
@@ -695,14 +1062,15 @@
       });
     }
 
-    function drawRoute(area, hospitalId) {
+    function drawRoute(area, hospitalId, originPoint = null) {
       if (routeLayer) {
         (Array.isArray(routeLayer) ? routeLayer : [routeLayer]).forEach((layer) =>
           map.removeLayer(layer),
         );
       }
       const hospital = HOSPITALS[hospitalId];
-      const path = buildRoutePath(area, hospital);
+      const path = buildRoutePath(area, hospital, originPoint);
+      const [startLat, startLng] = getOriginCoordinates(originPoint, area);
       const shadow = L.polyline(path, {
         color: "#ffffff",
         weight: 8,
@@ -718,7 +1086,7 @@
         lineCap: "round",
         lineJoin: "round",
       }).addTo(map);
-      const startMarker = L.circleMarker([area.lat, area.lng], {
+      const startMarker = L.circleMarker([startLat, startLng], {
         radius: 5,
         color: "#ffffff",
         weight: 2,
@@ -732,13 +1100,14 @@
       routeLayer = [shadow, main, startMarker, endMarker];
     }
 
-    function highlightCurrentArea(area) {
+    function highlightCurrentArea(area, originPoint = null) {
       if (focusLayer) {
         (Array.isArray(focusLayer) ? focusLayer : [focusLayer]).forEach((layer) =>
           map.removeLayer(layer),
         );
       }
-      focusLayer = L.circleMarker([area.lat, area.lng], {
+      const [originLat, originLng] = getOriginCoordinates(originPoint, area);
+      focusLayer = L.circleMarker([originLat, originLng], {
         radius: 9,
         color: "#ffffff",
         weight: 3,
@@ -747,15 +1116,26 @@
       }).addTo(map);
     }
 
-    function zoomToBounds(area, hospitalId, { reserveRouteView = false } = {}) {
+    function zoomToBounds(area, hospitalId, {
+      reserveRouteView = false,
+      originPoint = null,
+      popupPlacement = "right",
+    } = {}) {
       const hospital = HOSPITALS[hospitalId];
-      const routePath = buildRoutePath(area, hospital);
+      const routePath = buildRoutePath(area, hospital, originPoint);
+      const [originLat, originLng] = getOriginCoordinates(originPoint, area);
       const bounds = L.latLngBounds(routePath);
-      const viewportPadding = getOrientationViewportPadding({ reserveRouteView });
-      bounds.extend([area.lat, area.lng]);
+      const viewportPadding = getOrientationViewportPadding({
+        reserveRouteView,
+        popupPlacement,
+        area,
+        hospital,
+        originPoint,
+      });
+      bounds.extend([originLat, originLng]);
       bounds.extend([hospital.lat, hospital.lng]);
-      if (area.lat === hospital.lat && area.lng === hospital.lng) {
-        bounds.extend([area.lat + 0.005, area.lng + 0.005]);
+      if (originLat === hospital.lat && originLng === hospital.lng) {
+        bounds.extend([originLat + 0.005, originLng + 0.005]);
       }
       map.fitBounds(bounds, {
         ...viewportPadding,
@@ -805,17 +1185,46 @@
       renderLegend(specialtyId);
     }
 
-    function showOrientation({ area, hospitalId, travelEstimate }) {
+    function showOrientation({ area, originPoint = null, hospitalId, travelEstimate }) {
       closeOrientationPopup();
-      highlightCurrentArea(area);
-      drawRoute(area, hospitalId);
-      zoomToBounds(area, hospitalId);
-      openOrientationPopup(hospitalId, travelEstimate);
+      const hospital = HOSPITALS[hospitalId];
+      const preferredPopupPlacement = getPreferredOrientationPopupPlacement(
+        area,
+        hospital,
+        originPoint,
+      );
+      const initialPopupPlacement = preferredPopupPlacement;
+      highlightCurrentArea(area, originPoint);
+      drawRoute(area, hospitalId, originPoint);
+      zoomToBounds(area, hospitalId, {
+        originPoint,
+        popupPlacement: initialPopupPlacement,
+      });
+      openOrientationPopup(hospitalId, travelEstimate, initialPopupPlacement);
       // Re-cadre ensuite avec plus de marge pour garder tout le trajet visible
-      // une fois que l'autopan de la popup a fini de repositionner la carte.
+      // une fois que la popup est placee et mesuree dans le viewport.
       setTimeout(() => {
         if (!orientationPopup) return;
-        zoomToBounds(area, hospitalId, { reserveRouteView: true });
+        zoomToBounds(area, hospitalId, {
+          reserveRouteView: true,
+          originPoint,
+          popupPlacement: preferredPopupPlacement,
+        });
+        const finalPopupPlacement = resolveOrientationPopupPlacement(
+          area,
+          hospital,
+          originPoint,
+          preferredPopupPlacement,
+        );
+        orientationPopupPlacement = finalPopupPlacement;
+        if (finalPopupPlacement !== preferredPopupPlacement) {
+          zoomToBounds(area, hospitalId, {
+            reserveRouteView: true,
+            originPoint,
+            popupPlacement: finalPopupPlacement,
+          });
+        }
+        positionOrientationPopup(hospitalId, finalPopupPlacement);
       }, 0);
     }
 
@@ -834,6 +1243,25 @@
     }
 
     map.on("zoomend", updateLabelVisibility);
+    map.on("zoomend", () => {
+      if (orientationPopup && orientationPopupHospitalId && orientationPopupPlacement) {
+        positionOrientationPopup(
+          orientationPopupHospitalId,
+          orientationPopupPlacement,
+        );
+      }
+    });
+    map.on("moveend", () => {
+      if (orientationPopup && orientationPopupHospitalId && orientationPopupPlacement) {
+        positionOrientationPopup(
+          orientationPopupHospitalId,
+          orientationPopupPlacement,
+        );
+      }
+    });
+    map.on("popupclose", (event) => {
+      handleOrientationPopupClosed(event?.popup || null);
+    });
 
     return Object.freeze({
       fitAggloBounds,

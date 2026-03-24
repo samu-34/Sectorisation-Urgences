@@ -13,8 +13,8 @@ const HOSPITAL_RECORDS = [
     name: "Clinique Saint-Roch",
     color: "#06d6a0",
     location: {
-      lat: 43.5846,
-      lng: 3.8507,
+      lat: 43.582811,
+      lng: 3.861684,
       city: "Montpellier",
       address:
         "560 Av. du Colonel André Pavelet dit Villars, 34000 Montpellier",
@@ -25,9 +25,9 @@ const HOSPITAL_RECORDS = [
     },
     source: {
       label: "Référentiel MediMap",
-      note: "Adresse ajustée sur validation manuelle",
+      note: "Coordonnées recalées sur le géocodage de l'adresse",
     },
-    verified_at: "2026-03-19",
+    verified_at: "2026-03-24",
     verification_status: "reviewed",
   },
   {
@@ -35,8 +35,8 @@ const HOSPITAL_RECORDS = [
     name: "Clinique Saint - Jean Sud de France",
     color: "#ff4800",
     location: {
-      lat: 43.5747,
-      lng: 3.8258,
+      lat: 43.570217,
+      lng: 3.835075,
       city: "Saint-Jean-de-Védas",
       address: "1 place de l'Europe, 34430 Saint-Jean-de-Védas",
     },
@@ -46,18 +46,18 @@ const HOSPITAL_RECORDS = [
     },
     source: {
       label: "Référentiel MediMap",
-      note: "Coordonnées historiques à confirmer",
+      note: "Coordonnées recalées sur le géocodage de l'adresse",
     },
-    verified_at: "2026-03-19",
-    verification_status: "needs_review",
+    verified_at: "2026-03-24",
+    verification_status: "reviewed",
   },
   {
     id: "beausoleil",
     name: "Clinique Beausoleil",
     color: "#f5a201",
     location: {
-      lat: 43.61148,
-      lng: 3.85074,
+      lat: 43.609371,
+      lng: 3.848698,
       city: "Montpellier",
       address: "149 Rue de la Taillade, 34070 Montpellier",
     },
@@ -67,18 +67,18 @@ const HOSPITAL_RECORDS = [
     },
     source: {
       label: "Référentiel MediMap",
-      note: "Adresse validee par l'utilisateur, position cartographique encore a confirmer",
+      note: "Coordonnées recalées sur le géocodage de l'adresse",
     },
-    verified_at: "2026-03-19",
-    verification_status: "needs_review",
+    verified_at: "2026-03-24",
+    verification_status: "reviewed",
   },
   {
     id: "lapeyronie",
     name: "Hôpital Lapeyronie",
     color: "#ff0054",
     location: {
-      lat: 43.6349,
-      lng: 3.8624,
+      lat: 43.629886,
+      lng: 3.851481,
       city: "Montpellier",
       address: "371 avenue du Doyen Gaston Giraud, 34090 Montpellier",
     },
@@ -88,18 +88,18 @@ const HOSPITAL_RECORDS = [
     },
     source: {
       label: "Référentiel MediMap",
-      note: "Coordonnées historiques à confirmer",
+      note: "Coordonnées recalées sur le géocodage de l'adresse",
     },
-    verified_at: "2026-03-19",
-    verification_status: "needs_review",
+    verified_at: "2026-03-24",
+    verification_status: "reviewed",
   },
   {
     id: "parc",
     name: "Clinique du Parc",
     color: "#4361ee",
     location: {
-      lat: 43.6339,
-      lng: 3.8988,
+      lat: 43.633842,
+      lng: 3.893407,
       city: "Castelnau-le-Lez",
       address: "50 rue Émile Combes, 34170 Castelnau-le-Lez",
     },
@@ -109,18 +109,18 @@ const HOSPITAL_RECORDS = [
     },
     source: {
       label: "Référentiel MediMap",
-      note: "Coordonnées historiques à confirmer",
+      note: "Coordonnées recalées sur le géocodage de l'adresse",
     },
-    verified_at: "2026-03-19",
-    verification_status: "needs_review",
+    verified_at: "2026-03-24",
+    verification_status: "reviewed",
   },
   {
     id: "millenaire",
     name: "Clinique du Millénaire",
     color: "#e70e02",
     location: {
-      lat: 43.6049,
-      lng: 3.9189,
+      lat: 43.601962,
+      lng: 3.913786,
       city: "Montpellier",
       address: "220 boulevard Pénélope, 34960 Montpellier",
     },
@@ -130,10 +130,10 @@ const HOSPITAL_RECORDS = [
     },
     source: {
       label: "Référentiel MediMap",
-      note: "Coordonnées historiques à confirmer",
+      note: "Coordonnées recalées sur le géocodage de l'adresse",
     },
-    verified_at: "2026-03-19",
-    verification_status: "needs_review",
+    verified_at: "2026-03-24",
+    verification_status: "reviewed",
   },
 ];
 
