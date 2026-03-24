@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#17313b" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.tile.openstreetmap.org https://tile.openstreetmap.org; connect-src 'self' https://nominatim.openstreetmap.org; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'"
+    />
+    <meta
+      name="description"
+      content="MediMap — Outil d'aide à l'orientation médicale par sectorisation territoriale (Hérault)"
+    />
+    <link rel="icon" href="favicon.svg?v=20260319-1735" type="image/svg+xml" />
+    <title>SAMU34 - Sectorisation Urgences</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="vendor/leaflet/leaflet.css?v=20260319-1735" />
+    <!-- App CSS -->
+    <link rel="stylesheet" href="style.css?v=20260319-1735" />
+  </head>
+  <body>
+    <noscript>
+      <div
+        style="
+          padding: 12px 16px;
+          background: #fff4e5;
+          color: #7a4b00;
+          border-bottom: 1px solid #f0d39a;
+        "
+      >
+        Cette application nécessite JavaScript pour fonctionner correctement.
+      </div>
+    </noscript>
+
+    <div class="app">
+      <!-- ═══════════ SIDEBAR PANEL ═══════════ -->
+      <aside class="panel">
+        <!-- Header -->
+        <div class="panel-header">
+          <div class="panel-header-top">
+            <div>
+              <h1>Sectorisation - Urgences</h1>
+              <div class="subtitle">Agglomération Montpellier</div>
+            </div>
+            <div class="header-logos" aria-label="Partenaires">
+              <img
+                src="assets/logo_chu.svg.png"
+                alt="Logo CHU"
+                class="header-logo header-logo-chu"
+              />
+              <img
+                src="assets/logo_ars.png"
+                alt="Logo ARS"
+                class="header-logo header-logo-ars"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Console de régulation -->
+        <div class="section">
+          <h2>Console d'Orientation</h2>
+          <div class="soft-box">
+            <div class="stack">
+              <!-- Symptôme -->
+              <div>
+                <label for="symptomInput">Motif d'appel :</label>
+                <div class="autocomplete-wrap">
+                  <input
+                    id="symptomInput"
+                    type="text"
+                    placeholder="Rechercher un motif…"
+                    autocomplete="off"
+                    role="combobox"
+                    aria-autocomplete="list"
+                    aria-expanded="false"
+                    aria-controls="suggestBox"
+                    aria-haspopup="listbox"
+                  />
+                  <div
+                    id="suggestBox"
+                    class="suggest-box hidden"
+                    role="listbox"
+                    aria-label="Suggestions de motifs"
+                  ></div>
+                </div>
+              </div>
+
+              <!-- Commune -->
+              <div>
+                <label for="cityInput">Localisation :</label>
+                <div class="autocomplete-wrap">
+                  <input
+                    id="cityInput"
+                    type="text"
+                    placeholder="Commune / Quartier ou Adresse dans Montpellier  …"
+                    autocomplete="off"
+                    role="combobox"
+                    aria-autocomplete="list"
+                    aria-expanded="false"
+                    aria-controls="citySuggestBox"
+                    aria-haspopup="listbox"
+                  />
+                  <div
+                    id="citySuggestBox"
+                    class="suggest-box hidden"
+                    role="listbox"
+                    aria-label="Suggestions de communes et quartiers"
+                  ></div>
+                  <select id="citySelect" class="hidden"></select>
+                </div>
+              </div>
+
+              <!-- Sous-zone (Montpellier / Lattes) -->
+              <div id="subzoneWrap" class="hidden">
+                <label for="subzoneSelect">Quartier :</label>
+                <select id="subzoneSelect"></select>
+              </div>
+
+              <!-- Filière -->
+              <div>
+                <label for="detectedSpecialty">Filière : </label>
+                <input
+                  id="detectedSpecialty"
+                  type="text"
+                  placeholder="..."
+                  readonly
+                  aria-readonly="true"
+                />
+              </div>
+
+              <!-- Boutons action -->
+              <div class="row">
+                <button id="focusBtn" class="btn-danger">Effacer</button>
+                <button id="regulateBtn" class="btn-primary">
+                  Orientation
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filières -->
+        <div class="section">
+          <h2>Filières</h2>
+          <div class="chips" id="chips"></div>
+        </div>
+
+        <!-- Footer -->
+        <div class="panel-footer">MediMap v2 / Dr Ghomrani - Dr Mahmoudi</div>
+      </aside>
+
+      <!-- ═══════════ MAP ═══════════ -->
+      <div class="map-wrap">
+        <div id="map"></div>
+        <div class="legend" id="legend"></div>
+      </div>
+    </div>
+
+    <!-- Scripts : data d'abord, puis domaine / UI, puis Leaflet, puis app -->
+    <script src="data.js?v=20260319-1735"></script>
+    <script src="generated/montpellier_street_index.js?v=20260324-1621"></script>
+    <script src="domain.js?v=20260319-1735"></script>
+    <script src="application.js?v=20260319-1735"></script>
+    <script src="autocomplete.js?v=20260319-1735"></script>
+    <script src="city-input-controller.js?v=20260324-1915"></script>
+    <script src="map-renderer-static.js?v=20260324-2015"></script>
+    <script src="map-renderer-layout.js?v=20260324-2015"></script>
+    <script src="vendor/leaflet/leaflet.js?v=20260319-1735"></script>
+    <script src="map-renderer.js?v=20260324-2015"></script>
+    <script src="app.js?v=20260324-1915"></script>
+  </body>
+</html>
