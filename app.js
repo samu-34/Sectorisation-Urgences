@@ -6,6 +6,7 @@
  */
 
 const DOM = {
+  appRoot: document.getElementById("appRoot"),
   chips: document.getElementById("chips"),
   citySelect: document.getElementById("citySelect"),
   cityInput: document.getElementById("cityInput"),
@@ -18,7 +19,16 @@ const DOM = {
   citySuggestBox: document.getElementById("citySuggestBox"),
   regulateBtn: document.getElementById("regulateBtn"),
   focusBtn: document.getElementById("focusBtn"),
+  authOverlay: document.getElementById("authOverlay"),
+  authForm: document.getElementById("authForm"),
+  authPassword: document.getElementById("authPassword"),
+  authError: document.getElementById("authError"),
+  authUnlockBtn: document.getElementById("authUnlockBtn"),
+  authTogglePasswordBtn: document.getElementById("authTogglePasswordBtn"),
 };
+
+const MAP_ACCESS_PASSWORD = "samu34secteur";
+let mapAccessUnlocked = false;
 
 const {
   simplify,
@@ -133,8 +143,55 @@ function refreshMap() {
   const mapModel = appController.refreshSectorisationMap();
   mapRenderer.refresh({
     specialtyId: mapModel.specialtyId,
+    areaHospitalMap: mapModel.areaHospitalMap,
     cloudHospitalMap: mapModel.cloudHospitalMap,
   });
+}
+
+function lockMapAccess() {
+  mapAccessUnlocked = false;
+  DOM.appRoot.classList.add("app-locked");
+  DOM.authOverlay.classList.remove("hidden");
+  DOM.authError.classList.add("hidden");
+  DOM.authPassword.value = "";
+  DOM.authPassword.type = "password";
+  DOM.authTogglePasswordBtn.textContent = "Afficher";
+  DOM.authTogglePasswordBtn.setAttribute("aria-pressed", "false");
+
+  setTimeout(() => {
+    try {
+      DOM.authPassword.focus();
+    } catch (error) {}
+  }, 30);
+}
+
+function unlockMapAccess() {
+  mapAccessUnlocked = true;
+  DOM.appRoot.classList.remove("app-locked");
+  DOM.authOverlay.classList.add("hidden");
+  DOM.authError.classList.add("hidden");
+  DOM.authPassword.value = "";
+
+  setTimeout(() => {
+    try {
+      mapRenderer.invalidateSize();
+      mapRenderer.fitAggloBounds();
+      DOM.cityInput.focus();
+    } catch (error) {}
+  }, 120);
+}
+
+function submitMapAccessPassword() {
+  const typedPassword = String(DOM.authPassword.value || "").trim();
+
+  if (typedPassword === MAP_ACCESS_PASSWORD) {
+    unlockMapAccess();
+    return true;
+  }
+
+  DOM.authError.classList.remove("hidden");
+  DOM.authPassword.select();
+  return false;
 }
 
 function applySymptomInput(text, options = {}) {
@@ -298,6 +355,26 @@ DOM.subzoneSelect.addEventListener("change", () => {
   updateDecision();
 });
 
+DOM.authForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  submitMapAccessPassword();
+});
+
+DOM.authPassword.addEventListener("input", () => {
+  DOM.authError.classList.add("hidden");
+});
+
+DOM.authTogglePasswordBtn.addEventListener("click", () => {
+  const shouldReveal = DOM.authPassword.type === "password";
+  DOM.authPassword.type = shouldReveal ? "text" : "password";
+  DOM.authTogglePasswordBtn.textContent = shouldReveal ? "Masquer" : "Afficher";
+  DOM.authTogglePasswordBtn.setAttribute(
+    "aria-pressed",
+    shouldReveal ? "true" : "false",
+  );
+  DOM.authPassword.focus();
+});
+
 document.addEventListener("click", (event) => {
   if (!DOM.symptomInput.parentElement.contains(event.target)) {
     autocomplete.closeSymptomSuggestions();
@@ -308,6 +385,7 @@ document.addEventListener("click", (event) => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
+  lockMapAccess();
   renderChips();
   populateCitySelect();
   renderSelectionState();
@@ -323,12 +401,14 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 window.addEventListener("load", () => {
+  if (!mapAccessUnlocked) return;
   try {
     mapRenderer.invalidateSize();
   } catch (error) {}
 });
 
 window.addEventListener("resize", () => {
+  if (!mapAccessUnlocked) return;
   try {
     mapRenderer.invalidateSize();
   } catch (error) {}

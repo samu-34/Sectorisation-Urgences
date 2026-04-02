@@ -34,7 +34,7 @@
       </div>
     </noscript>
 
-    <div class="app">
+    <div class="app" id="appRoot">
       <!-- ═══════════ SIDEBAR PANEL ═══════════ -->
       <aside class="panel">
         <!-- Header -->
@@ -156,6 +156,41 @@
       <div class="map-wrap">
         <div id="map"></div>
         <div class="legend" id="legend"></div>
+      </div>
+    </div>
+
+    <div class="auth-overlay" id="authOverlay" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <div class="auth-card">
+        <div class="auth-eyebrow">Accès protégé</div>
+        <h2 id="authTitle">Déverrouiller la carte</h2>
+        <p class="auth-text">
+          Entrez le mot de passe pour afficher la sectorisation.
+        </p>
+        <form id="authForm" class="auth-form">
+          <div class="auth-password-row">
+            <input
+              id="authPassword"
+              type="password"
+              autocomplete="current-password"
+              placeholder="Mot de passe"
+            />
+            <button
+              type="button"
+              id="authTogglePasswordBtn"
+              class="auth-toggle-password"
+              aria-controls="authPassword"
+              aria-pressed="false"
+            >
+              Afficher
+            </button>
+          </div>
+          <div id="authError" class="auth-error hidden" aria-live="polite">
+            Mot de passe incorrect.
+          </div>
+          <button type="submit" id="authUnlockBtn" class="btn-primary">
+            Accéder à la carte
+          </button>
+        </form>
       </div>
     </div>
 
