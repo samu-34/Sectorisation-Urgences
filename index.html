@@ -143,13 +143,26 @@
         </div>
 
         <!-- Filières -->
-        <div class="section">
+        <div class="section filieres-section">
           <h2>Filières</h2>
-          <div class="chips" id="chips"></div>
+          <div class="soft-box filieres-box">
+            <div class="chips" id="chips"></div>
+          </div>
         </div>
 
         <!-- Footer -->
-        <div class="panel-footer">MediMap v2 / Dr Ghomrani - Dr Mahmoudi</div>
+        <div class="panel-footer">
+          <span>Crédits : Dr GHOMRANI & Dr MAHMOUDI</span>
+          <button
+            id="feedbackBtn"
+            type="button"
+            class="feedback-trigger"
+            aria-haspopup="dialog"
+            aria-controls="feedbackOverlay"
+          >
+            Remarques / Suggestions
+          </button>
+        </div>
       </aside>
 
       <!-- ═══════════ MAP ═══════════ -->
@@ -159,7 +172,13 @@
       </div>
     </div>
 
-    <div class="auth-overlay" id="authOverlay" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <div
+      class="auth-overlay"
+      id="authOverlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="authTitle"
+    >
       <div class="auth-card">
         <div class="auth-eyebrow">Accès protégé</div>
         <h2 id="authTitle">Déverrouiller la carte</h2>
@@ -189,6 +208,56 @@
           </div>
           <button type="submit" id="authUnlockBtn" class="btn-primary">
             Accéder à la carte
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div
+      class="feedback-overlay hidden"
+      id="feedbackOverlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="feedbackTitle"
+    >
+      <div class="feedback-card">
+        <div class="feedback-card-top">
+          <div>
+            <div class="feedback-eyebrow">Retour utilisateur</div>
+            <h2 id="feedbackTitle">Remarques / Suggestions</h2>
+          </div>
+          <button
+            id="feedbackCloseBtn"
+            type="button"
+            class="feedback-close"
+            aria-label="Fermer la fenêtre de remarques"
+          >
+            ×
+          </button>
+        </div>
+        <p class="feedback-text">
+          Décrivez un problème, idée d'amélioration ou remarque sur la
+          sectorisation.
+        </p>
+        <form id="feedbackForm" class="feedback-form">
+          <input
+            id="feedbackSender"
+            type="text"
+            placeholder="Identifiez vous"
+            autocomplete="name"
+          />
+          <textarea
+            id="feedbackMessage"
+            rows="4"
+            placeholder="Votre remarque / suggestion..."
+          ></textarea>
+          <div
+            id="feedbackStatus"
+            class="feedback-status hidden"
+            aria-live="polite"
+          ></div>
+          <button id="feedbackMailBtn" type="submit" class="btn-primary">
+            Envoyer
           </button>
         </form>
       </div>

@@ -25,10 +25,23 @@ const DOM = {
   authError: document.getElementById("authError"),
   authUnlockBtn: document.getElementById("authUnlockBtn"),
   authTogglePasswordBtn: document.getElementById("authTogglePasswordBtn"),
+  feedbackBtn: document.getElementById("feedbackBtn"),
+  feedbackOverlay: document.getElementById("feedbackOverlay"),
+  feedbackForm: document.getElementById("feedbackForm"),
+  feedbackSender: document.getElementById("feedbackSender"),
+  feedbackMessage: document.getElementById("feedbackMessage"),
+  feedbackStatus: document.getElementById("feedbackStatus"),
+  feedbackCloseBtn: document.getElementById("feedbackCloseBtn"),
+  feedbackMailBtn: document.getElementById("feedbackMailBtn"),
 };
 
 const MAP_ACCESS_PASSWORD = "samu34secteur";
+const FEEDBACK_EMAIL_RECIPIENTS = [
+  "h-ghomrani@chu-montpellier.fr",
+  "mohammed-mahmoudi@chu-montpellier.fr",
+];
 let mapAccessUnlocked = false;
+let feedbackDialogOpen = false;
 
 const {
   simplify,
@@ -192,6 +205,71 @@ function submitMapAccessPassword() {
   DOM.authError.classList.remove("hidden");
   DOM.authPassword.select();
   return false;
+}
+
+function setFeedbackStatus(message, type) {
+  DOM.feedbackStatus.textContent = message;
+  DOM.feedbackStatus.classList.remove("hidden", "is-success", "is-error");
+  DOM.feedbackStatus.classList.add(type === "error" ? "is-error" : "is-success");
+}
+
+function clearFeedbackStatus() {
+  DOM.feedbackStatus.textContent = "";
+  DOM.feedbackStatus.classList.add("hidden");
+  DOM.feedbackStatus.classList.remove("is-success", "is-error");
+}
+
+function buildFeedbackPayload() {
+  const sender = String(DOM.feedbackSender.value || "").trim();
+  const message = String(DOM.feedbackMessage.value || "").trim();
+
+  return [
+    "MediMap - Remarque / suggestion",
+    "",
+    `Emetteur : ${sender || "Non renseigne"}`,
+    `Date : ${new Date().toLocaleString("fr-FR")}`,
+    "",
+    "Message :",
+    message,
+  ].join("\n");
+}
+
+function autoResizeFeedbackMessage() {
+  DOM.feedbackMessage.style.height = "auto";
+  DOM.feedbackMessage.style.height = `${DOM.feedbackMessage.scrollHeight}px`;
+}
+
+function openFeedbackDialog() {
+  feedbackDialogOpen = true;
+  clearFeedbackStatus();
+  DOM.feedbackOverlay.classList.remove("hidden");
+  setTimeout(() => {
+    try {
+      autoResizeFeedbackMessage();
+      DOM.feedbackMessage.focus();
+    } catch (error) {}
+  }, 30);
+}
+
+function closeFeedbackDialog() {
+  feedbackDialogOpen = false;
+  DOM.feedbackOverlay.classList.add("hidden");
+  clearFeedbackStatus();
+  DOM.feedbackMessage.style.height = "";
+}
+
+function openFeedbackEmailDraft() {
+  const message = String(DOM.feedbackMessage.value || "").trim();
+  if (!message) {
+    setFeedbackStatus("Ajoute un message avant d'ouvrir l'email.", "error");
+    DOM.feedbackMessage.focus();
+    return;
+  }
+
+  const subject = encodeURIComponent("MediMap - Remarque / suggestion");
+  const body = encodeURIComponent(buildFeedbackPayload());
+  const recipients = encodeURIComponent(FEEDBACK_EMAIL_RECIPIENTS.join(","));
+  window.location.href = `mailto:${recipients}?subject=${subject}&body=${body}`;
 }
 
 function applySymptomInput(text, options = {}) {
@@ -375,12 +453,47 @@ DOM.authTogglePasswordBtn.addEventListener("click", () => {
   DOM.authPassword.focus();
 });
 
+DOM.feedbackBtn.addEventListener("click", () => {
+  openFeedbackDialog();
+});
+
+DOM.feedbackCloseBtn.addEventListener("click", () => {
+  closeFeedbackDialog();
+});
+
+DOM.feedbackForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  openFeedbackEmailDraft();
+});
+
+DOM.feedbackMessage.addEventListener("input", () => {
+  clearFeedbackStatus();
+  autoResizeFeedbackMessage();
+});
+
+DOM.feedbackSender.addEventListener("input", () => {
+  clearFeedbackStatus();
+});
+
 document.addEventListener("click", (event) => {
   if (!DOM.symptomInput.parentElement.contains(event.target)) {
     autocomplete.closeSymptomSuggestions();
   }
   if (!DOM.cityInput.parentElement.contains(event.target)) {
     autocomplete.closeCitySuggestions();
+  }
+  if (
+    feedbackDialogOpen &&
+    event.target === DOM.feedbackOverlay
+  ) {
+    closeFeedbackDialog();
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && feedbackDialogOpen) {
+    closeFeedbackDialog();
+    return;
   }
 });
 
