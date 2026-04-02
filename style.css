@@ -23,6 +23,10 @@
   --radius: 14px;
   --radius-sm: 12px;
   --radius-pill: 999px;
+  --safe-top: max(14px, env(safe-area-inset-top, 0px));
+  --safe-right: max(14px, env(safe-area-inset-right, 0px));
+  --safe-bottom: max(14px, env(safe-area-inset-bottom, 0px));
+  --safe-left: max(14px, env(safe-area-inset-left, 0px));
 }
 
 /* ─── Reset & Base ─── */
@@ -44,13 +48,18 @@ body {
   background: var(--bg);
   color: var(--text);
   line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
 }
 
 /* ─── App Layout ─── */
 .app {
   display: grid;
+  grid-template-areas: "panel map";
   grid-template-columns: 480px 1fr;
+  min-height: 100vh;
+  min-height: 100dvh;
   height: 100vh;
+  height: 100dvh;
   transition:
     filter 0.22s ease,
     transform 0.22s ease,
@@ -67,11 +76,15 @@ body {
 
 /* ─── Panel (sidebar) ─── */
 .panel {
+  grid-area: panel;
   background: linear-gradient(180deg, #ffffff 0%, #fbfdfe 100%);
   border-right: 1px solid var(--line);
   display: flex;
   flex-direction: column;
   overflow: auto;
+  min-width: 0;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* ─── Header ─── */
@@ -436,7 +449,10 @@ button:active {
 
 /* ─── Map ─── */
 .map-wrap {
+  grid-area: map;
   position: relative;
+  min-width: 0;
+  min-height: 0;
 }
 #map {
   height: 100%;
@@ -527,6 +543,7 @@ button:active {
 
 .auth-card {
   width: min(100%, 468px);
+  max-height: min(calc(100dvh - 48px), 720px);
   padding: 30px 28px 26px;
   border: 1px solid rgba(255, 255, 255, 0.28);
   border-radius: 28px;
@@ -534,6 +551,7 @@ button:active {
   box-shadow:
     0 26px 70px rgba(15, 23, 42, 0.24),
     0 10px 24px rgba(15, 23, 42, 0.14);
+  overflow: auto;
 }
 
 .auth-eyebrow {
@@ -635,6 +653,7 @@ button:active {
 
 .feedback-card {
   width: min(100%, 520px);
+  max-height: min(calc(100dvh - 48px), 760px);
   padding: 24px;
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 24px;
@@ -642,6 +661,7 @@ button:active {
   box-shadow:
     0 24px 54px rgba(15, 23, 42, 0.2),
     0 8px 20px rgba(15, 23, 42, 0.1);
+  overflow: auto;
 }
 
 .feedback-card-top {
@@ -757,26 +777,50 @@ button:active {
 /* ─── Responsive ─── */
 @media (max-width: 1100px) {
   .app {
+    grid-template-areas:
+      "panel"
+      "map";
     grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(320px, 48dvh);
+    height: auto;
+    min-height: 100dvh;
   }
   .panel {
-    height: 55vh;
+    height: auto;
     border-right: none;
     border-bottom: 1px solid var(--line);
   }
   .map-wrap {
-    height: 45vh;
+    height: 48dvh;
+    min-height: 320px;
   }
 }
 
 @media (max-width: 768px) {
+  .app {
+    grid-template-areas:
+      "map"
+      "panel";
+    grid-template-rows: minmax(300px, 46dvh) auto;
+  }
+  .panel {
+    border-bottom: none;
+    border-top: 1px solid var(--line);
+  }
   .panel-header-top {
     align-items: flex-start;
     flex-direction: column;
   }
+  .panel-header {
+    padding:
+      calc(14px + env(safe-area-inset-top, 0px))
+      14px
+      14px;
+  }
   .header-logos {
     justify-content: flex-start;
     gap: 10px;
+    flex-wrap: wrap;
   }
   .header-logo-ars {
     height: 40px;
@@ -793,16 +837,47 @@ button:active {
   .soft-box {
     padding: 12px;
   }
+  .row {
+    grid-template-columns: 1fr;
+  }
+  input,
+  select,
+  button,
+  .feedback-form input,
+  .feedback-form textarea {
+    font-size: 16px;
+  }
+  input,
+  select,
+  button {
+    min-height: 48px;
+  }
+  .chip {
+    flex: 1 1 calc(50% - 6px);
+    min-height: 44px;
+    text-align: center;
+  }
   .toolbar {
-    max-width: 280px;
+    top: auto;
+    right: 10px;
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    max-width: min(280px, calc(100vw - 20px));
     font-size: 11px;
   }
   .legend {
     left: 10px;
-    bottom: 10px;
-    max-width: 240px;
+    right: 10px;
+    width: auto;
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    max-width: none;
     max-height: 30vh;
     font-size: 11px;
+  }
+  .leaflet-popup.orientation-popup .leaflet-popup-content-wrapper {
+    max-width: min(92vw, 360px);
+  }
+  .leaflet-popup.orientation-popup .leaflet-popup-content {
+    margin: 16px 16px !important;
   }
   .auth-card {
     width: min(100%, 380px);
@@ -817,12 +892,16 @@ button:active {
     margin-bottom: 18px;
   }
   .auth-password-row {
-    grid-template-columns: minmax(0, 1fr) 104px;
-    gap: 8px;
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
   .panel-footer {
     align-items: stretch;
     flex-direction: column;
+    padding:
+      12px
+      14px
+      calc(14px + env(safe-area-inset-bottom, 0px));
   }
   .feedback-trigger {
     max-width: none;
@@ -831,6 +910,35 @@ button:active {
     width: min(100%, 420px);
     padding: 20px;
     border-radius: 20px;
+  }
+}
+
+@media (max-width: 560px) {
+  .app {
+    grid-template-rows: minmax(280px, 44dvh) auto;
+  }
+  .panel-header h1 {
+    font-size: 18px;
+  }
+  .subtitle {
+    max-width: 28ch;
+  }
+  .section h2 {
+    font-size: 15px;
+    letter-spacing: 0.05em;
+  }
+  .legend {
+    font-size: 10px;
+    max-height: 26vh;
+    padding: 9px 10px;
+  }
+  .feedback-overlay,
+  .auth-overlay {
+    padding:
+      var(--safe-top)
+      var(--safe-right)
+      var(--safe-bottom)
+      var(--safe-left);
   }
 }
 

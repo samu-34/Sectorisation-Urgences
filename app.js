@@ -7,6 +7,7 @@
 
 const DOM = {
   appRoot: document.getElementById("appRoot"),
+  map: document.getElementById("map"),
   chips: document.getElementById("chips"),
   citySelect: document.getElementById("citySelect"),
   cityInput: document.getElementById("cityInput"),
@@ -40,6 +41,8 @@ const FEEDBACK_EMAIL_RECIPIENTS = [
   "h-ghomrani@chu-montpellier.fr",
   "mohammed-mahmoudi@chu-montpellier.fr",
 ];
+const LEGEND_HIDE_VIEWPORT_MAX_WIDTH = 768;
+const LEGEND_HIDE_MAP_MAX_WIDTH = 700;
 let mapAccessUnlocked = false;
 let feedbackDialogOpen = false;
 
@@ -187,11 +190,39 @@ function unlockMapAccess() {
 
   setTimeout(() => {
     try {
-      mapRenderer.invalidateSize();
+      syncResponsiveMapUi();
       mapRenderer.fitAggloBounds();
       DOM.cityInput.focus();
     } catch (error) {}
   }, 120);
+}
+
+function syncLegendVisibility() {
+  if (!DOM.legend) return false;
+
+  const viewportWidth =
+    window.innerWidth || document.documentElement.clientWidth || 0;
+  const mapWidth =
+    Number(DOM.map?.clientWidth) ||
+    Number(DOM.legend.parentElement?.clientWidth) ||
+    0;
+  const shouldHideLegend =
+    viewportWidth <= LEGEND_HIDE_VIEWPORT_MAX_WIDTH ||
+    (mapWidth > 0 && mapWidth <= LEGEND_HIDE_MAP_MAX_WIDTH);
+  const wasHidden = DOM.legend.classList.contains("hidden");
+
+  DOM.legend.classList.toggle("hidden", shouldHideLegend);
+  return wasHidden !== shouldHideLegend;
+}
+
+function syncResponsiveMapUi() {
+  const legendVisibilityChanged = syncLegendVisibility();
+  if (!mapAccessUnlocked) return;
+  try {
+    if (legendVisibilityChanged || DOM.map?.clientWidth) {
+      mapRenderer.invalidateSize();
+    }
+  } catch (error) {}
 }
 
 function submitMapAccessPassword() {
@@ -498,6 +529,7 @@ document.addEventListener("keydown", (event) => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
+  syncLegendVisibility();
   lockMapAccess();
   renderChips();
   populateCitySelect();
@@ -514,18 +546,17 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 window.addEventListener("load", () => {
-  if (!mapAccessUnlocked) return;
-  try {
-    mapRenderer.invalidateSize();
-  } catch (error) {}
+  syncResponsiveMapUi();
 });
 
 window.addEventListener("resize", () => {
-  if (!mapAccessUnlocked) return;
-  try {
-    mapRenderer.invalidateSize();
-  } catch (error) {}
+  syncResponsiveMapUi();
 });
+
+if (window.visualViewport) {
+  window.visualViewport.addEventListener("resize", syncResponsiveMapUi);
+  window.visualViewport.addEventListener("scroll", syncResponsiveMapUi);
+}
 
 window.addEventListener("error", () => {
   const panel = document.querySelector(".panel");
