@@ -3,14 +3,28 @@ const path = require("node:path");
 const vm = require("node:vm");
 
 function loadApplicationExports() {
+  const sectorizationPath = path.join(
+    __dirname,
+    "..",
+    "generated",
+    "sectorization-data.js",
+  );
   const dataPath = path.join(__dirname, "..", "data.js");
   const streetIndexPath = path.join(__dirname, "..", "generated", "montpellier_street_index.js");
   const domainPath = path.join(__dirname, "..", "domain.js");
   const applicationPath = path.join(__dirname, "..", "application.js");
+  const sectorizationSource = fs.existsSync(sectorizationPath)
+    ? fs.readFileSync(sectorizationPath, "utf8")
+    : "";
 
   const context = vm.createContext({ console, globalThis: null });
   context.globalThis = context;
 
+  if (sectorizationSource) {
+    vm.runInContext(sectorizationSource, context, {
+      filename: sectorizationPath,
+    });
+  }
   vm.runInContext(fs.readFileSync(dataPath, "utf8"), context, {
     filename: dataPath,
   });

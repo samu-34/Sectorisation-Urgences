@@ -511,6 +511,15 @@ function createAppHarness({ fetchImpl, AbortControllerImpl } = {}) {
   });
   context.globalThis = context;
 
+  const sectorizationPath = path.join(
+    __dirname,
+    "..",
+    "generated",
+    "sectorization-data.js",
+  );
+  const sectorizationSource = fs.existsSync(sectorizationPath)
+    ? fs.readFileSync(sectorizationPath, "utf8")
+    : "";
   const dataSource = fs.readFileSync(path.join(__dirname, "..", "data.js"), "utf8");
   const streetIndexPath = path.join(__dirname, "..", "generated", "montpellier_street_index.js");
   const domainSource = fs.readFileSync(path.join(__dirname, "..", "domain.js"), "utf8");
@@ -531,6 +540,11 @@ function createAppHarness({ fetchImpl, AbortControllerImpl } = {}) {
   const mapRendererSource = fs.readFileSync(path.join(__dirname, "..", "map-renderer.js"), "utf8");
   const appSource = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
 
+  if (sectorizationSource) {
+    vm.runInContext(sectorizationSource, context, {
+      filename: "generated/sectorization-data.js",
+    });
+  }
   vm.runInContext(dataSource, context, { filename: "data.js" });
   if (fs.existsSync(streetIndexPath)) {
     vm.runInContext(fs.readFileSync(streetIndexPath, "utf8"), context, {

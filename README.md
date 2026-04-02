@@ -10,7 +10,9 @@ des regles de sectorisation configurees dans le code.
 L'application est pensee pour une utilisation de regulation / orientation sur un
 perimetre territorial defini. Elle ne calcule pas un itineraire routier reel et
 ne remplace pas une decision medicale. Les regles appliquees sont des regles
-metier statiques, maintenues dans [data.js](./data.js).
+metier statiques, maintenues dans le referentiel de sectorisation
+[`data_sources/sectorization.json`](./data_sources/sectorization.json), puis
+chargees dans le front via un bundle genere.
 
 ## Fonctionnalites
 
@@ -45,9 +47,12 @@ Les metadonnees etablissements incluent une date de verification
 - application front statique: [index.html](./index.html),
   [style.css](./style.css), [app.js](./app.js), [application.js](./application.js),
   [domain.js](./domain.js), [data.js](./data.js)
+- source sectorisation: [`data_sources/sectorization.json`](./data_sources/sectorization.json)
+- bundle sectorisation charge par le front: [`generated/sectorization-data.js`](./generated/sectorization-data.js)
 - base locale adresses Montpellier: [`db/montpellier_addresses.sqlite`](./db/montpellier_addresses.sqlite)
 - index rues -> sous-zone charge par le front: [`generated/montpellier_street_index.js`](./generated/montpellier_street_index.js)
-- script de construction data: [`scripts/build_montpellier_address_db.py`](./scripts/build_montpellier_address_db.py)
+- scripts de construction data: [`scripts/build_montpellier_address_db.py`](./scripts/build_montpellier_address_db.py),
+  [`scripts/build_sectorization_bundle.py`](./scripts/build_sectorization_bundle.py)
 - carte: Leaflet 1.9.4 embarque localement dans [`vendor/leaflet/`](./vendor/leaflet)
 - fond de carte: tuiles OpenStreetMap
 - serveur local de dev sans cache: [dev_server.py](./dev_server.py)
@@ -62,10 +67,12 @@ Les metadonnees etablissements incluent une date de verification
 ├── app.js            # couche UI / DOM
 ├── application.js    # cas d'usage applicatifs
 ├── domain.js         # regles metier pures
-├── data.js           # referentiel metier et sectorisation declarative
+├── data.js           # referentiel metier derive + helpers de resolution
 ├── data_sources/     # sources open data Montpellier utilisees pour la base locale
+│   └── sectorization.json # source de verite des zones / regles de sectorisation
 ├── db/               # schema SQLite + base locale adresses Montpellier
 ├── generated/        # artefacts generes pour le front (index de rues)
+│   └── sectorization-data.js # bundle JS genere pour le navigateur
 ├── scripts/          # scripts de construction / regeneration des donnees
 ├── dev_server.py     # serveur statique local sans cache
 ├── vendor/leaflet/   # distribution Leaflet embarquee
@@ -136,6 +143,24 @@ Le script produit:
 
 - [`db/montpellier_addresses.sqlite`](./db/montpellier_addresses.sqlite) avec les adresses et leur rattachement de sous-zone
 - [`generated/montpellier_street_index.js`](./generated/montpellier_street_index.js) charge par le front pour resoudre une rue comme `rue Joffre`
+
+## Base sectorisation
+
+La sectorisation n'est plus maintenue en dur dans `data.js`.
+
+Source de verite:
+
+- [`data_sources/sectorization.json`](./data_sources/sectorization.json)
+
+Generation du bundle front:
+
+```bash
+python3 scripts/build_sectorization_bundle.py
+```
+
+Le script produit:
+
+- [`generated/sectorization-data.js`](./generated/sectorization-data.js), charge avant [`data.js`](./data.js)
 
 ## Deploiement GitHub Pages
 
