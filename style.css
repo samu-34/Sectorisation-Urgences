@@ -913,6 +913,18 @@ button:active {
   }
 }
 
+@media (max-width: 768px), (max-height: 720px) {
+  .panel-header {
+    display: none;
+  }
+  .detected-specialty-field {
+    display: none;
+  }
+  .filieres-section {
+    display: none;
+  }
+}
+
 @media (max-width: 560px) {
   .app {
     grid-template-rows: minmax(280px, 44dvh) auto;
@@ -964,6 +976,54 @@ button:active {
 }
 .leaflet-popup.orientation-popup .leaflet-popup-content {
   margin: 18px 18px !important;
+}
+.orientation-overlay {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  z-index: 1200;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+.orientation-overlay-card {
+  position: relative;
+  width: min(420px, 100%);
+  max-height: min(calc(100% - 24px), 420px);
+  overflow-y: auto;
+  pointer-events: auto;
+  padding: 18px 18px 16px;
+  border-radius: 24px;
+  border: 1px solid rgba(209, 213, 219, 0.95);
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow:
+    0 24px 54px rgba(15, 23, 42, 0.16),
+    0 8px 20px rgba(15, 23, 42, 0.1);
+  backdrop-filter: blur(8px);
+}
+.orientation-overlay-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 34px;
+  height: 34px;
+  min-height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #c1121f;
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 34px;
+  text-align: center;
+}
+.orientation-overlay-close:hover,
+.orientation-overlay-close:focus {
+  background: #fde7ea;
+  color: #9b0f1a;
+  box-shadow: 0 0 0 3px rgba(193, 18, 31, 0.14);
 }
 .destination-flag-icon {
   background: transparent !important;
@@ -1025,4 +1085,21 @@ button:active {
 }
 .popup-phone a:hover {
   text-decoration: underline;
+}
+
+@media (max-width: 768px), (max-height: 640px) {
+  .orientation-overlay {
+    left: 10px;
+    right: 10px;
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+  }
+  .orientation-overlay-card {
+    width: 100%;
+    max-height: min(calc(100% - 20px), 360px);
+    padding: 14px 14px 12px;
+    border-radius: 20px;
+  }
+  .popup-hospital-name {
+    font-size: 16px;
+  }
 }

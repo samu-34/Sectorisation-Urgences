@@ -22,12 +22,18 @@
       [43.75, 4.08],
     ];
 
+    const mapElement = document.getElementById(mapElementId);
+    const orientationOverlayHost =
+      mapElement?.parentElement || mapElement || document.body;
     let focusLayer = null;
     let routeLayer = null;
     let orientationPopup = null;
+    let orientationOverlay = null;
     let orientationPopupPlacement = null;
     let orientationPopupHospitalId = null;
     let skipNextOrientationPopupCloseCallback = false;
+    let preserveOrientationVisualsOnClose = false;
+    let lastOrientationContext = null;
 
     const layoutController = MediMapMapLayout.createMapLayoutController({
       map,
@@ -114,26 +120,78 @@
       routeLayer = clearRenderableLayer(routeLayer);
     }
 
+    function removeElement(element) {
+      if (!element) return;
+      if (typeof element.remove === "function") {
+        element.remove();
+        return;
+      }
+      const parent = element.parentElement;
+      if (typeof parent?.removeChild === "function") {
+        parent.removeChild(element);
+        return;
+      }
+      if (Array.isArray(parent?.children)) {
+        parent.children = parent.children.filter((child) => child !== element);
+      }
+    }
+
     function handleOrientationPopupClosed(popup) {
       if (!popup || popup !== orientationPopup) {
         skipNextOrientationPopupCloseCallback = false;
+        preserveOrientationVisualsOnClose = false;
         return;
       }
 
       const shouldNotifyApp = !skipNextOrientationPopupCloseCallback;
+      const shouldPreserveVisuals = preserveOrientationVisualsOnClose;
       skipNextOrientationPopupCloseCallback = false;
+      preserveOrientationVisualsOnClose = false;
       orientationPopup = null;
       orientationPopupPlacement = null;
       orientationPopupHospitalId = null;
-      clearSelectionVisuals();
+      if (!shouldPreserveVisuals) {
+        lastOrientationContext = null;
+        clearSelectionVisuals();
+      }
 
       if (shouldNotifyApp && typeof onOrientationPopupClose === "function") {
         onOrientationPopupClose();
       }
     }
 
-    function closeOrientationPopup({ notifyApp = false } = {}) {
+    function closeOrientationOverlay({
+      notifyApp = false,
+      preserveVisuals = false,
+    } = {}) {
+      if (!orientationOverlay) return false;
+
+      removeElement(orientationOverlay);
+      orientationOverlay = null;
+      orientationPopupPlacement = null;
+      orientationPopupHospitalId = null;
+
+      if (!preserveVisuals) {
+        lastOrientationContext = null;
+        clearSelectionVisuals();
+      }
+
+      if (notifyApp && typeof onOrientationPopupClose === "function") {
+        onOrientationPopupClose();
+      }
+
+      return true;
+    }
+
+    function closeOrientationPopup({
+      notifyApp = false,
+      preserveVisuals = false,
+    } = {}) {
+      if (closeOrientationOverlay({ notifyApp, preserveVisuals })) {
+        return;
+      }
       if (!orientationPopup) return;
+      preserveOrientationVisualsOnClose = preserveVisuals;
       skipNextOrientationPopupCloseCallback = !notifyApp;
       map.closePopup(orientationPopup);
     }
@@ -217,9 +275,10 @@
       if (originLat === hospital.lat && originLng === hospital.lng) {
         bounds.extend([originLat + 0.005, originLng + 0.005]);
       }
+      const isCompactViewport = layoutController.isCompactOrientationViewport();
       map.fitBounds(bounds, {
         ...viewportPadding,
-        maxZoom: reserveRouteView ? 13 : 14,
+        maxZoom: isCompactViewport ? (reserveRouteView ? 12 : 13) : reserveRouteView ? 13 : 14,
       });
     }
 
@@ -228,16 +287,16 @@
       travelEstimate,
       popupPlacement = "right",
     ) {
-      closeOrientationPopup();
+      const isCompactViewport = layoutController.isCompactOrientationViewport();
       orientationPopup = L.popup({
         closeButton: true,
         autoClose: false,
         closeOnClick: false,
-        autoPan: false,
-        keepInView: false,
+        autoPan: isCompactViewport,
+        keepInView: isCompactViewport,
         className: layoutController.getPopupClassName(popupPlacement),
         offset: [0, 0],
-        maxWidth: 360,
+        maxWidth: layoutController.getOrientationPopupMaxWidth(),
       })
         .setLatLng([HOSPITALS[hospitalId].lat, HOSPITALS[hospitalId].lng])
         .setContent(layoutController.buildOrientationPopupContent(hospitalId, travelEstimate))
@@ -251,17 +310,50 @@
       });
     }
 
+    function openFixedOrientationOverlay(hospitalId, travelEstimate) {
+      const overlay = document.createElement("div");
+      overlay.className = "orientation-overlay";
+
+      const card = document.createElement("section");
+      card.className = "orientation-overlay-card";
+      card.setAttribute("role", "dialog");
+      card.setAttribute("aria-modal", "false");
+      card.setAttribute("aria-label", `Destination ${HOSPITALS[hospitalId].name}`);
+
+      const closeButton = document.createElement("button");
+      closeButton.type = "button";
+      closeButton.className = "orientation-overlay-close";
+      closeButton.setAttribute("aria-label", "Fermer la destination");
+      closeButton.textContent = "×";
+      closeButton.addEventListener("click", () => {
+        closeOrientationPopup({ notifyApp: true });
+      });
+
+      card.append(
+        closeButton,
+        layoutController.buildOrientationPopupContent(hospitalId, travelEstimate),
+      );
+      overlay.appendChild(card);
+      orientationOverlayHost.appendChild(overlay);
+
+      orientationOverlay = overlay;
+      orientationPopupPlacement = "compact";
+      orientationPopupHospitalId = hospitalId;
+    }
+
     function refresh({ specialtyId, cloudHospitalMap }) {
       staticLayerRenderer.refresh({ specialtyId, cloudHospitalMap });
     }
 
-    function showOrientation({
-      area,
-      originPoint = null,
-      hospitalId,
-      travelEstimate,
-    }) {
-      closeOrientationPopup();
+    function renderOrientationPresentation() {
+      if (!lastOrientationContext) return;
+
+      const {
+        area,
+        originPoint,
+        hospitalId,
+        travelEstimate,
+      } = lastOrientationContext;
       const hospital = HOSPITALS[hospitalId];
       const preferredPopupPlacement =
         layoutController.getPreferredOrientationPopupPlacement(
@@ -269,14 +361,23 @@
           hospital,
           originPoint,
         );
-      const initialPopupPlacement = preferredPopupPlacement;
-      highlightCurrentArea(area, originPoint);
-      drawRoute(area, hospitalId, originPoint);
+
       zoomToBounds(area, hospitalId, {
         originPoint,
-        popupPlacement: initialPopupPlacement,
+        popupPlacement: preferredPopupPlacement,
       });
-      openOrientationPopup(hospitalId, travelEstimate, initialPopupPlacement);
+
+      if (preferredPopupPlacement === "compact") {
+        openFixedOrientationOverlay(hospitalId, travelEstimate);
+        zoomToBounds(area, hospitalId, {
+          reserveRouteView: true,
+          originPoint,
+          popupPlacement: "compact",
+        });
+        return;
+      }
+
+      openOrientationPopup(hospitalId, travelEstimate, preferredPopupPlacement);
       setTimeout(() => {
         if (!orientationPopup) return;
         zoomToBounds(area, hospitalId, {
@@ -307,9 +408,53 @@
       }, 0);
     }
 
+    function syncOrientationPresentationToViewport() {
+      if (!lastOrientationContext) return;
+
+      const shouldUseFixedOverlay = layoutController.isCompactOrientationViewport();
+      if (shouldUseFixedOverlay && orientationOverlay) {
+        return;
+      }
+      if (
+        !shouldUseFixedOverlay &&
+        orientationPopup &&
+        orientationPopupHospitalId &&
+        orientationPopupPlacement
+      ) {
+        layoutController.positionOrientationPopup({
+          orientationPopup,
+          hospitalId: orientationPopupHospitalId,
+          placement: orientationPopupPlacement,
+        });
+        return;
+      }
+
+      closeOrientationPopup({ preserveVisuals: true });
+      renderOrientationPresentation();
+    }
+
+    function showOrientation({
+      area,
+      originPoint = null,
+      hospitalId,
+      travelEstimate,
+    }) {
+      closeOrientationPopup();
+      lastOrientationContext = {
+        area,
+        originPoint,
+        hospitalId,
+        travelEstimate,
+      };
+      highlightCurrentArea(area, originPoint);
+      drawRoute(area, hospitalId, originPoint);
+      renderOrientationPresentation();
+    }
+
     function resetDecisionState() {
       closeOrientationPopup();
       clearSelectionVisuals();
+      lastOrientationContext = null;
     }
 
     function getState() {
@@ -318,6 +463,7 @@
         focusLayer,
         routeLayer,
         orientationPopup,
+        orientationOverlay,
       };
     }
 
@@ -349,6 +495,7 @@
       setDefaultMapView,
       invalidateSize() {
         map.invalidateSize();
+        syncOrientationPresentationToViewport();
       },
       refresh,
       showOrientation,

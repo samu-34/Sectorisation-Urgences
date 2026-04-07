@@ -41,6 +41,9 @@ const FEEDBACK_EMAIL_RECIPIENTS = [
   "h-ghomrani@chu-montpellier.fr",
   "mohammed-mahmoudi@chu-montpellier.fr",
 ];
+const PASSWORD_GATE_ENABLED = false;
+const SUGGESTIONS_ENABLED = true;
+const FEEDBACK_ENABLED = false;
 const LEGEND_HIDE_VIEWPORT_MAX_WIDTH = 768;
 const LEGEND_HIDE_MAP_MAX_WIDTH = 700;
 let mapAccessUnlocked = false;
@@ -165,6 +168,11 @@ function refreshMap() {
 }
 
 function lockMapAccess() {
+  if (!PASSWORD_GATE_ENABLED) {
+    unlockMapAccess();
+    return;
+  }
+
   mapAccessUnlocked = false;
   DOM.appRoot.classList.add("app-locked");
   DOM.authOverlay.classList.remove("hidden");
@@ -226,6 +234,11 @@ function syncResponsiveMapUi() {
 }
 
 function submitMapAccessPassword() {
+  if (!PASSWORD_GATE_ENABLED) {
+    unlockMapAccess();
+    return true;
+  }
+
   const typedPassword = String(DOM.authPassword.value || "").trim();
 
   if (typedPassword === MAP_ACCESS_PASSWORD) {
@@ -271,6 +284,11 @@ function autoResizeFeedbackMessage() {
 }
 
 function openFeedbackDialog() {
+  if (!FEEDBACK_ENABLED) {
+    closeFeedbackDialog();
+    return;
+  }
+
   feedbackDialogOpen = true;
   clearFeedbackStatus();
   DOM.feedbackOverlay.classList.remove("hidden");
@@ -287,6 +305,13 @@ function closeFeedbackDialog() {
   DOM.feedbackOverlay.classList.add("hidden");
   clearFeedbackStatus();
   DOM.feedbackMessage.style.height = "";
+}
+
+function syncFeatureVisibility() {
+  if (!FEEDBACK_ENABLED) {
+    DOM.feedbackBtn.hidden = true;
+    DOM.feedbackOverlay.classList.add("hidden");
+  }
 }
 
 function openFeedbackEmailDraft() {
@@ -344,6 +369,7 @@ let cityInputController = null;
 
 const autocomplete = MediMapAutocomplete.createAutocompleteController({
   DOM,
+  enabled: SUGGESTIONS_ENABLED,
   simplify,
   getRankedMatches,
   filiereLabelById,
@@ -395,6 +421,13 @@ DOM.cityInput.addEventListener("keydown", (event) => {
     cityInputController.handleEscape();
     return;
   }
+  if (!SUGGESTIONS_ENABLED) {
+    if (event.key !== "Enter") return;
+
+    event.preventDefault();
+    void cityInputController.handleSubmit(DOM.cityInput.value);
+    return;
+  }
   if (event.key === "ArrowDown") {
     event.preventDefault();
     autocomplete.moveCitySuggestion(1);
@@ -421,6 +454,9 @@ DOM.cityInput.addEventListener("blur", () => {
 });
 
 DOM.symptomInput.addEventListener("keydown", (event) => {
+  if (!SUGGESTIONS_ENABLED) {
+    return;
+  }
   if (event.key === "ArrowDown") {
     event.preventDefault();
     autocomplete.moveSymptomSuggestion(1);
@@ -529,6 +565,7 @@ document.addEventListener("keydown", (event) => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
+  syncFeatureVisibility();
   syncLegendVisibility();
   lockMapAccess();
   renderChips();

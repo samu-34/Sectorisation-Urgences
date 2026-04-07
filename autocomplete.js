@@ -8,6 +8,7 @@
 
   function createAutocompleteController({
     DOM,
+    enabled = true,
     simplify,
     getRankedMatches,
     filiereLabelById,
@@ -106,6 +107,11 @@
     }
 
     function renderSymptomSuggestions(query) {
+      if (!enabled) {
+        closeSymptomSuggestions();
+        return;
+      }
+
       const normalizedQuery = simplify(query);
       if (!normalizedQuery) {
         closeSymptomSuggestions();
@@ -185,6 +191,11 @@
     }
 
     function renderCitySuggestions(query, { extraItems = [] } = {}) {
+      if (!enabled) {
+        closeCitySuggestions();
+        return;
+      }
+
       const normalizedQuery = simplify(query);
       if (!normalizedQuery) {
         closeCitySuggestions();

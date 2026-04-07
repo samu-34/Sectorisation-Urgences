@@ -7,9 +7,11 @@
   "use strict";
 
   const ORIENTATION_POPUP_CLASS = "orientation-popup";
-  const ORIENTATION_POPUP_PLACEMENTS = ["right", "left"];
+  const ORIENTATION_POPUP_PLACEMENTS = ["right", "left", "compact"];
   const ORIENTATION_POPUP_GAP_PX = 18;
   const ORIENTATION_POPUP_VIEWPORT_MARGIN_PX = 16;
+  const COMPACT_VIEWPORT_MAX_WIDTH_PX = 900;
+  const COMPACT_VIEWPORT_MAX_HEIGHT_PX = 620;
   const ORIENTATION_POPUP_FALLBACK_SIZE = Object.freeze({
     width: 320,
     height: 220,
@@ -394,6 +396,21 @@
       return [origin.lat, origin.lng];
     }
 
+    function isCompactOrientationViewport(viewportSize = map.getSize()) {
+      return (
+        viewportSize.x <= COMPACT_VIEWPORT_MAX_WIDTH_PX ||
+        viewportSize.y <= COMPACT_VIEWPORT_MAX_HEIGHT_PX
+      );
+    }
+
+    function getOrientationPopupMaxWidth(viewportSize = map.getSize()) {
+      if (!isCompactOrientationViewport(viewportSize)) {
+        return 360;
+      }
+
+      return clamp(viewportSize.x - 24, 260, 340);
+    }
+
     function buildRoutePath(area, hospital, originPoint = null) {
       const start = getOriginCoordinates(originPoint, area);
       const end = [hospital.lat, hospital.lng];
@@ -502,6 +519,10 @@
     }
 
     function getPreferredOrientationPopupPlacement(area, hospital, originPoint = null) {
+      if (isCompactOrientationViewport()) {
+        return "compact";
+      }
+
       const routePath = buildRoutePath(area, hospital, originPoint);
       const endPoint = projectLatLngToContainerPoint(routePath[routePath.length - 1]);
       const previousPoint = projectLatLngToContainerPoint(
@@ -524,6 +545,10 @@
       preferredPlacement = "right",
       orientationPopup,
     }) {
+      if (isCompactOrientationViewport()) {
+        return "compact";
+      }
+
       const placementOrder = [
         preferredPlacement,
         getOppositePopupPlacement(preferredPlacement),
@@ -639,6 +664,30 @@
       const popupSize = reserveRouteView
         ? getPopupElementSize(orientationPopup)
         : ORIENTATION_POPUP_FALLBACK_SIZE;
+
+      if (popupPlacement === "compact" || isCompactOrientationViewport(size)) {
+        const horizontalPadding = clamp(
+          Math.round(size.x * 0.05),
+          20,
+          44,
+        );
+        const topPadding = reserveRouteView
+          ? clamp(
+              popupSize.height + 42,
+              180,
+              Math.max(220, size.y - 80),
+            )
+          : clamp(popupSize.height + 28, 148, 260);
+        const bottomPadding = reserveRouteView
+          ? clamp(Math.round(size.y * 0.12), 44, 92)
+          : 40;
+
+        return {
+          paddingTopLeft: [horizontalPadding, topPadding],
+          paddingBottomRight: [horizontalPadding, bottomPadding],
+        };
+      }
+
       const sidePadding = Math.max(
         popupSize.width + ORIENTATION_POPUP_GAP_PX + 44,
         reserveRouteView
@@ -734,6 +783,8 @@
       resolveOrientationPopupPlacement,
       positionOrientationPopup,
       getOrientationViewportPadding,
+      getOrientationPopupMaxWidth,
+      isCompactOrientationViewport,
       getPopupClassName,
     });
   }
