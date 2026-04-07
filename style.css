@@ -840,6 +840,9 @@ button:active {
   .row {
     grid-template-columns: 1fr;
   }
+  #regulateBtn {
+    display: none !important;
+  }
   input,
   select,
   button,

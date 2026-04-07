@@ -65,6 +65,28 @@
       box.replaceChildren();
     }
 
+    function bindSuggestionPick(element, pick) {
+      let handled = false;
+
+      function handlePick(event) {
+        if (handled) {
+          return;
+        }
+        handled = true;
+
+        if (event && typeof event.preventDefault === "function") {
+          event.preventDefault();
+        }
+
+        pick();
+      }
+
+      element.addEventListener("pointerdown", handlePick);
+      element.addEventListener("mousedown", handlePick);
+      element.addEventListener("touchstart", handlePick);
+      element.addEventListener("click", handlePick);
+    }
+
     function buildSuggestionItem({
       id,
       label,
@@ -148,7 +170,7 @@
       setActiveSuggestion(DOM.symptomInput, DOM.suggestBox, symptomSuggestionIndex);
 
       DOM.suggestBox.querySelectorAll(".suggest-item").forEach((element) => {
-        element.addEventListener("click", () => {
+        bindSuggestionPick(element, () => {
           onSymptomPick(element.dataset.label, element.dataset.filiere);
           closeSymptomSuggestions();
         });
@@ -181,7 +203,7 @@
       setActiveSuggestion(DOM.cityInput, DOM.citySuggestBox, citySuggestionIndex);
 
       DOM.citySuggestBox.querySelectorAll(".suggest-item").forEach((element) => {
-        element.addEventListener("click", () => {
+        bindSuggestionPick(element, () => {
           const suggestion = currentCitySuggestions[Number(element.dataset.index)];
           if (suggestion) {
             onCityPick(suggestion);

@@ -104,6 +104,28 @@ test("cliquer une suggestion locale de rue montpellieraine conserve un texte lis
   assert.equal(exports.getCurrentArea().id, "mtp_centre_historique");
 });
 
+test("une interaction tactile sur une suggestion de localisation met a jour le champ mobile", () => {
+  const { exports } = createAppHarness();
+
+  exports.DOM.cityInput.value = "joff";
+  exports.DOM.cityInput.dispatchEvent({ type: "input" });
+
+  const suggestions = exports.DOM.citySuggestBox.querySelectorAll(".suggest-item");
+  const streetSuggestion = suggestions.find((item) =>
+    item.textContent.includes("Rue Joffre"),
+  );
+
+  assert.ok(streetSuggestion);
+
+  streetSuggestion.dispatchEvent({ type: "touchstart" });
+  exports.DOM.cityInput.dispatchEvent({ type: "blur" });
+
+  assert.equal(exports.DOM.cityInput.value, "Rue Joffre");
+  assert.equal(exports.DOM.citySelect.value, "Montpellier");
+  assert.equal(exports.DOM.subzoneSelect.value, "mtp_centre_historique");
+  assert.equal(exports.getCurrentArea().id, "mtp_centre_historique");
+});
+
 test("l'autocompletion propose une adresse montpellieraine distante et la selectionne au clic", async () => {
   const fetchCalls = [];
   const { exports } = createAppHarness({
@@ -225,6 +247,19 @@ test("le bouton Effacer reinitialise la selection, la decision et la carte", () 
   assert.equal(exports.DOM.detectedSpecialty.value, "");
   assert.equal(exports.getInternalState().routeLayer, null);
   assert.equal(exports.getInternalState().focusLayer, null);
+});
+
+test("le bouton Orientation se masque sur petit viewport puis reapparait sur grand ecran", () => {
+  const harness = createAppHarness();
+  const { exports, window } = harness;
+
+  window.innerWidth = 740;
+  window.dispatchEvent({ type: "resize" });
+  assert.equal(exports.DOM.regulateBtn.classList.contains("hidden"), true);
+
+  window.innerWidth = 1024;
+  window.dispatchEvent({ type: "resize" });
+  assert.equal(exports.DOM.regulateBtn.classList.contains("hidden"), false);
 });
 
 test("fermer la popup d'orientation efface la console pour une nouvelle saisie", () => {

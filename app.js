@@ -46,6 +46,7 @@ const SUGGESTIONS_ENABLED = true;
 const FEEDBACK_ENABLED = false;
 const LEGEND_HIDE_VIEWPORT_MAX_WIDTH = 768;
 const LEGEND_HIDE_MAP_MAX_WIDTH = 700;
+const REGULATE_BUTTON_HIDE_VIEWPORT_MAX_WIDTH = 768;
 let mapAccessUnlocked = false;
 let feedbackDialogOpen = false;
 
@@ -223,8 +224,23 @@ function syncLegendVisibility() {
   return wasHidden !== shouldHideLegend;
 }
 
+function syncRegulateButtonVisibility() {
+  if (!DOM.regulateBtn) return false;
+
+  const viewportWidth =
+    window.innerWidth || document.documentElement.clientWidth || 0;
+  const shouldHideRegulateButton =
+    viewportWidth > 0 &&
+    viewportWidth <= REGULATE_BUTTON_HIDE_VIEWPORT_MAX_WIDTH;
+  const wasHidden = DOM.regulateBtn.classList.contains("hidden");
+
+  DOM.regulateBtn.classList.toggle("hidden", shouldHideRegulateButton);
+  return wasHidden !== shouldHideRegulateButton;
+}
+
 function syncResponsiveMapUi() {
   const legendVisibilityChanged = syncLegendVisibility();
+  syncRegulateButtonVisibility();
   if (!mapAccessUnlocked) return;
   try {
     if (legendVisibilityChanged || DOM.map?.clientWidth) {
@@ -567,6 +583,7 @@ document.addEventListener("keydown", (event) => {
 document.addEventListener("DOMContentLoaded", () => {
   syncFeatureVisibility();
   syncLegendVisibility();
+  syncRegulateButtonVisibility();
   lockMapAccess();
   renderChips();
   populateCitySelect();
