@@ -13,9 +13,11 @@ const DOM = {
   cityInput: document.getElementById("cityInput"),
   subzoneSelect: document.getElementById("subzoneSelect"),
   subzoneWrap: document.getElementById("subzoneWrap"),
+  symptomField: document.getElementById("symptomField"),
   detectedSpecialty: document.getElementById("detectedSpecialty"),
   legend: document.getElementById("legend"),
   symptomInput: document.getElementById("symptomInput"),
+  symptomError: document.getElementById("symptomError"),
   suggestBox: document.getElementById("suggestBox"),
   citySuggestBox: document.getElementById("citySuggestBox"),
   regulateBtn: document.getElementById("regulateBtn"),
@@ -55,6 +57,7 @@ const {
   getRankedMatches,
   filiereLabelById,
 } = MediMapDomain;
+const SYMPTOM_ERROR_MESSAGE = "Choisir un motif valable";
 const appController = MediMapApplication.createAppController();
 
 const mapRenderer = MediMapMapRenderer.createMapRenderer({
@@ -73,6 +76,7 @@ function resetSessionUi({ resetMapView = false } = {}) {
   renderSelectionState();
   DOM.symptomInput.value = "";
   renderDetectedSpecialtyIndicator();
+  renderSymptomValidationState();
   resetDecisionState();
   if (resetMapView) {
     mapRenderer.setDefaultMapView();
@@ -84,6 +88,40 @@ function renderDetectedSpecialtyIndicator() {
   DOM.detectedSpecialty.value = detectedSpecialty
     ? filiereLabelById(detectedSpecialty)
     : "";
+}
+
+function hasSymptomCatalogMatch(query) {
+  return (
+    getRankedMatches(
+      MOTIF_CATALOG,
+      query,
+      (item) => [item.label, ...(item.aliases || [])],
+    ).length > 0
+  );
+}
+
+function renderSymptomValidationState() {
+  const { symptomInputValue, detectedSpecialty } = appController.getState();
+  const hasTypedSymptom = Boolean(simplify(symptomInputValue));
+  const invalidSymptom =
+    hasTypedSymptom &&
+    !detectedSpecialty &&
+    !hasSymptomCatalogMatch(symptomInputValue);
+
+  DOM.symptomField.classList.toggle("is-invalid", invalidSymptom);
+  DOM.symptomInput.setAttribute("aria-invalid", invalidSymptom ? "true" : "false");
+  DOM.symptomInput.parentElement.classList.toggle("is-invalid", invalidSymptom);
+
+  if (invalidSymptom) {
+    DOM.symptomInput.setAttribute("aria-describedby", "symptomError");
+    DOM.symptomError.textContent = SYMPTOM_ERROR_MESSAGE;
+    DOM.symptomError.classList.remove("hidden");
+    return;
+  }
+
+  DOM.symptomInput.removeAttribute("aria-describedby");
+  DOM.symptomError.textContent = SYMPTOM_ERROR_MESSAGE;
+  DOM.symptomError.classList.add("hidden");
 }
 
 function renderSubzoneOptions() {
@@ -347,6 +385,7 @@ function openFeedbackEmailDraft() {
 function applySymptomInput(text, options = {}) {
   const result = appController.setSymptomInput(text, options);
   renderDetectedSpecialtyIndicator();
+  renderSymptomValidationState();
 
   if (result.mapSpecialtyChanged) {
     renderChips();

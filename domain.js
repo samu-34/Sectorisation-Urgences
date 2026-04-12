@@ -175,7 +175,7 @@
         return specialty;
       }
     }
-    return "divers";
+    return "";
   }
 
   function inferDetectedSpecialty(text) {
@@ -648,7 +648,14 @@
   }
 
   function resolveOrientationHospital(area, symptomText) {
-    return resolveHospitalForArea(area, inferDetectedSpecialty(symptomText) || "divers");
+    const normalizedSymptom = simplify(symptomText);
+    const detectedSpecialty = inferDetectedSpecialty(symptomText);
+
+    if (normalizedSymptom && !detectedSpecialty) {
+      return "";
+    }
+
+    return resolveHospitalForArea(area, detectedSpecialty || "divers");
   }
 
   function distanceKm(lat1, lng1, lat2, lng2) {

@@ -231,6 +231,46 @@ test("changer le motif recalcule l'orientation quand la filiere bascule", () => 
   );
 });
 
+test("un motif non indexe efface l'orientation au lieu de basculer en classique", () => {
+  const { exports } = createAppHarness();
+
+  exports.DOM.cityInput.value = "Mauguio";
+  const matched = exports.syncSelectionFromCityInput(exports.DOM.cityInput.value);
+  exports.DOM.symptomInput.value = "entorse";
+  exports.updateDecision();
+
+  assert.equal(matched, true);
+  assert.notEqual(exports.getInternalState().routeLayer, null);
+  assert.notEqual(exports.getInternalState().orientationPopup, null);
+
+  exports.DOM.symptomInput.value = "motif hors catalogue";
+  exports.DOM.symptomInput.dispatchEvent({ type: "input" });
+
+  assert.equal(exports.DOM.detectedSpecialty.value, "");
+  assert.equal(exports.DOM.symptomInput.getAttribute("aria-invalid"), "true");
+  assert.equal(exports.DOM.symptomError.classList.contains("hidden"), false);
+  assert.equal(exports.DOM.symptomError.textContent, "Choisir un motif valable");
+  assert.equal(exports.DOM.symptomField.classList.contains("is-invalid"), true);
+  assert.equal(exports.getInternalState().routeLayer, null);
+  assert.equal(exports.getInternalState().orientationPopup, null);
+});
+
+test("une saisie valide efface le message d'erreur sur le motif", () => {
+  const { exports } = createAppHarness();
+
+  exports.DOM.symptomInput.value = "motif hors catalogue";
+  exports.DOM.symptomInput.dispatchEvent({ type: "input" });
+
+  assert.equal(exports.DOM.symptomError.classList.contains("hidden"), false);
+
+  exports.DOM.symptomInput.value = "traumatisme";
+  exports.DOM.symptomInput.dispatchEvent({ type: "input" });
+
+  assert.equal(exports.DOM.symptomInput.getAttribute("aria-invalid"), "false");
+  assert.equal(exports.DOM.symptomError.classList.contains("hidden"), true);
+  assert.equal(exports.DOM.symptomField.classList.contains("is-invalid"), false);
+});
+
 test("le bouton Effacer reinitialise la selection, la decision et la carte", () => {
   const { exports } = createAppHarness();
 

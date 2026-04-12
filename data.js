@@ -299,7 +299,7 @@ const MOTIF_CATALOG = [
   {
     label: "Traumatisme",
     filiere: "trauma",
-    aliases: ["TC", "Traumatisme crânien", "Traumatisme cranien"],
+    aliases: ["TC", "Trauma", "Traumatisme crânien", "Traumatisme cranien"],
   },
   { label: "Entorse", filiere: "trauma" },
   { label: "Luxation", filiere: "trauma" },

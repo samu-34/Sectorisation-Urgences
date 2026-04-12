@@ -231,6 +231,14 @@
 
       const mapSpecialtyChanged = syncMapSpecialtyFromDetected();
       const hospitalId = domain.resolveOrientationHospital(area, state.symptomInputValue);
+      if (!hospitalId) {
+        return {
+          mapSpecialtyChanged,
+          orientation: null,
+          state: getState(),
+        };
+      }
+
       const originPoint =
         state.originPoint || {
           lat: area.lat,

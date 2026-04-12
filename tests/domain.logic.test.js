@@ -15,6 +15,7 @@ test("inferDetectedSpecialty and detectSpecialty resolve expected filieres", () 
   assert.equal(MediMapDomain.inferDetectedSpecialty("douleur thoracique"), "cardio_pneumo");
   assert.equal(MediMapDomain.inferDetectedSpecialty("colique nephretique"), "gastro_uro");
   assert.equal(MediMapDomain.inferDetectedSpecialty("traumatisme cranien"), "trauma");
+  assert.equal(MediMapDomain.inferDetectedSpecialty("motif inconnu"), "");
   assert.equal(MediMapDomain.inferDetectedSpecialty(""), "");
   assert.equal(MediMapDomain.detectSpecialty(""), "cardio_pneumo");
 });
@@ -113,6 +114,20 @@ test("Mauguio en traumatologie oriente vers la Clinique du Parc", () => {
   assert.equal(
     MediMapDomain.resolveOrientationHospital(mauguio, "entorse de cheville"),
     "parc",
+  );
+});
+
+test("un motif saisi mais non reconnu ne declenche pas d'orientation", () => {
+  const mauguio = MediMapDomain.resolveAreaFromSelection("Mauguio", "");
+
+  assert.equal(mauguio.id, "mauguio");
+  assert.equal(
+    MediMapDomain.resolveOrientationHospital(mauguio, "motif hors catalogue"),
+    "",
+  );
+  assert.equal(
+    MediMapDomain.resolveOrientationHospital(mauguio, ""),
+    "millenaire",
   );
 });
 

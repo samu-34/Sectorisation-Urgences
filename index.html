@@ -65,8 +65,17 @@
           <div class="soft-box">
             <div class="stack">
               <!-- Symptôme -->
-              <div>
-                <label for="symptomInput">Motif d'appel :</label>
+              <div id="symptomField">
+                <div class="field-label-row">
+                  <label for="symptomInput">Motif d'appel :</label>
+                  <span
+                    id="symptomError"
+                    class="field-error hidden"
+                    aria-live="polite"
+                  >
+                    Choisir un motif valable
+                  </span>
+                </div>
                 <div class="autocomplete-wrap">
                   <input
                     id="symptomInput"

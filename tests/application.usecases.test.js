@@ -21,6 +21,21 @@ test("les cas d'usage de selection et d'orientation restent coherents", () => {
   assert.equal(orientationResult.orientation.hospitalId, "parc");
 });
 
+test("un motif non reconnu bloque l'orientation sans casser la selection de zone", () => {
+  const controller = MediMapApplication.createAppController();
+
+  const cityResult = controller.selectCityInput("Mauguio");
+  assert.equal(cityResult.selection.matched, true);
+  assert.equal(cityResult.state.currentArea.id, "mauguio");
+
+  controller.setSymptomInput("motif hors catalogue", { syncMapSpecialty: false });
+  const orientationResult = controller.computeOrientation();
+
+  assert.equal(orientationResult.mapSpecialtyChanged, false);
+  assert.equal(orientationResult.orientation, null);
+  assert.equal(orientationResult.state.detectedSpecialty, "");
+});
+
 test("refreshSectorisationMap s'appuie sur la configuration declarative des nuages", () => {
   const controller = MediMapApplication.createAppController();
 
