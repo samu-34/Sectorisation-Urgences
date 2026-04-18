@@ -6,7 +6,11 @@
     <meta name="theme-color" content="#17313b" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.tile.openstreetmap.org https://tile.openstreetmap.org; connect-src 'self' https://nominatim.openstreetmap.org; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'"
+      content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.tile.openstreetmap.org https://tile.openstreetmap.org; connect-src 'self' https://nominatim.openstreetmap.org https://cloudflareinsights.com; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'"
+    />
+    <meta
+      name="cloudflare-analytics-token"
+      content="c542349f664441718013fe44c7f4b739"
     />
     <meta
       name="description"
@@ -18,7 +22,7 @@
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="vendor/leaflet/leaflet.css?v=20260319-1735" />
     <!-- App CSS -->
-    <link rel="stylesheet" href="style.css?v=20260319-1735" />
+    <link rel="stylesheet" href="style.css?v=20260418-1055" />
   </head>
   <body>
     <noscript>
@@ -159,6 +163,28 @@
           </div>
         </div>
 
+        <div class="section usage-section">
+          <h2>Usage</h2>
+          <div class="soft-box usage-box">
+            <div class="usage-grid">
+              <div class="usage-metric">
+                <div class="usage-label">Ouvertures du site</div>
+                <div class="usage-value" id="usageOpenCount">0</div>
+              </div>
+              <div class="usage-metric">
+                <div class="usage-label">Recherches (session)</div>
+                <div class="usage-value" id="usageSessionSearchCount">0</div>
+              </div>
+            </div>
+            <ul
+              id="usageSessionsList"
+              class="usage-sessions"
+              aria-label="Historique des recherches par session"
+            ></ul>
+            <p class="usage-hint">Compteur local au navigateur actuel.</p>
+          </div>
+        </div>
+
         <!-- Footer -->
         <div class="panel-footer">
           <span>Crédits : Dr GHOMRANI & Dr MAHMOUDI</span>
@@ -182,7 +208,7 @@
     </div>
 
     <div
-      class="auth-overlay"
+      class="auth-overlay hidden"
       id="authOverlay"
       role="dialog"
       aria-modal="true"
@@ -284,6 +310,7 @@
     <script src="map-renderer-layout.js?v=20260324-2015"></script>
     <script src="vendor/leaflet/leaflet.js?v=20260319-1735"></script>
     <script src="map-renderer.js?v=20260324-2015"></script>
-    <script src="app.js?v=20260324-1915"></script>
+    <script src="app.js?v=20260418-1055"></script>
+    <script src="analytics.js?v=20260418-1115"></script>
   </body>
 </html>

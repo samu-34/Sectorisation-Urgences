@@ -309,6 +309,60 @@ button:active {
   color: var(--primary-dark);
 }
 
+/* ─── Usage Stats ─── */
+.usage-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.usage-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.usage-metric {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  padding: 10px 12px;
+}
+
+.usage-label {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.usage-value {
+  font-size: 24px;
+  line-height: 1.15;
+  color: var(--text);
+  font-weight: 800;
+  margin-top: 4px;
+}
+
+.usage-sessions {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.usage-sessions li {
+  line-height: 1.4;
+}
+
+.usage-hint {
+  margin: 0;
+  font-size: 11px;
+  color: var(--muted);
+}
+
 /* ─── Decision Card ─── */
 .card {
   border: 1px solid var(--line);
@@ -866,6 +920,9 @@ button:active {
     padding: 12px;
   }
   .row {
+    grid-template-columns: 1fr;
+  }
+  .usage-grid {
     grid-template-columns: 1fr;
   }
   #regulateBtn {

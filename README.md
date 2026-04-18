@@ -184,6 +184,27 @@ Exemples d'URLs:
 
 Comme les liens sont relatifs, aucun changement de `basePath` n'est necessaire pour ces deux cas.
 
+## Analytics Cloudflare (gratuit)
+
+Le projet inclut un branchement Cloudflare Web Analytics pret a l'emploi:
+
+- script local: [`analytics.js`](./analytics.js)
+- token a renseigner dans [`index.html`](./index.html) via:
+  `<meta name="cloudflare-analytics-token" content="" />`
+
+Pour activer la collecte:
+
+1. creer le site dans Cloudflare Web Analytics
+2. recuperer le `token` fourni par Cloudflare
+3. renseigner ce token dans la balise meta `cloudflare-analytics-token`
+4. deployer sur GitHub Pages
+
+Notes:
+
+- sans token, le script ne charge rien (comportement volontaire)
+- la CSP de [`index.html`](./index.html) est deja adaptee pour autoriser
+  `static.cloudflareinsights.com` et `cloudflareinsights.com`
+
 ## Utilisation
 
 1. saisir un motif d'appel dans `Motif d'appel`
@@ -203,6 +224,17 @@ Pour les adresses Montpellier, l'application:
    repere de voie deja connu
 2. s'appuie sur l'index de rues genere depuis la base locale Montpellier
 3. ignore le numero de voie pour privilegier le rattachement territorial
+
+## Suivi d'usage local
+
+Un bloc `Usage` est affiche dans la barre laterale avec:
+
+- le nombre d'ouvertures du site (`Ouvertures du site`)
+- le nombre de recherches effectuees dans la session en cours (`Recherches (session)`)
+- un historique des dernieres sessions avec leur nombre de recherches
+
+Ce suivi est stocke uniquement dans le navigateur local (`localStorage` +
+`sessionStorage`). Il ne remonte aucune donnee vers un serveur distant.
 
 ## Referentiel technique et metier
 
