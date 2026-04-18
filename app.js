@@ -36,9 +36,6 @@ const DOM = {
   feedbackStatus: document.getElementById("feedbackStatus"),
   feedbackCloseBtn: document.getElementById("feedbackCloseBtn"),
   feedbackMailBtn: document.getElementById("feedbackMailBtn"),
-  usageOpenCount: document.getElementById("usageOpenCount"),
-  usageSessionSearchCount: document.getElementById("usageSessionSearchCount"),
-  usageSessionsList: document.getElementById("usageSessionsList"),
 };
 
 const MAP_ACCESS_PASSWORD = "samu34secteur";
@@ -52,9 +49,6 @@ const FEEDBACK_ENABLED = false;
 const LEGEND_HIDE_VIEWPORT_MAX_WIDTH = 768;
 const LEGEND_HIDE_MAP_MAX_WIDTH = 700;
 const REGULATE_BUTTON_HIDE_VIEWPORT_MAX_WIDTH = 768;
-const USAGE_METRICS_STORAGE_KEY = "medimap.usage.metrics.v1";
-const USAGE_SESSION_STORAGE_KEY = "medimap.usage.session.v1";
-const USAGE_SESSION_HISTORY_LIMIT = 8;
 let mapAccessUnlocked = false;
 let feedbackDialogOpen = false;
 
@@ -74,181 +68,6 @@ const mapRenderer = MediMapMapRenderer.createMapRenderer({
     resetSessionUi();
   },
 });
-
-function createUsageMetricsController() {
-  let metrics = {
-    siteOpenCount: 0,
-    sessions: [],
-  };
-  let currentSessionId = "";
-
-  const sessionDateFormatter = new Intl.DateTimeFormat("fr-FR", {
-    day: "2-digit",
-    month: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-
-  function toSafeInteger(value) {
-    const numericValue = Number(value);
-    if (!Number.isFinite(numericValue) || numericValue < 0) return 0;
-    return Math.floor(numericValue);
-  }
-
-  function normalizeIsoDate(value) {
-    if (typeof value !== "string" || !value) return new Date().toISOString();
-    const parsedDate = new Date(value);
-    if (Number.isNaN(parsedDate.getTime())) return new Date().toISOString();
-    return parsedDate.toISOString();
-  }
-
-  function sanitizeSessions(rawSessions) {
-    if (!Array.isArray(rawSessions)) return [];
-
-    return rawSessions
-      .map((session) => {
-        const sessionId = String(session?.id || "").trim();
-        if (!sessionId) return null;
-        return {
-          id: sessionId,
-          startedAt: normalizeIsoDate(session.startedAt),
-          searchCount: toSafeInteger(session.searchCount),
-        };
-      })
-      .filter(Boolean)
-      .sort(
-        (left, right) =>
-          new Date(right.startedAt).getTime() - new Date(left.startedAt).getTime(),
-      )
-      .slice(0, USAGE_SESSION_HISTORY_LIMIT);
-  }
-
-  function readMetrics() {
-    try {
-      const rawMetrics = localStorage.getItem(USAGE_METRICS_STORAGE_KEY);
-      if (!rawMetrics) return { siteOpenCount: 0, sessions: [] };
-      const parsedMetrics = JSON.parse(rawMetrics);
-      return {
-        siteOpenCount: toSafeInteger(parsedMetrics?.siteOpenCount),
-        sessions: sanitizeSessions(parsedMetrics?.sessions),
-      };
-    } catch (error) {
-      return { siteOpenCount: 0, sessions: [] };
-    }
-  }
-
-  function saveMetrics() {
-    try {
-      localStorage.setItem(USAGE_METRICS_STORAGE_KEY, JSON.stringify(metrics));
-    } catch (error) {}
-  }
-
-  function readSessionId() {
-    try {
-      return String(sessionStorage.getItem(USAGE_SESSION_STORAGE_KEY) || "").trim();
-    } catch (error) {
-      return "";
-    }
-  }
-
-  function saveSessionId(sessionId) {
-    try {
-      sessionStorage.setItem(USAGE_SESSION_STORAGE_KEY, sessionId);
-    } catch (error) {}
-  }
-
-  function ensureCurrentSession() {
-    if (!currentSessionId) {
-      currentSessionId = readSessionId();
-    }
-
-    if (!currentSessionId) {
-      currentSessionId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-      saveSessionId(currentSessionId);
-    }
-
-    const existingSessionIndex = metrics.sessions.findIndex(
-      (session) => session.id === currentSessionId,
-    );
-    if (existingSessionIndex >= 0) return;
-
-    metrics.sessions.unshift({
-      id: currentSessionId,
-      startedAt: new Date().toISOString(),
-      searchCount: 0,
-    });
-    metrics.sessions = metrics.sessions.slice(0, USAGE_SESSION_HISTORY_LIMIT);
-  }
-
-  function getCurrentSessionSearchCount() {
-    const currentSession = metrics.sessions.find(
-      (session) => session.id === currentSessionId,
-    );
-    if (!currentSession) return 0;
-    return currentSession.searchCount;
-  }
-
-  function formatSessionLine(session) {
-    const sessionDate = sessionDateFormatter.format(new Date(session.startedAt));
-    const searchLabel = session.searchCount > 1 ? "recherches" : "recherche";
-    const currentLabel = session.id === currentSessionId ? " (en cours)" : "";
-    return `${sessionDate} : ${session.searchCount} ${searchLabel}${currentLabel}`;
-  }
-
-  function render() {
-    if (DOM.usageOpenCount) {
-      DOM.usageOpenCount.textContent = String(metrics.siteOpenCount);
-    }
-    if (DOM.usageSessionSearchCount) {
-      DOM.usageSessionSearchCount.textContent = String(getCurrentSessionSearchCount());
-    }
-    if (!DOM.usageSessionsList) return;
-
-    const sessionsToShow = metrics.sessions.slice(0, 5);
-    if (sessionsToShow.length === 0) {
-      const item = document.createElement("li");
-      item.textContent = "Aucune session enregistrée";
-      DOM.usageSessionsList.replaceChildren(item);
-      return;
-    }
-
-    DOM.usageSessionsList.replaceChildren(
-      ...sessionsToShow.map((session) => {
-        const item = document.createElement("li");
-        item.textContent = formatSessionLine(session);
-        return item;
-      }),
-    );
-  }
-
-  function init() {
-    metrics = readMetrics();
-    metrics.siteOpenCount += 1;
-    ensureCurrentSession();
-    saveMetrics();
-    render();
-  }
-
-  function trackSearch() {
-    ensureCurrentSession();
-
-    const currentSession = metrics.sessions.find(
-      (session) => session.id === currentSessionId,
-    );
-    if (!currentSession) return;
-    currentSession.searchCount += 1;
-
-    saveMetrics();
-    render();
-  }
-
-  return {
-    init,
-    trackSearch,
-  };
-}
-
-const usageMetricsController = createUsageMetricsController();
 
 function resetSessionUi({ resetMapView = false } = {}) {
   cityInputController.cancelPendingWork();
@@ -420,7 +239,7 @@ function unlockMapAccess() {
     try {
       syncResponsiveMapUi();
       mapRenderer.fitAggloBounds();
-      DOM.cityInput.focus();
+      (DOM.symptomInput || DOM.cityInput).focus();
     } catch (error) {}
   }, 120);
 }
@@ -661,7 +480,6 @@ DOM.cityInput.addEventListener("keydown", (event) => {
     if (event.key !== "Enter") return;
 
     event.preventDefault();
-    usageMetricsController.trackSearch();
     void cityInputController.handleSubmit(DOM.cityInput.value);
     return;
   }
@@ -683,7 +501,6 @@ DOM.cityInput.addEventListener("keydown", (event) => {
   }
 
   autocomplete.closeCitySuggestions();
-  usageMetricsController.trackSearch();
   void cityInputController.handleSubmit(DOM.cityInput.value);
 });
 
@@ -717,7 +534,6 @@ DOM.symptomInput.addEventListener("keydown", (event) => {
 });
 
 DOM.regulateBtn.addEventListener("click", () => {
-  usageMetricsController.trackSearch();
   void cityInputController.handleSubmit(DOM.cityInput.value);
 });
 
@@ -804,7 +620,6 @@ document.addEventListener("keydown", (event) => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-  usageMetricsController.init();
   syncFeatureVisibility();
   syncLegendVisibility();
   syncRegulateButtonVisibility();

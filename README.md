@@ -225,17 +225,6 @@ Pour les adresses Montpellier, l'application:
 2. s'appuie sur l'index de rues genere depuis la base locale Montpellier
 3. ignore le numero de voie pour privilegier le rattachement territorial
 
-## Suivi d'usage local
-
-Un bloc `Usage` est affiche dans la barre laterale avec:
-
-- le nombre d'ouvertures du site (`Ouvertures du site`)
-- le nombre de recherches effectuees dans la session en cours (`Recherches (session)`)
-- un historique des dernieres sessions avec leur nombre de recherches
-
-Ce suivi est stocke uniquement dans le navigateur local (`localStorage` +
-`sessionStorage`). Il ne remonte aucune donnee vers un serveur distant.
-
 ## Referentiel technique et metier
 
 ### Fichiers clefs
