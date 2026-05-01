@@ -107,6 +107,16 @@ test("resolveAreaFromSelection and orientation helpers stay coherent", () => {
   assert.ok(travel.theoreticalDurationMin > 0);
 });
 
+test("une commune du secteur Beziers est resolue et orientee vers la bonne structure", () => {
+  const beziers = MediMapDomain.resolveAreaFromSelection("Béziers", "");
+  assert.ok(beziers);
+  assert.equal(beziers.type, "beziers_commune");
+  assert.equal(
+    MediMapDomain.resolveOrientationHospital(beziers, "douleur thoracique"),
+    "ch_beziers",
+  );
+});
+
 test("Mauguio en traumatologie oriente vers la Clinique du Parc", () => {
   const mauguio = MediMapDomain.resolveAreaFromSelection("Mauguio", "");
 
@@ -138,8 +148,68 @@ test("city suggestions expose both communes and quartier aliases", () => {
   assert.ok(
     suggestions.some(
       (item) =>
+        item.label === "Béziers" && item.category === "Commune Béziers",
+    ),
+  );
+  assert.ok(
+    suggestions.some(
+      (item) =>
+        item.label === "Agde" && item.category === "Commune Béziers",
+    ),
+  );
+  assert.ok(
+    suggestions.some(
+      (item) =>
+        item.label === "EHPAD Le Mas du Moulin" &&
+        item.category === "EHPAD Béziers",
+    ),
+  );
+  assert.ok(
+    suggestions.some(
+      (item) =>
         item.label === "Lattes - Boirargues" &&
         item.category === "Secteur Lattes",
     ),
   );
+});
+
+test("city suggestions match Beziers EHPAD short alias without EHPAD prefix", () => {
+  const suggestions = MediMapDomain.getCitySuggestions();
+  const matches = MediMapDomain.getRankedMatches(
+    suggestions,
+    "Mas du Moulin",
+    (item) => [item.label, ...(item.aliases || [])],
+  );
+
+  assert.ok(
+    matches.some((item) => item.label === "EHPAD Le Mas du Moulin"),
+  );
+});
+
+test("un EHPAD Beziers peut etre saisi comme localisation et resolu sur sa commune", () => {
+  const selection = MediMapDomain.resolveCitySelection("Mas du Moulin");
+  assert.equal(selection.matched, true);
+  assert.equal(selection.cityValue, "Cers");
+});
+
+test("resolveBeziersEhpadOrientation handles exact match, normalized variant and Agde exception", () => {
+  const exact = MediMapDomain.resolveBeziersEhpadOrientation(
+    "EHPAD Les Jardins de Brescou",
+    { commune: "Agde" },
+  );
+  assert.ok(exact);
+  assert.equal(exact.structureId, "pasteur");
+
+  const normalized = MediMapDomain.resolveBeziersEhpadOrientation(
+    "ehpad les jardins de brescou",
+    { commune: "agde" },
+  );
+  assert.ok(normalized);
+  assert.equal(normalized.structureId, "pasteur");
+
+  const fallback = MediMapDomain.resolveBeziersEhpadOrientation(
+    "EHPAD Les Acacias",
+  );
+  assert.ok(fallback);
+  assert.equal(fallback.structureId, "saint_privat");
 });

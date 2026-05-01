@@ -49,10 +49,13 @@ Les metadonnees etablissements incluent une date de verification
   [domain.js](./domain.js), [data.js](./data.js)
 - source sectorisation: [`data_sources/sectorization.json`](./data_sources/sectorization.json)
 - bundle sectorisation charge par le front: [`generated/sectorization-data.js`](./generated/sectorization-data.js)
+- referentiels additionnels (dont Beziers / Ouest Herault): cle `references` dans
+  [`data_sources/sectorization.json`](./data_sources/sectorization.json)
 - base locale adresses Montpellier: [`db/montpellier_addresses.sqlite`](./db/montpellier_addresses.sqlite)
 - index rues -> sous-zone charge par le front: [`generated/montpellier_street_index.js`](./generated/montpellier_street_index.js)
 - scripts de construction data: [`scripts/build_montpellier_address_db.py`](./scripts/build_montpellier_address_db.py),
-  [`scripts/build_sectorization_bundle.py`](./scripts/build_sectorization_bundle.py)
+  [`scripts/build_sectorization_bundle.py`](./scripts/build_sectorization_bundle.py),
+  [`scripts/geocode_beziers_sectorization.py`](./scripts/geocode_beziers_sectorization.py)
 - carte: Leaflet 1.9.4 embarque localement dans [`vendor/leaflet/`](./vendor/leaflet)
 - fond de carte: tuiles OpenStreetMap
 - serveur local de dev sans cache: [dev_server.py](./dev_server.py)

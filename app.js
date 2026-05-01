@@ -51,6 +51,7 @@ const LEGEND_HIDE_MAP_MAX_WIDTH = 700;
 const REGULATE_BUTTON_HIDE_VIEWPORT_MAX_WIDTH = 768;
 let mapAccessUnlocked = false;
 let feedbackDialogOpen = false;
+const beziersPreviewEnabled = true;
 
 const {
   simplify,
@@ -203,6 +204,7 @@ function refreshMap() {
     specialtyId: mapModel.specialtyId,
     areaHospitalMap: mapModel.areaHospitalMap,
     cloudHospitalMap: mapModel.cloudHospitalMap,
+    beziersPreviewEnabled,
   });
 }
 

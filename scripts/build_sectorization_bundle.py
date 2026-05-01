@@ -20,6 +20,14 @@ REQUIRED_TOP_LEVEL_KEYS = (
     "mtpRules",
     "areaSpecialtyRules",
 )
+BEZIERS_REFERENCE_REQUIRED_KEYS = (
+    "perimetre",
+    "structures",
+    "filieres",
+    "sectorisationCommunes",
+    "regleLittoral",
+    "ehpad",
+)
 
 
 def load_sectorization_source(path: Path) -> dict:
@@ -30,6 +38,21 @@ def load_sectorization_source(path: Path) -> dict:
         raise ValueError(
             f"Missing required keys in {path}: {', '.join(missing_keys)}"
         )
+
+    references = data.get("references")
+    if references is not None and not isinstance(references, dict):
+        raise ValueError("'references' must be an object when provided")
+
+    beziers_reference = (references or {}).get("beziers_ouest_herault")
+    if beziers_reference is not None:
+        missing_reference_keys = [
+            key for key in BEZIERS_REFERENCE_REQUIRED_KEYS if key not in beziers_reference
+        ]
+        if missing_reference_keys:
+            raise ValueError(
+                "Missing required keys in references.beziers_ouest_herault: "
+                + ", ".join(missing_reference_keys)
+            )
 
     return data
 

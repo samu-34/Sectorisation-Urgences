@@ -191,6 +191,77 @@
     })),
   );
 
+  function collectBeziersSuggestionCities() {
+    const names = new Set();
+
+    (Array.isArray(BEZIERS_COMMUNES) ? BEZIERS_COMMUNES : []).forEach((item) => {
+      if (item && item.commune) names.add(item.commune);
+    });
+
+    const ehpadByStructure = (BEZIERS_SECTORIZATION && BEZIERS_SECTORIZATION.ehpad) || {};
+    Object.values(ehpadByStructure).forEach((items) => {
+      if (!Array.isArray(items)) return;
+      items.forEach((rawLabel) => {
+        if (typeof rawLabel !== "string") return;
+        const parts = rawLabel.split("—").map((part) => part.trim());
+        if (parts.length >= 2 && parts[1]) {
+          names.add(parts[1]);
+        }
+      });
+    });
+
+    const exclusions = ((BEZIERS_SECTORIZATION && BEZIERS_SECTORIZATION.perimetre) || {}).exclusionsCommunales || [];
+    exclusions.forEach((item) => {
+      if (item && item.commune) names.add(item.commune);
+    });
+
+    const exceptions = ((BEZIERS_SECTORIZATION && BEZIERS_SECTORIZATION.perimetre) || {}).exceptionEhpad || [];
+    exceptions.forEach((item) => {
+      if (item && item.commune) names.add(item.commune);
+    });
+
+    return [...names].sort((a, b) => a.localeCompare(b, "fr"));
+  }
+
+  const BEZIERS_COMMUNE_SUGGESTIONS = Object.freeze(
+    collectBeziersSuggestionCities().map((city) => ({
+      label: city,
+      category: "Commune Béziers",
+    })),
+  );
+
+  function toEhpadDisplayLabel(name) {
+    const trimmed = String(name || "").trim();
+    if (!trimmed) return "";
+    if (/^ehpad\b/i.test(trimmed)) return trimmed;
+    return `EHPAD ${trimmed.replace(/^(ehpa|eepha)\b/i, "").trim()}`;
+  }
+
+  const BEZIERS_EHPAD_SUGGESTIONS = Object.freeze(
+    Array.from(
+      new Map(
+        (Array.isArray(BEZIERS_EHPAD) ? BEZIERS_EHPAD : [])
+          .map((item) => {
+            const displayLabel = toEhpadDisplayLabel(item.ehpadName);
+            if (!displayLabel) return null;
+            const shortAlias = displayLabel.replace(/^ehpad\s+/i, "").trim();
+            const communeAlias = item.commune
+              ? `${shortAlias} ${item.commune}`.trim()
+              : shortAlias;
+            return [
+              simplify(`${displayLabel}|${item.commune || ""}`),
+              {
+                label: displayLabel,
+                category: "EHPAD Béziers",
+                aliases: [shortAlias, communeAlias].filter(Boolean),
+              },
+            ];
+          })
+          .filter(Boolean),
+      ).values(),
+    ),
+  );
+
   const CITY_SUGGESTIONS = Object.freeze(
     Array.from(
       new Map(
@@ -217,15 +288,20 @@
             })),
           ]),
           ...MTP_STREET_SUGGESTIONS,
+          ...BEZIERS_COMMUNE_SUGGESTIONS,
+          ...BEZIERS_EHPAD_SUGGESTIONS,
         ].map((entry) => [simplify(entry.label), entry]),
       ).values(),
     ),
   );
 
   const CITY_NAME_BY_KEY = new Map(
-    [...new Set(CITY_AREAS.map((area) => area.city)), "Montpellier", "Lattes"].map(
-      (city) => [simplify(city), city],
-    ),
+    [
+      ...new Set(CITY_AREAS.map((area) => area.city)),
+      ...new Set((Array.isArray(BEZIERS_COMMUNES) ? BEZIERS_COMMUNES : []).map((item) => item.commune)),
+      "Montpellier",
+      "Lattes",
+    ].map((city) => [simplify(city), city]),
   );
 
   const COMMUNE_AREA_BY_CITY = new Map(
@@ -233,6 +309,39 @@
       area.city,
       area,
     ]),
+  );
+  const BEZIERS_COMMUNE_AREA_BY_CITY = new Map(
+    (Array.isArray(BEZIERS_COMMUNES) ? BEZIERS_COMMUNES : []).map((item) => [
+      item.commune,
+      Object.freeze({
+        id: `beziers_${simplify(item.commune).replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "")}`,
+        city: item.commune,
+        label: item.commune,
+        lat: item.coordinates ? item.coordinates.lat : null,
+        lng: item.coordinates ? item.coordinates.lng : null,
+        type: "beziers_commune",
+      }),
+    ]),
+  );
+  const BEZIERS_EHPAD_SELECTION_BY_KEY = new Map(
+    (Array.isArray(BEZIERS_EHPAD) ? BEZIERS_EHPAD : []).flatMap((item) => {
+      const displayLabel = toEhpadDisplayLabel(item.ehpadName);
+      const baseAliases = [
+        displayLabel,
+        ...(((BEZIERS_EHPAD_SUGGESTIONS.find((entry) => entry.label === displayLabel) || {}).aliases) || []),
+      ];
+      const aliases = [
+        ...baseAliases,
+        ...baseAliases.map((value) =>
+          String(value || "")
+            .replace(/^(?:l'|le|la|les)\s+/i, "")
+            .trim(),
+        ),
+      ]
+        .map((value) => simplify(value))
+        .filter(Boolean);
+      return aliases.map((alias) => [alias, item]);
+    }),
   );
 
   const MTP_SUBAREA_BY_KEY = new Map(
@@ -599,6 +708,25 @@
       };
     }
 
+    const beziersEhpad = BEZIERS_EHPAD_SELECTION_BY_KEY.get(normalized);
+    if (beziersEhpad) {
+      return {
+        matched: true,
+        cityValue: beziersEhpad.commune || "",
+        subzoneValue: "",
+        displayValue: toEhpadDisplayLabel(beziersEhpad.ehpadName),
+        resolvedPoint: beziersEhpad.coordinates
+          ? createResolvedPoint({
+              lat: beziersEhpad.coordinates.lat,
+              lng: beziersEhpad.coordinates.lng,
+              label: toEhpadDisplayLabel(beziersEhpad.ehpadName),
+              precision: "ehpad",
+            })
+          : null,
+        isAddressSelection: false,
+      };
+    }
+
     const city = CITY_NAME_BY_KEY.get(normalized);
     if (city) {
       return {
@@ -632,7 +760,7 @@
       return AREA_BY_ID[subzoneValue] || null;
     }
 
-    return COMMUNE_AREA_BY_CITY.get(cityValue) || null;
+    return COMMUNE_AREA_BY_CITY.get(cityValue) || BEZIERS_COMMUNE_AREA_BY_CITY.get(cityValue) || null;
   }
 
   function computeDiversAssignments() {
@@ -656,6 +784,37 @@
     }
 
     return resolveHospitalForArea(area, detectedSpecialty || "divers");
+  }
+
+  function resolveBeziersEhpadOrientation(ehpadLabel, { commune = "" } = {}) {
+    const normalizedName = simplifySectorizationText(ehpadLabel);
+    const normalizedCommune = simplifySectorizationText(commune);
+
+    if (!normalizedName) {
+      return null;
+    }
+
+    const strictKey = `${normalizedName}|${normalizedCommune}`;
+    const strictMatch = BEZIERS_EHPAD_LOOKUP[strictKey];
+    if (strictMatch) {
+      return {
+        ...strictMatch,
+        structure: BEZIERS_STRUCTURES_BY_ID[strictMatch.structureId] || null,
+      };
+    }
+
+    const fallbackMatch = Object.entries(BEZIERS_EHPAD_LOOKUP).find(([key]) =>
+      key.startsWith(`${normalizedName}|`),
+    );
+    if (!fallbackMatch) {
+      return null;
+    }
+
+    const match = fallbackMatch[1];
+    return {
+      ...match,
+      structure: BEZIERS_STRUCTURES_BY_ID[match.structureId] || null,
+    };
   }
 
   function distanceKm(lat1, lng1, lat2, lng2) {
@@ -698,6 +857,7 @@
     computeDiversAssignments,
     resolveMapHospital,
     resolveOrientationHospital,
+    resolveBeziersEhpadOrientation,
     estimateTheoreticalTravel,
   });
 })(globalThis);

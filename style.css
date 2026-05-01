@@ -277,6 +277,20 @@ button:active {
   filter: brightness(1.1);
 }
 
+.btn-secondary {
+  background: #eef5f9;
+  color: var(--primary-dark);
+  border-color: #c6dbe6;
+}
+.btn-secondary:hover {
+  background: #e2eef5;
+}
+.btn-secondary.is-active {
+  background: #d4e7f2;
+  border-color: #9fc7d4;
+  font-weight: 700;
+}
+
 /* ─── Chips (filières) ─── */
 .chips {
   display: flex;
@@ -550,7 +564,6 @@ button:active {
 .quarter-label {
   font-size: 9px;
 }
-
 /* ─── Utility ─── */
 .hidden {
   display: none !important;

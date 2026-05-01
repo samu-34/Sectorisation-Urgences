@@ -14,6 +14,15 @@ const {
   RULES,
   MTP_RULES,
   SPECIAL_AREA_RULES,
+  BEZIERS_SECTORIZATION,
+  BEZIERS_GEOCODING,
+  BEZIERS_STRUCTURES_BY_ID,
+  BEZIERS_STRUCTURES,
+  BEZIERS_COMMUNES,
+  BEZIERS_EHPAD,
+  BEZIERS_EHPAD_LOOKUP,
+  getBeziersGeocodedEntry,
+  simplifySectorizationText,
   resolveHospitalForArea
 } = loadDataExports();
 
@@ -46,8 +55,8 @@ test("hospital records expose coherent metadata, addresses and coordinates", () 
       `Address/city mismatch for ${record.id}: ${record.location.address} / ${record.location.city}`
     );
 
-    assert.ok(record.location.lat >= 43.45 && record.location.lat <= 43.75, `Latitude out of expected bounds for ${record.id}`);
-    assert.ok(record.location.lng >= 3.65 && record.location.lng <= 4.05, `Longitude out of expected bounds for ${record.id}`);
+    assert.ok(record.location.lat >= 43.25 && record.location.lat <= 43.75, `Latitude out of expected bounds for ${record.id}`);
+    assert.ok(record.location.lng >= 3.10 && record.location.lng <= 4.05, `Longitude out of expected bounds for ${record.id}`);
 
     const addressKey = record.location.address.toLowerCase();
     assert.ok(!seenAddresses.has(addressKey), `Duplicate address detected for ${record.id}`);
@@ -203,4 +212,101 @@ test("every configured area resolves to a valid hospital for every specialty", (
       assert.ok(KNOWN_HOSPITAL_IDS.has(hospitalId), `Area ${area.id} resolves to unknown hospital ${hospitalId} for ${specialty}`);
     });
   });
+});
+
+test("beziers reference exposes coherent structures and commune assignment uniqueness", () => {
+  const structures = BEZIERS_SECTORIZATION.structures || [];
+  const sectorisationCommunes = BEZIERS_SECTORIZATION.sectorisationCommunes || {};
+  const seenCommunes = new Map();
+
+  structures.forEach((structure) => {
+    assert.ok(structure.id, "Structure id is required");
+    assert.ok(BEZIERS_STRUCTURES_BY_ID[structure.id], `Structure ${structure.id} must be indexed`);
+    assert.ok(
+      Array.isArray(sectorisationCommunes[structure.id]),
+      `Missing commune sectorisation for structure ${structure.id}`,
+    );
+  });
+
+  Object.entries(sectorisationCommunes).forEach(([structureId, communes]) => {
+    assert.ok(BEZIERS_STRUCTURES_BY_ID[structureId], `Unknown Beziers structure ${structureId}`);
+    communes.forEach((commune) => {
+      const normalized = simplifySectorizationText(commune);
+      const previous = seenCommunes.get(normalized);
+      assert.ok(!previous, `Commune "${commune}" assigned twice: ${previous} and ${structureId}`);
+      seenCommunes.set(normalized, structureId);
+    });
+  });
+});
+
+test("beziers Agde exclusion and EHPAD exception stay coherent", () => {
+  const perimetre = BEZIERS_SECTORIZATION.perimetre || {};
+  const excludedCommunes = new Set(
+    (perimetre.exclusionsCommunales || []).map((item) => simplifySectorizationText(item.commune)),
+  );
+  const exceptions = perimetre.exceptionEhpad || [];
+
+  assert.ok(excludedCommunes.has("agde"), "Agde must remain excluded at commune level");
+  assert.ok(exceptions.length > 0, "Expected at least one EHPAD exception");
+  assert.ok(
+    exceptions.some((item) => simplifySectorizationText(item.commune) === "agde"),
+    "Expected an exception EHPAD for Agde",
+  );
+});
+
+test("beziers EHPAD lookup keeps normalized unique keys and known structure targets", () => {
+  const seenKeys = new Set();
+  Object.entries(BEZIERS_EHPAD_LOOKUP).forEach(([key, item]) => {
+    assert.ok(!seenKeys.has(key), `Duplicate normalized EHPAD key ${key}`);
+    seenKeys.add(key);
+    assert.ok(item.structureId, `Missing structureId for EHPAD lookup ${key}`);
+    assert.ok(BEZIERS_STRUCTURES_BY_ID[item.structureId], `Unknown structure for EHPAD lookup ${key}`);
+  });
+});
+
+test("beziers geocoding coverage provides usable coordinates for all exported entities", () => {
+  const geocoding = BEZIERS_SECTORIZATION.geocoding || {};
+  const entries = Object.entries(geocoding);
+  assert.ok(entries.length > 0, "Missing beziers geocoding dataset");
+
+  entries.forEach(([key, value]) => {
+    assert.ok(value, `Missing geocoding value for ${key}`);
+    assert.ok(Number.isFinite(value.lat), `Invalid lat for ${key}`);
+    assert.ok(Number.isFinite(value.lng), `Invalid lng for ${key}`);
+    assert.ok(
+      value.precision === "entity" ||
+        value.precision === "commune_fallback" ||
+        value.precision === "entity_verified",
+      `Unexpected precision for ${key}: ${value.precision}`,
+    );
+  });
+});
+
+test("beziers enriched objects expose coordinates on structures, communes and EHPAD", () => {
+  assert.ok(Object.keys(BEZIERS_GEOCODING).length > 0, "Expected Beziers geocoding keys");
+
+  BEZIERS_STRUCTURES.forEach((item) => {
+    assert.ok(item.coordinates, `Missing coordinates for structure ${item.id}`);
+    assert.ok(Number.isFinite(item.coordinates.lat), `Invalid lat for structure ${item.id}`);
+    assert.ok(Number.isFinite(item.coordinates.lng), `Invalid lng for structure ${item.id}`);
+  });
+
+  BEZIERS_COMMUNES.forEach((item) => {
+    assert.ok(item.coordinates, `Missing coordinates for commune ${item.commune}`);
+    assert.ok(Number.isFinite(item.coordinates.lat), `Invalid lat for commune ${item.commune}`);
+    assert.ok(Number.isFinite(item.coordinates.lng), `Invalid lng for commune ${item.commune}`);
+  });
+
+  BEZIERS_EHPAD.forEach((item) => {
+    assert.ok(item.coordinates, `Missing coordinates for EHPAD ${item.ehpadName}`);
+    assert.ok(Number.isFinite(item.coordinates.lat), `Invalid lat for EHPAD ${item.ehpadName}`);
+    assert.ok(Number.isFinite(item.coordinates.lng), `Invalid lng for EHPAD ${item.ehpadName}`);
+  });
+});
+
+test("beziers geocoding helper resolves by kind/label/commune", () => {
+  const structure = getBeziersGeocodedEntry("structure", "CH de Béziers", "Béziers");
+  assert.ok(structure, "Expected geocoded structure entry");
+  assert.ok(Number.isFinite(structure.lat));
+  assert.ok(Number.isFinite(structure.lng));
 });
