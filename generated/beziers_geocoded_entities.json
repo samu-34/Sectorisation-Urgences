@@ -563,6 +563,156 @@
     "display_name": "Camplong, Béziers, Hérault, Occitanie, France métropolitaine, 34260, France",
     "precision": "entity"
   },
+  "commune:cabrerolles:": {
+    "lat": 43.5445,
+    "lng": 3.12514,
+    "display_name": "Cabrerolles, Béziers, Hérault, Occitanie, France métropolitaine, 34480, France",
+    "precision": "entity"
+  },
+  "commune:caussiniojouls:": {
+    "lat": 43.5516,
+    "lng": 3.15323,
+    "display_name": "Caussiniojouls, Béziers, Hérault, Occitanie, France métropolitaine, 34600, France",
+    "precision": "entity"
+  },
+  "commune:faugères:": {
+    "lat": 43.5648186,
+    "lng": 3.1901144,
+    "display_name": "Faugères, Béziers, Hérault, Occitanie, France métropolitaine, 34600, France",
+    "precision": "entity"
+  },
+  "commune:roquessels:": {
+    "lat": 43.5514,
+    "lng": 3.22334,
+    "display_name": "Roquessels, Béziers, Hérault, Occitanie, France métropolitaine, 34320, France",
+    "precision": "entity"
+  },
+  "commune:fos:": {
+    "lat": 43.5668,
+    "lng": 3.24696,
+    "display_name": "Fos, Béziers, Hérault, Occitanie, France métropolitaine, 34320, France",
+    "precision": "entity"
+  },
+  "commune:colombières-sur-orb:": {
+    "lat": 43.5786,
+    "lng": 3.00795,
+    "display_name": "Colombières-sur-Orb, Béziers, Hérault, Occitanie, France métropolitaine, 34390, France",
+    "precision": "entity"
+  },
+  "commune:les aires:": {
+    "lat": 43.5813748,
+    "lng": 3.1046535,
+    "display_name": "Les Aires, Béziers, Hérault, Occitanie, France métropolitaine, 34600, France",
+    "precision": "entity"
+  },
+  "commune:saint-martin-de-l'arçon:": {
+    "lat": 43.5748673,
+    "lng": 2.9830754,
+    "display_name": "Saint-Martin-de-l'Arçon, Béziers, Hérault, Occitanie, France métropolitaine, 34390, France",
+    "precision": "entity"
+  },
+  "commune:mons:": {
+    "lat": 43.5712864,
+    "lng": 2.9563239,
+    "display_name": "Mons, Béziers, Hérault, Occitanie, France métropolitaine, 34390, France",
+    "precision": "entity"
+  },
+  "commune:saint-julien:": {
+    "lat": 43.5694984,
+    "lng": 2.9260559,
+    "display_name": "Saint-Julien, Béziers, Hérault, Occitanie, France métropolitaine, 34390, France",
+    "precision": "entity"
+  },
+  "commune:olargues:": {
+    "lat": 43.5570115,
+    "lng": 2.9137404,
+    "display_name": "Olargues, Béziers, Hérault, Occitanie, France métropolitaine, 34390, France",
+    "precision": "entity"
+  },
+  "commune:saint-vincent-d'olargues:": {
+    "lat": 43.5605575,
+    "lng": 2.8790142,
+    "display_name": "Saint-Vincent-d'Olargues, Béziers, Hérault, Occitanie, France métropolitaine, 34390, France",
+    "precision": "entity"
+  },
+  "commune:cambon-et-salvergues:": {
+    "lat": 43.6209706,
+    "lng": 2.8555354,
+    "display_name": "Cambon-et-Salvergues, Béziers, Hérault, Occitanie, France métropolitaine, 34330, France",
+    "precision": "entity"
+  },
+  "commune:vieussan:": {
+    "lat": 43.5408,
+    "lng": 2.97677,
+    "display_name": "Vieussan, Béziers, Hérault, Occitanie, France métropolitaine, 34390, France",
+    "precision": "entity"
+  },
+  "commune:saint-geniès-de-varensal:": {
+    "lat": 43.6808,
+    "lng": 3.00374,
+    "display_name": "Saint-Geniès-de-Varensal, Béziers, Hérault, Occitanie, France métropolitaine, 34610, France",
+    "precision": "entity"
+  },
+  "commune:joncels:": {
+    "lat": 43.7374047,
+    "lng": 3.1940691,
+    "display_name": "Joncels, Béziers, Hérault, Occitanie, France métropolitaine, 34650, France",
+    "precision": "entity"
+  },
+  "commune:saint-étienne-estréchoux:": {
+    "lat": 43.6641873,
+    "lng": 3.1082173,
+    "display_name": "Saint-Étienne-Estréchoux, Béziers, Hérault, Occitanie, France métropolitaine, 34260, France",
+    "precision": "entity"
+  },
+  "commune:montesquieu:": {
+    "lat": 43.5637486,
+    "lng": 3.271108,
+    "display_name": "Montesquieu, Béziers, Hérault, Occitanie, France métropolitaine, 34320, France",
+    "precision": "entity"
+  },
+  "commune:valmascle:": {
+    "lat": 43.5966654,
+    "lng": 3.2987466,
+    "display_name": "Valmascle, Lodève, Hérault, Occitanie, France métropolitaine, 34800, France",
+    "precision": "entity"
+  },
+  "commune:saint-étienne-d'albagnan:": {
+    "lat": 43.5320338,
+    "lng": 2.8561737,
+    "display_name": "Saint-Étienne-d'Albagnan, Béziers, Hérault, Occitanie, France métropolitaine, 34390, France",
+    "precision": "entity"
+  },
+  "commune:prémian:": {
+    "lat": 43.5238673,
+    "lng": 2.8311943,
+    "display_name": "Prémian, Béziers, Hérault, Occitanie, France métropolitaine, 34390, France",
+    "precision": "entity"
+  },
+  "commune:riols:": {
+    "lat": 43.506,
+    "lng": 2.7923,
+    "display_name": "Riols, Béziers, Hérault, Occitanie, France métropolitaine, 34220, France",
+    "precision": "entity"
+  },
+  "commune:saint-pons-de-thomières:": {
+    "lat": 43.4891622,
+    "lng": 2.7598776,
+    "display_name": "Saint-Pons-de-Thomières, Béziers, Hérault, Occitanie, France métropolitaine, 34220, France",
+    "precision": "entity"
+  },
+  "commune:roqueredonde:": {
+    "lat": 43.800174,
+    "lng": 3.212108,
+    "display_name": "Roqueredonde, Lodève, Hérault, Occitanie, France métropolitaine, 34650, France",
+    "precision": "entity"
+  },
+  "commune:romiguières:": {
+    "lat": 43.8180054,
+    "lng": 3.2299375,
+    "display_name": "Romiguières, Lodève, Hérault, Occitanie, France métropolitaine, 34650, France",
+    "precision": "entity"
+  },
   "commune:avène:": {
     "lat": 43.7574503,
     "lng": 3.0991684,
@@ -701,12 +851,6 @@
     "display_name": "Campagnan, Lodève, Hérault, Occitanie, France métropolitaine, 34230, France",
     "precision": "entity"
   },
-  "commune:plaissan:": {
-    "lat": 43.558,
-    "lng": 3.52456,
-    "display_name": "Plaissan, Lodève, Hérault, Occitanie, France métropolitaine, 34230, France",
-    "precision": "entity"
-  },
   "commune:nézignan-l'évêque:": {
     "lat": 43.4210557,
     "lng": 3.4079729,
@@ -729,6 +873,48 @@
     "lat": 43.5662917,
     "lng": 3.4497645,
     "display_name": "Aspiran, Lodève, Hérault, Occitanie, France métropolitaine, 34800, France",
+    "precision": "entity"
+  },
+  "commune:pomérols:": {
+    "lat": 43.390895,
+    "lng": 3.4992161,
+    "display_name": "Pomérols, Béziers, Hérault, Occitanie, France métropolitaine, 34810, France",
+    "precision": "entity"
+  },
+  "commune:gabian:": {
+    "lat": 43.5136,
+    "lng": 3.2711,
+    "display_name": "Gabian, Béziers, Hérault, Occitanie, France métropolitaine, 34320, France",
+    "precision": "entity"
+  },
+  "commune:fouzilhon:": {
+    "lat": 43.501542,
+    "lng": 3.2443048,
+    "display_name": "Fouzilhon, Béziers, Hérault, Occitanie, France métropolitaine, 34480, France",
+    "precision": "entity"
+  },
+  "commune:vailhan:": {
+    "lat": 43.5532151,
+    "lng": 3.3025534,
+    "display_name": "Vailhan, Béziers, Hérault, Occitanie, France métropolitaine, 34320, France",
+    "precision": "entity"
+  },
+  "commune:cabrières:": {
+    "lat": 43.5784,
+    "lng": 3.36398,
+    "display_name": "Cabrières, Lodève, Hérault, Occitanie, France métropolitaine, 34800, France",
+    "precision": "entity"
+  },
+  "commune:péret:": {
+    "lat": 43.5757523,
+    "lng": 3.3968487,
+    "display_name": "Péret, Lodève, Hérault, Occitanie, France métropolitaine, 34800, France",
+    "precision": "entity"
+  },
+  "commune:saint-pargoire:": {
+    "lat": 43.5291861,
+    "lng": 3.5222242,
+    "display_name": "Saint-Pargoire, Lodève, Hérault, Occitanie, France métropolitaine, 34230, France",
     "precision": "entity"
   },
   "commune:boujan-sur-libron:": {
@@ -791,64 +977,10 @@
     "display_name": "Pailhès, Béziers, Hérault, Occitanie, France métropolitaine, 34490, France",
     "precision": "entity"
   },
-  "commune:maraussan:": {
-    "lat": 43.3696,
-    "lng": 3.15399,
-    "display_name": "Maraussan, Béziers, Hérault, Occitanie, France métropolitaine, 34370, France",
-    "precision": "entity"
-  },
-  "commune:maureilhan:": {
-    "lat": 43.3565052,
-    "lng": 3.1207097,
-    "display_name": "Maureilhan, Béziers, Hérault, Occitanie, France métropolitaine, 34370, France",
-    "precision": "entity"
-  },
   "commune:lignan-sur-orb:": {
     "lat": 43.3828,
     "lng": 3.17294,
     "display_name": "Lignan-sur-Orb, Béziers, Hérault, Occitanie, France métropolitaine, 34490, France",
-    "precision": "entity"
-  },
-  "commune:montady:": {
-    "lat": 43.3349069,
-    "lng": 3.1254244,
-    "display_name": "Montady, Béziers, Hérault, Occitanie, France métropolitaine, 34310, France",
-    "precision": "entity"
-  },
-  "commune:colombiers:": {
-    "lat": 43.3141,
-    "lng": 3.13966,
-    "display_name": "Colombiers, Béziers, Hérault, Occitanie, France métropolitaine, 34440, France",
-    "precision": "entity"
-  },
-  "commune:nissan-lez-enserune:": {
-    "lat": 43.2900051,
-    "lng": 3.1279229,
-    "display_name": "Nissan-lez-Enserune, Béziers, Hérault, Occitanie, France métropolitaine, 34440, France",
-    "precision": "entity"
-  },
-  "commune:lespignan:": {
-    "lat": 43.2743,
-    "lng": 3.16982,
-    "display_name": "Lespignan, Béziers, Hérault, Occitanie, France métropolitaine, 34710, France",
-    "precision": "entity"
-  },
-  "commune:villeneuve-lès-béziers:": {
-    "lat": 43.3162817,
-    "lng": 3.2797511,
-    "display_name": "Villeneuve-lès-Béziers, Béziers, Hérault, Occitanie, France métropolitaine, 34420, France",
-    "precision": "entity"
-  },
-  "commune:cers:": {
-    "lat": 43.3232846,
-    "lng": 3.3057088,
-    "display_name": "Cers, Béziers, Hérault, Occitanie, France métropolitaine, 34420, France",
-    "precision": "entity"
-  },
-  "commune:sauvian:": {
-    "lat": 43.2917,
-    "lng": 3.25476,
-    "display_name": "Sauvian, Béziers, Hérault, Occitanie, France métropolitaine, 34410, France",
     "precision": "entity"
   },
   "commune:montblanc:": {
@@ -863,16 +995,52 @@
     "display_name": "Magalas, Béziers, Hérault, Occitanie, France métropolitaine, 34480, France",
     "precision": "entity"
   },
-  "commune:portiragnes:": {
-    "lat": 43.3036,
-    "lng": 3.33477,
-    "display_name": "Portiragnes, Béziers, Hérault, Occitanie, France métropolitaine, 34420, France",
+  "commune:saint-geniès-de-fontedit:": {
+    "lat": 43.467,
+    "lng": 3.17461,
+    "display_name": "Saint-Geniès-de-Fontedit, Béziers, Hérault, Occitanie, France métropolitaine, 34480, France",
     "precision": "entity"
   },
-  "commune:sérignan:": {
-    "lat": 43.2830736,
-    "lng": 3.2798682,
-    "display_name": "Sérignan, Béziers, Hérault, Occitanie, France métropolitaine, 34410, France",
+  "commune:autignac:": {
+    "lat": 43.4997,
+    "lng": 3.17188,
+    "display_name": "Autignac, Béziers, Hérault, Occitanie, France métropolitaine, 34480, France",
+    "precision": "entity"
+  },
+  "commune:coulobres:": {
+    "lat": 43.4505,
+    "lng": 3.27875,
+    "display_name": "Coulobres, Béziers, Hérault, Occitanie, France métropolitaine, 34290, France",
+    "precision": "entity"
+  },
+  "commune:vias:": {
+    "lat": 43.3107683,
+    "lng": 3.4201599,
+    "display_name": "Vias, Béziers, Hérault, Occitanie, France métropolitaine, 34450, France",
+    "precision": "entity"
+  },
+  "commune:bessan:": {
+    "lat": 43.3606788,
+    "lng": 3.4263361,
+    "display_name": "Bessan, Béziers, Hérault, Occitanie, France métropolitaine, 34550, France",
+    "precision": "entity"
+  },
+  "commune:valros:": {
+    "lat": 43.4200583,
+    "lng": 3.3664309,
+    "display_name": "Valros, Béziers, Hérault, Occitanie, France métropolitaine, 34290, France",
+    "precision": "entity"
+  },
+  "commune:saint-thibéry:": {
+    "lat": 43.3977994,
+    "lng": 3.4178651,
+    "display_name": "Saint-Thibéry, Béziers, Hérault, Occitanie, France métropolitaine, 34630, France",
+    "precision": "entity"
+  },
+  "commune:laurens:": {
+    "lat": 43.5225,
+    "lng": 3.19507,
+    "display_name": "Laurens, Béziers, Hérault, Occitanie, France métropolitaine, 34480, France",
     "precision": "entity"
   },
   "commune:béziers:": {
@@ -971,6 +1139,12 @@
     "display_name": "Montouliers, Béziers, Hérault, Occitanie, France métropolitaine, 34310, France",
     "precision": "entity"
   },
+  "commune:montels:": {
+    "lat": 43.2951,
+    "lng": 3.0296,
+    "display_name": "Montels, Béziers, Hérault, Occitanie, France métropolitaine, 34310, France",
+    "precision": "entity"
+  },
   "commune:assignan:": {
     "lat": 43.3979197,
     "lng": 2.8900831,
@@ -983,10 +1157,148 @@
     "display_name": "Cruzy, Béziers, Hérault, Occitanie, France métropolitaine, 34310, France",
     "precision": "entity"
   },
-  "commune:vias:": {
-    "lat": 43.3107683,
-    "lng": 3.4201599,
-    "display_name": "Vias, Béziers, Hérault, Occitanie, France métropolitaine, 34450, France",
+  "commune:saint-jean-de-minervois:": {
+    "lat": 43.3862566,
+    "lng": 2.8325995,
+    "display_name": "Saint-Jean-de-Minervois, Béziers, Hérault, Occitanie, France métropolitaine, 34360, France",
+    "precision": "entity"
+  },
+  "commune:aigues-vives:": {
+    "lat": 43.3375957,
+    "lng": 2.8170934,
+    "display_name": "Aigues-Vives, Béziers, Hérault, Occitanie, France métropolitaine, 34210, France",
+    "precision": "entity"
+  },
+  "commune:aigne:": {
+    "lat": 43.3326883,
+    "lng": 2.798065,
+    "display_name": "Aigne, Béziers, Hérault, Occitanie, France métropolitaine, 34210, France",
+    "precision": "entity"
+  },
+  "commune:la caunette:": {
+    "lat": 43.3525,
+    "lng": 2.77958,
+    "display_name": "La Caunette, Béziers, Hérault, Occitanie, France métropolitaine, 34210, France",
+    "precision": "entity"
+  },
+  "commune:minerve:": {
+    "lat": 43.3539572,
+    "lng": 2.7462772,
+    "display_name": "Minerve, Béziers, Hérault, Occitanie, France métropolitaine, 34210, France",
+    "precision": "entity"
+  },
+  "commune:agel:": {
+    "lat": 43.3380976,
+    "lng": 2.8527462,
+    "display_name": "Agel, Béziers, Hérault, Occitanie, France métropolitaine, 34210, France",
+    "precision": "entity"
+  },
+  "commune:pardailhan:": {
+    "lat": 43.4506,
+    "lng": 2.84703,
+    "display_name": "Pardailhan, Béziers, Hérault, Occitanie, France métropolitaine, 34360, France",
+    "precision": "entity"
+  },
+  "commune:ferrières-poussarou:": {
+    "lat": 43.4854657,
+    "lng": 2.8974012,
+    "display_name": "Ferrières-Poussarou, Béziers, Hérault, Occitanie, France métropolitaine, 34360, France",
+    "precision": "entity"
+  },
+  "commune:berlou:": {
+    "lat": 43.4908553,
+    "lng": 2.9590686,
+    "display_name": "Berlou, Béziers, Hérault, Occitanie, France métropolitaine, 34360, France",
+    "precision": "entity"
+  },
+  "commune:lespignan:": {
+    "lat": 43.2743,
+    "lng": 3.16982,
+    "display_name": "Lespignan, Béziers, Hérault, Occitanie, France métropolitaine, 34710, France",
+    "precision": "entity"
+  },
+  "commune:nissan-lez-enserune:": {
+    "lat": 43.2900051,
+    "lng": 3.1279229,
+    "display_name": "Nissan-lez-Enserune, Béziers, Hérault, Occitanie, France métropolitaine, 34440, France",
+    "precision": "entity"
+  },
+  "commune:colombiers:": {
+    "lat": 43.3141,
+    "lng": 3.13966,
+    "display_name": "Colombiers, Béziers, Hérault, Occitanie, France métropolitaine, 34440, France",
+    "precision": "entity"
+  },
+  "commune:montady:": {
+    "lat": 43.3349069,
+    "lng": 3.1254244,
+    "display_name": "Montady, Béziers, Hérault, Occitanie, France métropolitaine, 34310, France",
+    "precision": "entity"
+  },
+  "commune:maureilhan:": {
+    "lat": 43.3565052,
+    "lng": 3.1207097,
+    "display_name": "Maureilhan, Béziers, Hérault, Occitanie, France métropolitaine, 34370, France",
+    "precision": "entity"
+  },
+  "commune:maraussan:": {
+    "lat": 43.3696,
+    "lng": 3.15399,
+    "display_name": "Maraussan, Béziers, Hérault, Occitanie, France métropolitaine, 34370, France",
+    "precision": "entity"
+  },
+  "commune:cazedarnes:": {
+    "lat": 43.4258,
+    "lng": 3.02935,
+    "display_name": "Cazedarnes, Béziers, Hérault, Occitanie, France métropolitaine, 34460, France",
+    "precision": "entity"
+  },
+  "commune:villespassans:": {
+    "lat": 43.3808128,
+    "lng": 2.9146954,
+    "display_name": "Villespassans, Béziers, Hérault, Occitanie, France métropolitaine, 34360, France",
+    "precision": "entity"
+  },
+  "commune:causses-et-veyran:": {
+    "lat": 43.4744593,
+    "lng": 3.0861076,
+    "display_name": "Causses-et-Veyran, Béziers, Hérault, Occitanie, France métropolitaine, 34490, France",
+    "precision": "entity"
+  },
+  "commune:saint-nazaire-de-ladarez:": {
+    "lat": 43.5088,
+    "lng": 3.07583,
+    "display_name": "Saint-Nazaire-de-Ladarez, Béziers, Hérault, Occitanie, France métropolitaine, 34490, France",
+    "precision": "entity"
+  },
+  "commune:villeneuve-lès-béziers:": {
+    "lat": 43.3162817,
+    "lng": 3.2797511,
+    "display_name": "Villeneuve-lès-Béziers, Béziers, Hérault, Occitanie, France métropolitaine, 34420, France",
+    "precision": "entity"
+  },
+  "commune:cers:": {
+    "lat": 43.3232846,
+    "lng": 3.3057088,
+    "display_name": "Cers, Béziers, Hérault, Occitanie, France métropolitaine, 34420, France",
+    "precision": "entity"
+  },
+  "commune:sauvian:": {
+    "lat": 43.2917,
+    "lng": 3.25476,
+    "display_name": "Sauvian, Béziers, Hérault, Occitanie, France métropolitaine, 34410, France",
+    "precision": "entity"
+  },
+  "commune:portiragnes:": {
+    "lat": 43.3036,
+    "lng": 3.33477,
+    "display_name": "Portiragnes, Béziers, Hérault, Occitanie, France métropolitaine, 34420, France",
+    "precision": "entity"
+  },
+  "commune:sérignan:": {
+    "lat": 43.2830736,
+    "lng": 3.2798682,
+    "display_name": "Sérignan, Béziers, Hérault, Occitanie, France métropolitaine, 34410, France",
     "precision": "entity"
   },
   "commune:valras-plage:": {
@@ -999,12 +1311,6 @@
     "lat": 43.2686109,
     "lng": 3.2237054,
     "display_name": "Vendres, Béziers, Hérault, Occitanie, France métropolitaine, 34350, France",
-    "precision": "entity"
-  },
-  "commune:marseillan:": {
-    "lat": 43.3567775,
-    "lng": 3.5280516,
-    "display_name": "Marseillan, Montpellier, Hérault, Occitanie, France métropolitaine, 34340, France",
     "precision": "entity"
   }
 }

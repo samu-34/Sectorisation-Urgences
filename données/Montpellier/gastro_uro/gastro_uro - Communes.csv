@@ -1,0 +1,55 @@
+Secteur;Commune;Population;lit_touristique;population_estivale_potentielle;coefficient_pression_estivale
+CHU Lapeyronie;Assas;1405;0;1405;1,00
+CHU Lapeyronie;Combaillaux;2001;0;2001;1,00
+CHU Lapeyronie;Grabels;9092;86;9178;1,01
+CHU Lapeyronie;Le Triadou;737;0;737;1,00
+CHU Lapeyronie;Les Matelles;2068;0;2068;1,00
+CHU Lapeyronie;Montarnaud;4208;0;4208;1,00
+CHU Lapeyronie;Montferrier-sur-Lez;4135;100;4235;1,02
+CHU Lapeyronie;Murles;353;0;353;1,00
+CHU Lapeyronie;Prades-le-Lez;6184;0;6184;1,00
+CHU Lapeyronie;Saint-Clément-de-Rivière;5218;108;5326;1,02
+CHU Lapeyronie;Saint-Gély-du-Fesc;10472;0;10472;1,00
+CHU Lapeyronie;Saint-Jean-de-Cuculles;531;0;531;1,00
+CHU Lapeyronie;Saint-Mathieu-de-Tréviers;4979;0;4979;1,00
+CHU Lapeyronie;Saint-Vincent-de-Barbeyrargues;775;0;775;1,00
+CHU Lapeyronie;Vailhauquès;2722;0;2722;1,00
+Clinique Beausoleil;Juvignac;14055;602;14657;1,04
+Clinique Beausoleil;Murviel-lès-Montpellier;2075;0;2075;1,00
+Clinique Beausoleil;Saint-Georges-d'Orques;5676;0;5676;1,00
+Clinique du Millénaire;Carnon;16522;3618;20140;1,22
+Clinique du Millénaire;Lattes;17351;6062;23413;1,35
+Clinique du Millénaire;Lattes;17351;6062;23413;1,35
+Clinique du Millénaire;Mauguio;16522;3618;20140;1,22
+Clinique du Millénaire;Pérols;9615;256;9871;1,03
+Clinique du Millénaire;Saint-Aunès;4530;384;4914;1,08
+Clinique du Parc;Baillargues;7829;548;8377;1,07
+Clinique du Parc;Beaulieu;2264;0;2264;1,00
+Clinique du Parc;Castelnau-le-Lez;26058;192;26250;1,01
+Clinique du Parc;Castries;6883;436;7319;1,06
+Clinique du Parc;Clapiers;6006;1034;7040;1,17
+Clinique du Parc;Guzargues;502;0;502;1,00
+Clinique du Parc;Jacou;6924;0;6924;1,00
+Clinique du Parc;Le Crès;9226;0;9226;1,00
+Clinique du Parc;Montaud;1014;0;1014;1,00
+Clinique du Parc;Restinclières;2612;0;2612;1,00
+Clinique du Parc;Saint-Brès;3623;0;3623;1,00
+Clinique du Parc;Saint-Drézéry;3006;0;3006;1,00
+Clinique du Parc;Saint-Geniès-des-Mourgues;2148;50;2198;1,02
+Clinique du Parc;Sussargues;2840;0;2840;1,00
+Clinique du Parc;Teyran;4787;0;4787;1,00
+Clinique du Parc;Vendargues;7262;72;7334;1,01
+Clinique Saint-Jean;Cournonsec;3616;0;3616;1,00
+Clinique Saint-Jean;Cournonterral;7359;0;7359;1,00
+Clinique Saint-Jean;Fabrègues;7447;3682;11129;1,49
+Clinique Saint-Jean;Gigean;6639;0;6639;1,00
+Clinique Saint-Jean;Lattes;17351;6062;23413;1,35
+Clinique Saint-Jean;Lavérune;3302;28;3330;1,01
+Clinique Saint-Jean;Mireval;3301;0;3301;1,00
+Clinique Saint-Jean;Montbazin;2877;0;2877;1,00
+Clinique Saint-Jean;Palavas-les-Flots;6133;9956;16089;2,62
+Clinique Saint-Jean;Pignan;8431;0;8431;1,00
+Clinique Saint-Jean;Saint-Jean-de-Védas;13328;1780;15108;1,13
+Clinique Saint-Jean;Saussan;2069;0;2069;1,00
+Clinique Saint-Jean;Vic-la-Gardiole;3428;3376;6804;1,98
+Clinique Saint-Jean;Villeneuve-lès-Maguelone;10872;0;10872;1,00

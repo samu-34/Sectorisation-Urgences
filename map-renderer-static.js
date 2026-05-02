@@ -1,6 +1,6 @@
 /**
  * MediMap — map-renderer-static.js
- * Couches statiques et semi-statiques de la carte: nuages, etablissements, labels, legende
+ * Couches statiques et semi-statiques de la carte: contours, etablissements, labels, legende
  */
 
 (function attachMapStaticRenderer(global) {
@@ -11,9 +11,6 @@
     legendElement = null,
     buildHospitalPopup,
   }) {
-    let cloudLayers = [];
-    let haloLayers = [];
-    let heatLayers = [];
     let hospitalLayers = [];
     let labelLayers = [];
     let beziersPreviewLayers = [];
@@ -25,6 +22,8 @@
     let mtpSubareaGeoJson = null;
     let mtpSubareaGeoJsonLoadPromise = null;
     let latestRefreshArgs = null;
+    let mtpAreaByKey = null;
+    let lastLegendSpecialtyId = null;
     let baseLayersBuilt = false;
 
     function clearLayers(arr) {
@@ -101,6 +100,13 @@
     }
 
     function ensureCommuneGeoJsonLoaded() {
+      if (
+        typeof fetch !== "function" ||
+        typeof L === "undefined" ||
+        typeof L.geoJSON !== "function"
+      ) {
+        return Promise.resolve(null);
+      }
       if (communeGeoJson) return Promise.resolve(communeGeoJson);
       if (communeGeoJsonLoadPromise) return communeGeoJsonLoadPromise;
       communeGeoJsonLoadPromise = fetch("data_sources/communes-34-herault.geojson")
@@ -122,6 +128,13 @@
     }
 
     function ensureMtpSubareaGeoJsonLoaded() {
+      if (
+        typeof fetch !== "function" ||
+        typeof L === "undefined" ||
+        typeof L.geoJSON !== "function"
+      ) {
+        return Promise.resolve(null);
+      }
       if (mtpSubareaGeoJson) return Promise.resolve(mtpSubareaGeoJson);
       if (mtpSubareaGeoJsonLoadPromise) return mtpSubareaGeoJsonLoadPromise;
       mtpSubareaGeoJsonLoadPromise = fetch("data_sources/montpellier_sous_quartiers.json")
@@ -310,263 +323,141 @@
             L.polygon(latLngRing, {
               interactive: false,
               color: hospital.color,
-              weight: 2.2,
+              weight: 1.35,
               opacity: 0.95,
               fillColor: hospital.color,
-              fillOpacity: 0.32,
+              fillOpacity: 0.12,
             }).addTo(map),
           );
         });
       });
     }
 
-    function renderMontpellierSubareas(specialtyId, cloudHospitalMap) {
-      clearLayers(mtpSubareaLayers);
-      if (!mtpSubareaGeoJson || !Array.isArray(mtpSubareaGeoJson.features)) return;
-
-      const areaByKey = new Map();
+    function getMtpAreaByKey() {
+      if (mtpAreaByKey) return mtpAreaByKey;
+      mtpAreaByKey = new Map();
       (MTP_SUBAREAS || []).forEach((area) => {
         const keys = [area.label, ...(area.aliases || [])]
           .map((value) => normalizeText(value))
           .filter(Boolean);
-        keys.forEach((key) => areaByKey.set(key, area));
+        keys.forEach((key) => mtpAreaByKey.set(key, area));
       });
       // Ajustements explicites de libellés GeoJSON qui ne correspondent pas
       // exactement aux alias métier des sous-secteurs.
-      areaByKey.set("celleneuve", AREA_BY_ID.mtp_cevennes);
-      areaByKey.set("les hauts de massane", AREA_BY_ID.mtp_mosson);
-      areaByKey.set("hauts de massane", AREA_BY_ID.mtp_mosson);
-      areaByKey.set("figuerolles", AREA_BY_ID.mtp_arceaux_gambetta);
+      mtpAreaByKey.set("celleneuve", AREA_BY_ID.mtp_mosson);
+      mtpAreaByKey.set("les hauts de massane", AREA_BY_ID.mtp_mosson);
+      mtpAreaByKey.set("hauts de massane", AREA_BY_ID.mtp_mosson);
+      mtpAreaByKey.set("figuerolles", AREA_BY_ID.mtp_arceaux_gambetta);
+      return mtpAreaByKey;
+    }
+
+    function createMtpSubareaStyle(specialtyId, cloudHospitalMap) {
+      const areaByKey = getMtpAreaByKey();
+      return function styleMtpSubarea(feature) {
+        const name = feature?.properties?.name || feature?.properties?.quartier || "";
+        const area = areaByKey.get(normalizeText(name));
+        if (!area) {
+          return {
+            color: "#94a3b8",
+            weight: 1.2,
+            opacity: 0.45,
+            fillColor: "#cbd5e1",
+            fillOpacity: 0.08,
+          };
+        }
+        const hospitalId =
+          typeof resolveHospitalForArea === "function"
+            ? resolveHospitalForArea(area, specialtyId)
+            : area.cloud
+              ? cloudHospitalMap[area.cloud]
+              : null;
+        const hospital = hospitalId ? HOSPITALS[hospitalId] : null;
+        if (!hospital) {
+          return {
+            color: "#94a3b8",
+            weight: 1.2,
+            opacity: 0.45,
+            fillColor: "#cbd5e1",
+            fillOpacity: 0.08,
+          };
+        }
+        return {
+          color: hospital.color,
+          weight: 1.7,
+          opacity: 0.9,
+          fillColor: hospital.color,
+          fillOpacity: 0.14,
+          className: "mtp-subarea-path",
+        };
+      };
+    }
+
+    function renderMontpellierSubareas(specialtyId, cloudHospitalMap) {
+      if (!mtpSubareaGeoJson || !Array.isArray(mtpSubareaGeoJson.features)) return;
+
+      const style = createMtpSubareaStyle(specialtyId, cloudHospitalMap);
+      const existingLayer = mtpSubareaLayers[0];
+      if (existingLayer && typeof existingLayer.setStyle === "function") {
+        existingLayer.setStyle(style);
+        return;
+      }
+
+      clearLayers(mtpSubareaLayers);
 
       mtpSubareaLayers.push(
         L.geoJSON(mtpSubareaGeoJson, {
           interactive: false,
-          style(feature) {
-            const name = feature?.properties?.name || feature?.properties?.quartier || "";
-            const area = areaByKey.get(normalizeText(name));
-            if (!area) {
-              return {
-                color: "#94a3b8",
-                weight: 1.2,
-                opacity: 0.45,
-                fillColor: "#cbd5e1",
-                fillOpacity: 0.08,
-              };
-            }
-            const hospitalId =
-              typeof resolveHospitalForArea === "function"
-                ? resolveHospitalForArea(area, specialtyId)
-                : area.cloud
-                  ? cloudHospitalMap[area.cloud]
-                  : null;
-            const hospital = hospitalId ? HOSPITALS[hospitalId] : null;
-            if (!hospital) {
-              return {
-                color: "#94a3b8",
-                weight: 1.2,
-                opacity: 0.45,
-                fillColor: "#cbd5e1",
-                fillOpacity: 0.08,
-              };
-            }
-            return {
-              color: hospital.color,
-              weight: 1.8,
-              opacity: 0.95,
-              fillColor: hospital.color,
-              fillOpacity: 0.22,
-            };
-          },
+          style,
         }).addTo(map),
       );
     }
 
-    function renderCommuneContours(specialtyId, cloudHospitalMap) {
-      clearCommuneContourLayer();
-      if (!communeGeoJson || !Array.isArray(communeGeoJson.features)) return;
-
+    function createCommuneContourStyle(specialtyId, cloudHospitalMap) {
       const communeHospitalMap = buildCommuneHospitalMap(
         specialtyId,
         cloudHospitalMap,
       );
+      return function styleCommuneContour(feature) {
+        const communeName = feature?.properties?.nom || "";
+        const communeKeys = buildCommuneNameKeys(communeName);
+        const hospitalId = communeKeys
+          .map((key) => communeHospitalMap.get(key))
+          .find(Boolean);
+        const hospital = hospitalId ? HOSPITALS[hospitalId] : null;
+        if (!hospital) {
+          return {
+            color: "#9ca3af",
+            weight: 0.8,
+            opacity: 0.25,
+            fillColor: "#cbd5e1",
+            fillOpacity: 0.04,
+          };
+        }
+        return {
+          color: hospital.color,
+          weight: 1.35,
+          opacity: 0.68,
+          fillColor: hospital.color,
+          fillOpacity: 0.12,
+          className: "commune-sector-path",
+        };
+      };
+    }
+
+    function renderCommuneContours(specialtyId, cloudHospitalMap) {
+      if (!communeGeoJson || !Array.isArray(communeGeoJson.features)) return;
+
+      const style = createCommuneContourStyle(specialtyId, cloudHospitalMap);
+      if (communeContourLayer && typeof communeContourLayer.setStyle === "function") {
+        communeContourLayer.setStyle(style);
+        return;
+      }
+
+      clearCommuneContourLayer();
       communeContourLayer = L.geoJSON(communeGeoJson, {
         interactive: false,
-        style(feature) {
-          const communeName = feature?.properties?.nom || "";
-          const communeKeys = buildCommuneNameKeys(communeName);
-          const hospitalId = communeKeys
-            .map((key) => communeHospitalMap.get(key))
-            .find(Boolean);
-          const hospital = hospitalId ? HOSPITALS[hospitalId] : null;
-          if (!hospital) {
-            return {
-              color: "#9ca3af",
-              weight: 0.8,
-              opacity: 0.25,
-              fillColor: "#cbd5e1",
-              fillOpacity: 0.04,
-            };
-          }
-          return {
-            color: hospital.color,
-            weight: 1.6,
-            opacity: 0.75,
-            fillColor: hospital.color,
-            fillOpacity: 0.2,
-          };
-        },
+        style,
       }).addTo(map);
-    }
-
-    function seededRand(seed) {
-      let x = Math.sin(seed) * 10000;
-      return x - Math.floor(x);
-    }
-
-    function generateCloudPoints(
-      key,
-      n,
-      { clouds = CLOUDS, cloudStyle = CLOUD_STYLE, cloudAnchors = CLOUD_ANCHORS } = {},
-    ) {
-      const cloud = clouds[key];
-      const style = cloudStyle[key] || { spread: 0.7 };
-      const spread = style.spread || 0.7;
-      const anchors = cloudAnchors[key] || [
-        { lat: cloud.center[0], lng: cloud.center[1], w: 1 },
-      ];
-      const totalWeight = anchors.reduce((sum, anchor) => sum + anchor.w, 0);
-      const cumulative = [];
-      let acc = 0;
-      anchors.forEach((anchor) => {
-        acc += anchor.w / totalWeight;
-        cumulative.push(acc);
-      });
-      const angle = (cloud.angle * Math.PI) / 180;
-
-      function pickAnchor(r) {
-        for (let index = 0; index < cumulative.length; index += 1) {
-          if (r <= cumulative[index]) return anchors[index];
-        }
-        return anchors[anchors.length - 1];
-      }
-
-      const points = [];
-      for (let index = 0; index < n; index += 1) {
-        const pickedAnchor = pickAnchor(seededRand(index * 29 + key.length * 17));
-        const r1 = seededRand(index * 31 + key.length * 7);
-        const r2 = seededRand(index * 47 + key.length * 11);
-        const radius = Math.pow(r1, 0.82) * spread;
-        const theta = r2 * Math.PI * 2;
-        const localRx = cloud.rx * (0.34 + 0.32 * spread);
-        const localRy = cloud.ry * (0.34 + 0.32 * spread);
-        const x = radius * Math.cos(theta) * localRx;
-        const y = radius * Math.sin(theta) * localRy;
-        const xr = x * Math.cos(angle) - y * Math.sin(angle);
-        const yr = x * Math.sin(angle) + y * Math.cos(angle);
-        const jitterLat =
-          (seededRand(index * 53 + key.length * 13) - 0.5) * cloud.ry * 0.1;
-        const jitterLng =
-          (seededRand(index * 61 + key.length * 19) - 0.5) * cloud.rx * 0.1;
-        points.push([pickedAnchor.lat + yr + jitterLat, pickedAnchor.lng + xr + jitterLng]);
-      }
-      return points;
-    }
-
-    function addHeatBlob(lat, lng, color, baseRadius, opacity) {
-      const layers = [
-        { r: 1.9, o: 0.16 },
-        { r: 1.25, o: 0.22 },
-        { r: 0.72, o: 0.28 },
-      ];
-      layers.forEach(({ r, o }) => {
-        heatLayers.push(
-          L.circle([lat, lng], {
-            radius: baseRadius * r,
-            stroke: false,
-            fillColor: color,
-            fillOpacity: opacity * o,
-            interactive: false,
-          }).addTo(map),
-        );
-      });
-    }
-
-    function addComboHeat(
-      key,
-      { color, clouds = CLOUDS, cloudStyle = CLOUD_STYLE, cloudAnchors = CLOUD_ANCHORS } = {},
-    ) {
-      const anchors = cloudAnchors[key] || [
-        { lat: clouds[key].center[0], lng: clouds[key].center[1], w: 1 },
-      ];
-      const style = cloudStyle[key] || { halo: 0.7 };
-      const isMtp = key.startsWith("mtp_");
-      const isLattes = key.startsWith("lattes");
-      const baseRadius = isMtp ? 260 : isLattes ? 210 : 340;
-      const opacity = isMtp ? 0.9 : 1.0;
-
-      anchors.forEach((anchor) => {
-        const weightFactor = 0.75 + (anchor.w || 1) * 0.35;
-        const radius = baseRadius * weightFactor * (style.halo || 0.7);
-        addHeatBlob(anchor.lat, anchor.lng, color, radius, opacity);
-      });
-
-      const cloud = clouds[key];
-      addHeatBlob(
-        cloud.center[0],
-        cloud.center[1],
-        color,
-        baseRadius * 0.92 * (style.halo || 0.7),
-        opacity * 0.95,
-      );
-    }
-
-    function addCloud(
-      key,
-      density,
-      { color, clouds = CLOUDS, cloudStyle = CLOUD_STYLE, cloudAnchors = CLOUD_ANCHORS } = {},
-    ) {
-      const cloud = clouds[key];
-      const style = cloudStyle[key] || { density, halo: 0.7 };
-      const haloRadius =
-        Math.max(cloud.rx * 62000, cloud.ry * 82000) * (style.halo || 0.7);
-
-      haloLayers.push(
-        L.circle([cloud.center[0], cloud.center[1]], {
-          radius: haloRadius,
-          stroke: false,
-          fillColor: color,
-          fillOpacity: 0.09,
-          interactive: false,
-        }).addTo(map),
-      );
-
-      generateCloudPoints(key, style.density || density, {
-        clouds,
-        cloudStyle,
-        cloudAnchors,
-      }).forEach((point, idx) => {
-        const mod = idx % 12;
-        const radius = mod === 0 ? 3.4 : mod < 4 ? 2.8 : 2.2;
-
-        cloudLayers.push(
-          L.circleMarker(point, {
-            radius: radius + 3,
-            stroke: false,
-            fillColor: color,
-            fillOpacity: 0.12,
-            interactive: false,
-          }).addTo(map),
-        );
-        cloudLayers.push(
-          L.circleMarker(point, {
-            radius,
-            stroke: false,
-            fillColor: color,
-            fillOpacity: mod === 0 ? 0.65 : 0.85,
-            interactive: false,
-          }).addTo(map),
-        );
-      });
     }
 
     function buildHospitals() {
@@ -595,48 +486,22 @@
     function updateLabelVisibility() {
       const zoom = map.getZoom();
       document.querySelectorAll(".quarter-label").forEach((element) => {
-        element.style.opacity = zoom >= 12 ? "0.65" : "0";
+        element.style.opacity = zoom >= 12 ? "0.82" : "0";
       });
       document.querySelectorAll(".city-label").forEach((element) => {
-        element.style.opacity = zoom >= 11 ? "0.55" : "0.28";
+        element.style.opacity = zoom >= 11 ? "0.68" : "0.32";
       });
     }
 
     function buildLabels() {
       clearLayers(labelLayers);
-      CITY_AREAS.filter((area) => area.type === "commune").forEach((area) => {
-        labelLayers.push(
-          L.marker([area.lat, area.lng], {
-            interactive: false,
-            icon: L.divIcon({
-              className: "city-label",
-              html: escapeHtml(area.city),
-            }),
-          }).addTo(map),
-        );
-      });
-      MTP_SUBAREAS.forEach((area) => {
-        labelLayers.push(
-          L.marker([area.lat, area.lng], {
-            interactive: false,
-            icon: L.divIcon({
-              className: "quarter-label",
-              html: escapeHtml(area.label.replace("Montpellier - ", "")),
-            }),
-          }).addTo(map),
-        );
-      });
       updateLabelVisibility();
     }
 
     function renderLegend(specialtyId) {
       if (!legendElement) return;
-      const specialty =
-        SPECIALTIES.find((item) => item.id === specialtyId)?.label || specialtyId;
-      const title = document.createElement("div");
-      title.style.fontWeight = "700";
-      title.style.marginBottom = "6px";
-      title.textContent = specialty;
+      if (lastLegendSpecialtyId === specialtyId) return;
+      lastLegendSpecialtyId = specialtyId;
 
       const items = Object.values(HOSPITALS).map((hospital) => {
         const row = document.createElement("div");
@@ -653,7 +518,7 @@
         return row;
       });
 
-      legendElement.replaceChildren(title, ...items);
+      legendElement.replaceChildren(...items);
     }
 
     function ensureBaseLayers() {
@@ -665,8 +530,11 @@
     }
 
     function renderBeziersPreview({ enabled }) {
-      clearLayers(beziersPreviewLayers);
-      if (!enabled) return;
+      if (!enabled) {
+        clearLayers(beziersPreviewLayers);
+        return;
+      }
+      if (beziersPreviewLayers.length) return;
 
       (BEZIERS_STRUCTURES || []).forEach((item) => {
         if (!item.coordinates) return;
@@ -701,13 +569,8 @@
 
     function refresh({ specialtyId, cloudHospitalMap, beziersPreviewEnabled = false }) {
       latestRefreshArgs = { specialtyId, cloudHospitalMap, beziersPreviewEnabled };
-      clearLayers(cloudLayers);
-      clearLayers(haloLayers);
-      clearLayers(heatLayers);
       clearLayers(lattesSectorLayers);
-      clearLayers(mtpSubareaLayers);
 
-      clearCommuneContourLayer();
       if (communeGeoJson) {
         renderCommuneContours(specialtyId, cloudHospitalMap);
         renderLattesSectors(specialtyId, cloudHospitalMap);

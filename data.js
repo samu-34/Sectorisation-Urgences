@@ -11,7 +11,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "beausoleil",
     name: "Clinique Beausoleil",
-    color: "#f5a201",
+    color: "#ff7b00",
     location: {
       lat: 43.609371,
       lng: 3.848698,
@@ -32,7 +32,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "millenaire",
     name: "Clinique du Millénaire",
-    color: "#e70e02",
+    color: "#0079FF",
     location: {
       lat: 43.601962,
       lng: 3.913786,
@@ -53,7 +53,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "parc",
     name: "Clinique du Parc",
-    color: "#4361ee",
+    color: "#8A8635",
     location: {
       lat: 43.633842,
       lng: 3.893407,
@@ -74,7 +74,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "saint_roch",
     name: "Clinique Saint-Roch",
-    color: "#06d6a0",
+    color: "#FF2DD1",
     location: {
       lat: 43.582811,
       lng: 3.861684,
@@ -96,7 +96,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "saint_jean",
     name: "Clinique Saint-Jean",
-    color: "#ff4800",
+    color: "#8C00FF",
     location: {
       lat: 43.570217,
       lng: 3.835075,
@@ -116,8 +116,8 @@ const HOSPITAL_RECORDS = [
   },
   {
     id: "lapeyronie",
-    name: "Hôpital Lapeyronie",
-    color: "#ff0054",
+    name: "CHU Lapeyronie",
+    color: "#d81159",
     location: {
       lat: 43.629886,
       lng: 3.851481,
@@ -138,7 +138,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "trois_vallees",
     name: "Clinique des 3 Vallées",
-    color: "#bc00dd",
+    color: "#8338ec",
     location: {
       lat: 43.6081013,
       lng: 3.1503237,
@@ -159,7 +159,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "pasteur",
     name: "Clinique Pasteur",
-    color: "#008BFF",
+    color: "#F67D31",
     location: {
       lat: 43.4564227,
       lng: 3.4233371,
@@ -180,7 +180,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "saint_privat",
     name: "Clinique Saint-Privat",
-    color: "#F67D31",
+    color: "#008BFF",
     location: {
       lat: 43.3672413,
       lng: 3.2547578,
@@ -200,7 +200,7 @@ const HOSPITAL_RECORDS = [
   },
   {
     id: "ch_beziers",
-    name: "CH de Béziers",
+    name: "CH Béziers",
     color: "#DE1A58",
     location: {
       lat: 43.3399156,
@@ -480,6 +480,11 @@ const DIVERS_CITY_RULES = {
     "Montferrier-sur-Lez",
     "Prades-le-Lez",
     "Assas",
+    "Les Matelles",
+    "Le Triadou",
+    "Saint-Jean-de-Cuculles",
+    "Saint-Vincent-de-Barbeyrargues",
+    "Saint-Mathieu-de-Tréviers",
   ],
   saint_roch: ["Palavas-les-Flots"],
   beausoleil: ["Murviel-lès-Montpellier", "Saint-Georges-d'Orques", "Juvignac"],
@@ -492,6 +497,7 @@ const DIVERS_CITY_RULES = {
     "Teyran",
     "Le Crès",
     "Castries",
+    "Guzargues",
     "Sussargues",
     "Saint-Drézéry",
     "Beaulieu",
