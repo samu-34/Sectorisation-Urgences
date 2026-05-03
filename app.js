@@ -7,7 +7,6 @@
 
 const DOM = {
   appRoot: document.getElementById("appRoot"),
-  panel: document.querySelector(".panel"),
   map: document.getElementById("map"),
   chips: document.getElementById("chips"),
   citySelect: document.getElementById("citySelect"),
@@ -29,19 +28,28 @@ const DOM = {
   authError: document.getElementById("authError"),
   authUnlockBtn: document.getElementById("authUnlockBtn"),
   authTogglePasswordBtn: document.getElementById("authTogglePasswordBtn"),
-  filieresInfoBtn: document.getElementById("filieresInfoBtn"),
-  filieresPanel: document.getElementById("filieresPanel"),
-  filieresCloseBtn: document.getElementById("filieresCloseBtn"),
+  feedbackBtn: document.getElementById("feedbackBtn"),
+  feedbackOverlay: document.getElementById("feedbackOverlay"),
+  feedbackForm: document.getElementById("feedbackForm"),
+  feedbackSender: document.getElementById("feedbackSender"),
+  feedbackMessage: document.getElementById("feedbackMessage"),
+  feedbackStatus: document.getElementById("feedbackStatus"),
+  feedbackCloseBtn: document.getElementById("feedbackCloseBtn"),
 };
 
 const MAP_ACCESS_PASSWORD = "samu34secteur";
+const FEEDBACK_EMAIL_RECIPIENTS = [
+  "h-ghomrani@chu-montpellier.fr",
+  "mohammed-mahmoudi@chu-montpellier.fr",
+];
 const PASSWORD_GATE_ENABLED = false;
 const SUGGESTIONS_ENABLED = true;
+const FEEDBACK_ENABLED = false;
 const LEGEND_HIDE_VIEWPORT_MAX_WIDTH = 768;
 const LEGEND_HIDE_MAP_MAX_WIDTH = 700;
 const REGULATE_BUTTON_HIDE_VIEWPORT_MAX_WIDTH = 768;
 let mapAccessUnlocked = false;
-let filieresDialogOpen = false;
+let feedbackDialogOpen = false;
 const beziersPreviewEnabled = true;
 
 const {
@@ -57,7 +65,7 @@ const mapRenderer = MediMapMapRenderer.createMapRenderer({
   legendElement: DOM.legend,
   getOrientationSpecialty: () => appController.getOrientationSpecialty(),
   onOrientationPopupClose() {
-    resetSessionUi({ resetMapView: true });
+    resetSessionUi();
   },
 });
 
@@ -297,39 +305,81 @@ function submitMapAccessPassword() {
   return false;
 }
 
-function openFilieresDialog() {
-  filieresDialogOpen = true;
-  DOM.filieresPanel.classList.remove("hidden");
-  DOM.filieresInfoBtn.setAttribute("aria-expanded", "true");
-  DOM.panel?.classList?.add("is-filieres-open");
-  syncFilieresPanelPosition();
+function setFeedbackStatus(message, type) {
+  DOM.feedbackStatus.textContent = message;
+  DOM.feedbackStatus.classList.remove("hidden", "is-success", "is-error");
+  DOM.feedbackStatus.classList.add(type === "error" ? "is-error" : "is-success");
 }
 
-function closeFilieresDialog() {
-  filieresDialogOpen = false;
-  DOM.filieresPanel.classList.add("hidden");
-  DOM.filieresInfoBtn.setAttribute("aria-expanded", "false");
-  DOM.panel?.classList?.remove("is-filieres-open");
+function clearFeedbackStatus() {
+  DOM.feedbackStatus.textContent = "";
+  DOM.feedbackStatus.classList.add("hidden");
+  DOM.feedbackStatus.classList.remove("is-success", "is-error");
 }
 
-function toggleFilieresDialog() {
-  if (filieresDialogOpen) {
-    closeFilieresDialog();
+function buildFeedbackPayload() {
+  const sender = String(DOM.feedbackSender.value || "").trim();
+  const message = String(DOM.feedbackMessage.value || "").trim();
+
+  return [
+    "MediMap - Remarque / suggestion",
+    "",
+    `Emetteur : ${sender || "Non renseigne"}`,
+    `Date : ${new Date().toLocaleString("fr-FR")}`,
+    "",
+    "Message :",
+    message,
+  ].join("\n");
+}
+
+function autoResizeFeedbackMessage() {
+  DOM.feedbackMessage.style.height = "auto";
+  DOM.feedbackMessage.style.height = `${DOM.feedbackMessage.scrollHeight}px`;
+}
+
+function openFeedbackDialog() {
+  if (!FEEDBACK_ENABLED) {
+    closeFeedbackDialog();
     return;
   }
-  openFilieresDialog();
+
+  feedbackDialogOpen = true;
+  clearFeedbackStatus();
+  DOM.feedbackOverlay.classList.remove("hidden");
+  setTimeout(() => {
+    try {
+      autoResizeFeedbackMessage();
+      DOM.feedbackMessage.focus();
+    } catch (error) {}
+  }, 30);
 }
 
-function syncFilieresPanelPosition() {
-  if (!DOM.panel || !DOM.filieresPanel) return;
-  if (window.innerWidth <= 768) {
-    DOM.filieresPanel.style.top = "";
+function closeFeedbackDialog() {
+  feedbackDialogOpen = false;
+  DOM.feedbackOverlay.classList.add("hidden");
+  clearFeedbackStatus();
+  DOM.feedbackMessage.style.height = "";
+}
+
+function syncFeatureVisibility() {
+  if (!FEEDBACK_ENABLED) {
+    DOM.feedbackBtn.hidden = true;
+    DOM.feedbackOverlay.classList.add("hidden");
+  }
+}
+
+function openFeedbackEmailDraft() {
+  const message = String(DOM.feedbackMessage.value || "").trim();
+  if (!message) {
+    setFeedbackStatus("Ajoute un message avant d'ouvrir l'email.", "error");
+    DOM.feedbackMessage.focus();
     return;
   }
 
-  const panelRect = DOM.panel.getBoundingClientRect();
-  const panelTop = Math.max(8, Math.round(panelRect.bottom + 8));
-  DOM.filieresPanel.style.top = `${panelTop}px`;
+  const subject = encodeURIComponent("MediMap - Remarque / suggestion");
+  const body = encodeURIComponent(buildFeedbackPayload());
+  const recipients = encodeURIComponent(FEEDBACK_EMAIL_RECIPIENTS.join(","));
+  window.location.href = `mailto:${recipients}?subject=${subject}&body=${body}`;
 }
 
 function applySymptomInput(text, options = {}) {
@@ -521,43 +571,52 @@ DOM.authTogglePasswordBtn.addEventListener("click", () => {
   DOM.authPassword.focus();
 });
 
-DOM.filieresInfoBtn.addEventListener("click", () => {
-  toggleFilieresDialog();
+DOM.feedbackBtn.addEventListener("click", () => {
+  openFeedbackDialog();
 });
 
-DOM.filieresCloseBtn.addEventListener("click", () => {
-  closeFilieresDialog();
+DOM.feedbackCloseBtn.addEventListener("click", () => {
+  closeFeedbackDialog();
+});
+
+DOM.feedbackForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  openFeedbackEmailDraft();
+});
+
+DOM.feedbackMessage.addEventListener("input", () => {
+  clearFeedbackStatus();
+  autoResizeFeedbackMessage();
+});
+
+DOM.feedbackSender.addEventListener("input", () => {
+  clearFeedbackStatus();
 });
 
 document.addEventListener("click", (event) => {
-  const popupCloseTarget =
-    event.target instanceof Element
-      ? event.target.closest(
-          ".leaflet-popup-close-button, .orientation-overlay-close",
-        )
-      : null;
-  if (popupCloseTarget) {
-    event.preventDefault();
-    event.stopPropagation();
-    resetSessionUi({ resetMapView: true });
-    return;
-  }
-
   if (!DOM.symptomInput.parentElement.contains(event.target)) {
     autocomplete.closeSymptomSuggestions();
   }
   if (!DOM.cityInput.parentElement.contains(event.target)) {
     autocomplete.closeCitySuggestions();
   }
+  if (
+    feedbackDialogOpen &&
+    event.target === DOM.feedbackOverlay
+  ) {
+    closeFeedbackDialog();
+  }
 });
 
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && filieresDialogOpen) {
-    closeFilieresDialog();
+  if (event.key === "Escape" && feedbackDialogOpen) {
+    closeFeedbackDialog();
+    return;
   }
 });
 
 document.addEventListener("DOMContentLoaded", () => {
+  syncFeatureVisibility();
   syncLegendVisibility();
   syncRegulateButtonVisibility();
   lockMapAccess();
@@ -567,7 +626,6 @@ document.addEventListener("DOMContentLoaded", () => {
   renderDetectedSpecialtyIndicator();
   refreshMap();
   updateDecision();
-  syncFilieresPanelPosition();
   mapRenderer.fitAggloBounds();
   setTimeout(() => {
     try {
@@ -582,18 +640,11 @@ window.addEventListener("load", () => {
 
 window.addEventListener("resize", () => {
   syncResponsiveMapUi();
-  syncFilieresPanelPosition();
 });
 
 if (window.visualViewport) {
-  window.visualViewport.addEventListener("resize", () => {
-    syncResponsiveMapUi();
-    syncFilieresPanelPosition();
-  });
-  window.visualViewport.addEventListener("scroll", () => {
-    syncResponsiveMapUi();
-    syncFilieresPanelPosition();
-  });
+  window.visualViewport.addEventListener("resize", syncResponsiveMapUi);
+  window.visualViewport.addEventListener("scroll", syncResponsiveMapUi);
 }
 
 window.addEventListener("error", () => {
