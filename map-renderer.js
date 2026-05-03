@@ -13,10 +13,11 @@
     getOrientationSpecialty = () => "divers",
     onOrientationPopupClose = null,
   } = {}) {
-    const map = L.map(mapElementId, { zoomControl: true }).setView(
+    const map = L.map(mapElementId, { zoomControl: false }).setView(
       [43.50, 3.42],
       10,
     );
+    L.control.zoom({ position: "topright" }).addTo(map);
     const DUAL_SECTORIZATION_BOUNDS = [
       [43.27, 3.08],
       [43.74, 4.06],
@@ -52,62 +53,21 @@
     }).addTo(map);
 
     function fitAggloBounds() {
-      map.fitBounds(DUAL_SECTORIZATION_BOUNDS, { padding: [24, 24] });
+      const viewportWidth =
+        window.innerWidth || document.documentElement.clientWidth || 0;
+      const desktopPaddingOptions =
+        viewportWidth >= 1024
+          ? {
+              paddingTopLeft: [520, 24],
+              paddingBottomRight: [24, 24],
+            }
+          : { padding: [24, 24] };
+      map.fitBounds(DUAL_SECTORIZATION_BOUNDS, desktopPaddingOptions);
     }
 
     function setDefaultMapView() {
-      map.setView([43.50, 3.42], 10);
+      fitAggloBounds();
     }
-
-    const AggloControl = L.Control.extend({
-      options: { position: "topleft" },
-      onAdd() {
-        const container = L.DomUtil.create("div", "leaflet-bar leaflet-control");
-        container.style.position = "absolute";
-        container.style.top = "0";
-        container.style.left = "56px";
-        container.style.margin = "10px 0 0 0";
-        const button = L.DomUtil.create("button", "", container);
-        button.type = "button";
-        button.title = "Adapter le zoom sur l'Hérault";
-        button.setAttribute("aria-label", "Adapter le zoom sur l'Hérault");
-        button.innerHTML = `
-          <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="8 3 3 3 3 8"></polyline>
-            <line x1="3" y1="3" x2="9" y2="9"></line>
-            <polyline points="16 3 21 3 21 8"></polyline>
-            <line x1="15" y1="9" x2="21" y2="3"></line>
-            <polyline points="3 16 3 21 8 21"></polyline>
-            <line x1="3" y1="21" x2="9" y2="15"></line>
-            <polyline points="16 21 21 21 21 16"></polyline>
-            <line x1="15" y1="15" x2="21" y2="21"></line>
-          </svg>
-        `;
-        button.style.width = "34px";
-        button.style.height = "34px";
-        button.style.padding = "0";
-        button.style.border = "0";
-        button.style.borderRadius = "0";
-        button.style.background = "#ffffff";
-        button.style.color = "#17313b";
-        button.style.display = "grid";
-        button.style.placeItems = "center";
-        button.style.cursor = "pointer";
-        button.style.boxShadow = "none";
-        button.style.borderRadius = "4px";
-
-        L.DomEvent.disableClickPropagation(container);
-        L.DomEvent.disableScrollPropagation(container);
-        L.DomEvent.on(button, "click", (event) => {
-          L.DomEvent.stop(event);
-          fitAggloBounds();
-        });
-
-        return container;
-      },
-    });
-
-    map.addControl(new AggloControl());
 
     function clearRenderableLayer(layer) {
       if (!layer) return null;
@@ -118,6 +78,14 @@
     function clearSelectionVisuals() {
       focusLayer = clearRenderableLayer(focusLayer);
       routeLayer = clearRenderableLayer(routeLayer);
+    }
+
+    function notifyOrientationPopupClosed() {
+      if (typeof onOrientationPopupClose !== "function") return;
+      // Laisse Leaflet terminer la fermeture visuelle avant de recadrer la carte.
+      requestAnimationFrame(() => {
+        onOrientationPopupClose();
+      });
     }
 
     function removeElement(element) {
@@ -155,8 +123,8 @@
         clearSelectionVisuals();
       }
 
-      if (shouldNotifyApp && typeof onOrientationPopupClose === "function") {
-        onOrientationPopupClose();
+      if (shouldNotifyApp) {
+        notifyOrientationPopupClosed();
       }
     }
 
@@ -176,8 +144,8 @@
         clearSelectionVisuals();
       }
 
-      if (notifyApp && typeof onOrientationPopupClose === "function") {
-        onOrientationPopupClose();
+      if (notifyApp) {
+        notifyOrientationPopupClosed();
       }
 
       return true;
