@@ -227,7 +227,7 @@
       const localMatches = getRankedMatches(
         cityItems,
         normalizedQuery,
-        (suggestion) => [suggestion.label, ...(suggestion.aliases || [])],
+        (suggestion) => suggestion.label,
       ).slice(0, 10);
 
       const mergedEntries = Array.from(

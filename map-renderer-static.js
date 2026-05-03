@@ -16,7 +16,6 @@
     let heatLayers = [];
     let hospitalLayers = [];
     let labelLayers = [];
-    let beziersPreviewLayers = [];
     let baseLayersBuilt = false;
 
     function clearLayers(arr) {
@@ -38,9 +37,6 @@
       hospitalLayers.forEach((layer, index) => {
         elevateLayer(layer, 1200 + index);
       });
-      beziersPreviewLayers.forEach((layer, index) => {
-        elevateLayer(layer, 1400 + index);
-      });
       labelLayers.forEach((layer, index) => {
         elevateLayer(layer, 1600 + index);
       });
@@ -60,15 +56,11 @@
       return x - Math.floor(x);
     }
 
-    function generateCloudPoints(
-      key,
-      n,
-      { clouds = CLOUDS, cloudStyle = CLOUD_STYLE, cloudAnchors = CLOUD_ANCHORS } = {},
-    ) {
-      const cloud = clouds[key];
-      const style = cloudStyle[key] || { spread: 0.7 };
+    function generateCloudPoints(key, n) {
+      const cloud = CLOUDS[key];
+      const style = CLOUD_STYLE[key] || { spread: 0.7 };
       const spread = style.spread || 0.7;
-      const anchors = cloudAnchors[key] || [
+      const anchors = CLOUD_ANCHORS[key] || [
         { lat: cloud.center[0], lng: cloud.center[1], w: 1 },
       ];
       const totalWeight = anchors.reduce((sum, anchor) => sum + anchor.w, 0);
@@ -128,14 +120,12 @@
       });
     }
 
-    function addComboHeat(
-      key,
-      { color, clouds = CLOUDS, cloudStyle = CLOUD_STYLE, cloudAnchors = CLOUD_ANCHORS } = {},
-    ) {
-      const anchors = cloudAnchors[key] || [
-        { lat: clouds[key].center[0], lng: clouds[key].center[1], w: 1 },
+    function addComboHeat(key, hospitalId) {
+      const hospital = HOSPITALS[hospitalId];
+      const anchors = CLOUD_ANCHORS[key] || [
+        { lat: CLOUDS[key].center[0], lng: CLOUDS[key].center[1], w: 1 },
       ];
-      const style = cloudStyle[key] || { halo: 0.7 };
+      const style = CLOUD_STYLE[key] || { halo: 0.7 };
       const isMtp = key.startsWith("mtp_");
       const isLattes = key.startsWith("lattes");
       const baseRadius = isMtp ? 260 : isLattes ? 210 : 340;
@@ -144,26 +134,23 @@
       anchors.forEach((anchor) => {
         const weightFactor = 0.75 + (anchor.w || 1) * 0.35;
         const radius = baseRadius * weightFactor * (style.halo || 0.7);
-        addHeatBlob(anchor.lat, anchor.lng, color, radius, opacity);
+        addHeatBlob(anchor.lat, anchor.lng, hospital.color, radius, opacity);
       });
 
-      const cloud = clouds[key];
+      const cloud = CLOUDS[key];
       addHeatBlob(
         cloud.center[0],
         cloud.center[1],
-        color,
+        hospital.color,
         baseRadius * 0.92 * (style.halo || 0.7),
         opacity * 0.95,
       );
     }
 
-    function addCloud(
-      key,
-      density,
-      { color, clouds = CLOUDS, cloudStyle = CLOUD_STYLE, cloudAnchors = CLOUD_ANCHORS } = {},
-    ) {
-      const cloud = clouds[key];
-      const style = cloudStyle[key] || { density, halo: 0.7 };
+    function addCloud(key, hospitalId, density) {
+      const hospital = HOSPITALS[hospitalId];
+      const cloud = CLOUDS[key];
+      const style = CLOUD_STYLE[key] || { density, halo: 0.7 };
       const haloRadius =
         Math.max(cloud.rx * 62000, cloud.ry * 82000) * (style.halo || 0.7);
 
@@ -171,17 +158,13 @@
         L.circle([cloud.center[0], cloud.center[1]], {
           radius: haloRadius,
           stroke: false,
-          fillColor: color,
+          fillColor: hospital.color,
           fillOpacity: 0.09,
           interactive: false,
         }).addTo(map),
       );
 
-      generateCloudPoints(key, style.density || density, {
-        clouds,
-        cloudStyle,
-        cloudAnchors,
-      }).forEach((point, idx) => {
+      generateCloudPoints(key, style.density || density).forEach((point, idx) => {
         const mod = idx % 12;
         const radius = mod === 0 ? 3.4 : mod < 4 ? 2.8 : 2.2;
 
@@ -189,7 +172,7 @@
           L.circleMarker(point, {
             radius: radius + 3,
             stroke: false,
-            fillColor: color,
+            fillColor: hospital.color,
             fillOpacity: 0.12,
             interactive: false,
           }).addTo(map),
@@ -198,7 +181,7 @@
           L.circleMarker(point, {
             radius,
             stroke: false,
-            fillColor: color,
+            fillColor: hospital.color,
             fillOpacity: mod === 0 ? 0.65 : 0.85,
             interactive: false,
           }).addTo(map),
@@ -301,72 +284,17 @@
       baseLayersBuilt = true;
     }
 
-    function renderBeziersPreview({ enabled }) {
-      clearLayers(beziersPreviewLayers);
-      if (!enabled) return;
-
-      Object.entries(BEZIERS_CLOUDS || {}).forEach(([cloudKey]) => {
-        const structureId = cloudKey.replace(/^beziers_/, "");
-        const structure = (BEZIERS_STRUCTURES || []).find((item) => item.id === structureId);
-        const color = (structure && structure.color) || "#9ca3af";
-        addComboHeat(cloudKey, {
-          color,
-          clouds: BEZIERS_CLOUDS,
-          cloudStyle: BEZIERS_CLOUD_STYLE,
-          cloudAnchors: BEZIERS_CLOUD_ANCHORS,
-        });
-        addCloud(cloudKey, 140, {
-          color,
-          clouds: BEZIERS_CLOUDS,
-          cloudStyle: BEZIERS_CLOUD_STYLE,
-          cloudAnchors: BEZIERS_CLOUD_ANCHORS,
-        });
-      });
-
-      (BEZIERS_STRUCTURES || []).forEach((item) => {
-        if (!item.coordinates) return;
-        const pseudoHospital = {
-          name: item.nom || "Établissement",
-          color: item.color || "#1d4e6a",
-          address: item.commune || "Béziers",
-          phone_urgences: "Non communiqué",
-        };
-        beziersPreviewLayers.push(
-          L.circle([item.coordinates.lat, item.coordinates.lng], {
-            radius: 700,
-            stroke: false,
-            fillColor: pseudoHospital.color,
-            fillOpacity: 0.14,
-            interactive: false,
-          }).addTo(map),
-        );
-        beziersPreviewLayers.push(
-          L.circleMarker([item.coordinates.lat, item.coordinates.lng], {
-            radius: 8.5,
-            color: "#ffffff",
-            weight: 2.5,
-            fillColor: pseudoHospital.color,
-            fillOpacity: 1,
-          })
-            .addTo(map)
-            .bindPopup(buildHospitalPopup(pseudoHospital), { maxWidth: 320 }),
-        );
-      });
-    }
-
-    function refresh({ specialtyId, cloudHospitalMap, beziersPreviewEnabled = false }) {
+    function refresh({ specialtyId, cloudHospitalMap }) {
       clearLayers(cloudLayers);
       clearLayers(haloLayers);
       clearLayers(heatLayers);
 
       Object.entries(cloudHospitalMap).forEach(([cloud, hospitalId]) => {
-        const hospital = HOSPITALS[hospitalId];
-        addComboHeat(cloud, { color: hospital.color });
-        addCloud(cloud, 140, { color: hospital.color });
+        addComboHeat(cloud, hospitalId);
+        addCloud(cloud, hospitalId, 140);
       });
 
       ensureBaseLayers();
-      renderBeziersPreview({ enabled: beziersPreviewEnabled });
       elevateStaticForegroundLayers();
       renderLegend(specialtyId);
     }

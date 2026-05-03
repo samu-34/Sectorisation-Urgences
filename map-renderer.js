@@ -14,12 +14,12 @@
     onOrientationPopupClose = null,
   } = {}) {
     const map = L.map(mapElementId, { zoomControl: true }).setView(
-      [43.50, 3.42],
-      10,
+      [43.61, 3.87],
+      12,
     );
-    const DUAL_SECTORIZATION_BOUNDS = [
-      [43.27, 3.08],
-      [43.74, 4.06],
+    const AGGLO_BOUNDS = [
+      [43.47, 3.67],
+      [43.75, 4.08],
     ];
 
     const mapElement = document.getElementById(mapElementId);
@@ -52,11 +52,11 @@
     }).addTo(map);
 
     function fitAggloBounds() {
-      map.fitBounds(DUAL_SECTORIZATION_BOUNDS, { padding: [24, 24] });
+      map.fitBounds(AGGLO_BOUNDS, { padding: [24, 24] });
     }
 
     function setDefaultMapView() {
-      map.setView([43.50, 3.42], 10);
+      map.setView([43.61, 3.87], 12);
     }
 
     const AggloControl = L.Control.extend({
@@ -69,8 +69,8 @@
         container.style.margin = "10px 0 0 0";
         const button = L.DomUtil.create("button", "", container);
         button.type = "button";
-        button.title = "Adapter le zoom sur l'Hérault";
-        button.setAttribute("aria-label", "Adapter le zoom sur l'Hérault");
+        button.title = "Adapter le zoom sur l'agglomération";
+        button.setAttribute("aria-label", "Adapter le zoom sur l'agglomération");
         button.innerHTML = `
           <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="8 3 3 3 3 8"></polyline>
@@ -341,12 +341,8 @@
       orientationPopupHospitalId = hospitalId;
     }
 
-    function refresh({ specialtyId, cloudHospitalMap, beziersPreviewEnabled = false }) {
-      staticLayerRenderer.refresh({
-        specialtyId,
-        cloudHospitalMap,
-        beziersPreviewEnabled,
-      });
+    function refresh({ specialtyId, cloudHospitalMap }) {
+      staticLayerRenderer.refresh({ specialtyId, cloudHospitalMap });
     }
 
     function renderOrientationPresentation() {
