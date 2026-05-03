@@ -1923,8 +1923,20 @@
           "interventions ambulances privées",
           "capacité relative des structures"
         ],
-        "exclusionsCommunales": [],
-        "exceptionEhpad": []
+        "exclusionsCommunales": [
+          {
+            "commune": "Agde",
+            "motif": "Commune hors périmètre de sectorisation Ouest Hérault"
+          }
+        ],
+        "exceptionEhpad": [
+          {
+            "ehpad": "EHPAD Les Jardins de Brescou",
+            "commune": "Agde",
+            "structure": "Clinique Pasteur",
+            "motif": "Exception validée malgré exclusion communale d’Agde"
+          }
+        ]
       },
       "structures": [
         {
@@ -1950,12 +1962,6 @@
           "nom": "CH de Béziers",
           "commune": "Béziers",
           "capaciteRelative": 5
-        },
-        {
-          "id": "ch_sete",
-          "nom": "CH de Sète",
-          "commune": "Sète",
-          "capaciteRelative": 4
         }
       ],
       "filieres": [
@@ -2116,19 +2122,6 @@
           "Sérignan",
           "Valras-Plage",
           "Vendres"
-        ],
-        "ch_sete": [
-          "Agde",
-          "Marseillan",
-          "Mèze",
-          "Loupian",
-          "Villeveyrac",
-          "Poussan",
-          "Bouzigues",
-          "Balaruc-les-Bains",
-          "Frontignan",
-          "Sète",
-          "Balaruc-le-Vieux"
         ]
       },
       "regleLittoral": {
@@ -2142,19 +2135,7 @@
           "Valras-Plage",
           "Vendres"
         ],
-        "chSete": [
-          "Agde",
-          "Marseillan",
-          "Mèze",
-          "Loupian",
-          "Villeveyrac",
-          "Poussan",
-          "Bouzigues",
-          "Balaruc-les-Bains",
-          "Frontignan",
-          "Sète",
-          "Balaruc-le-Vieux"
-        ]
+        "agde": "Exclue du calcul communal"
       },
       "ehpad": {
         "pasteur": [
@@ -2271,12 +2252,6 @@
           "lat": 43.3399156,
           "lng": 3.2546494,
           "display_name": "Centre hospitalier Montimaran, 2 Rue Valentin Haüy, Béziers, Hérault, France",
-          "precision": "entity_verified"
-        },
-        "structure:ch de sète:sète": {
-          "lat": 43.4029493,
-          "lng": 3.6984129,
-          "display_name": "Centre Hospitalier de Sète, Boulevard Camille Blanc, Sète, Hérault, France",
           "precision": "entity_verified"
         },
         "ehpad:ehpa les floréales:pinet": {
@@ -3263,60 +3238,6 @@
           "display_name": "Marseillan, Montpellier, Hérault, Occitanie, France métropolitaine, 34340, France",
           "precision": "entity"
         },
-        "commune:agde:": {
-          "lat": 43.3108284,
-          "lng": 3.4755605,
-          "display_name": "Agde, Hérault, Occitanie, France métropolitaine, 34300, France",
-          "precision": "entity"
-        },
-        "commune:mèze:": {
-          "lat": 43.4243475,
-          "lng": 3.6047839,
-          "display_name": "Mèze, Hérault, Occitanie, France métropolitaine, 34140, France",
-          "precision": "entity"
-        },
-        "commune:loupian:": {
-          "lat": 43.4484928,
-          "lng": 3.6133382,
-          "display_name": "Loupian, Hérault, Occitanie, France métropolitaine, 34140, France",
-          "precision": "entity"
-        },
-        "commune:villeveyrac:": {
-          "lat": 43.4990305,
-          "lng": 3.6070303,
-          "display_name": "Villeveyrac, Hérault, Occitanie, France métropolitaine, 34560, France",
-          "precision": "entity"
-        },
-        "commune:poussan:": {
-          "lat": 43.4881744,
-          "lng": 3.6708533,
-          "display_name": "Poussan, Hérault, Occitanie, France métropolitaine, 34560, France",
-          "precision": "entity"
-        },
-        "commune:bouzigues:": {
-          "lat": 43.4491689,
-          "lng": 3.6575885,
-          "display_name": "Bouzigues, Hérault, Occitanie, France métropolitaine, 34140, France",
-          "precision": "entity"
-        },
-        "commune:balaruc-les-bains:": {
-          "lat": 43.4404673,
-          "lng": 3.6785018,
-          "display_name": "Balaruc-les-Bains, Hérault, Occitanie, France métropolitaine, 34540, France",
-          "precision": "entity"
-        },
-        "commune:frontignan:": {
-          "lat": 43.4477545,
-          "lng": 3.7559894,
-          "display_name": "Frontignan, Hérault, Occitanie, France métropolitaine, 34110, France",
-          "precision": "entity"
-        },
-        "commune:sète:": {
-          "lat": 43.4075292,
-          "lng": 3.7007743,
-          "display_name": "Sète, Hérault, Occitanie, France métropolitaine, 34200, France",
-          "precision": "entity"
-        },
         "commune:Cabrerolles:": {
           "lat": 43.5445,
           "lng": 3.12514,
@@ -3633,12 +3554,6 @@
           "lat": 43.5088,
           "lng": 3.07583,
           "display_name": "Saint-Nazaire-de-Ladarez, Béziers, Hérault, Occitanie, France métropolitaine, 34490, France",
-          "precision": "entity"
-        },
-        "commune:balaruc-le-vieux:": {
-          "lat": 43.4603592,
-          "lng": 3.6843557,
-          "display_name": "Balaruc-le-Vieux, Hérault, Occitanie, France métropolitaine, 34540, France",
           "precision": "entity"
         }
       }
