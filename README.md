@@ -350,11 +350,6 @@ Source technique : `DIVERS_AREA_RULES` dans [data.js](./data.js).
 - Montferrier-sur-Lez
 - Prades-le-Lez
 - Assas
-- Les Matelles
-- Le Triadou
-- Saint-Jean-de-Cuculles
-- Saint-Vincent-de-Barbeyrargues
-- Saint-Mathieu-de-Tréviers
 
 #### Clinique Saint-Roch
 
@@ -384,7 +379,6 @@ Source technique : `DIVERS_AREA_RULES` dans [data.js](./data.js).
 - Teyran
 - Le Crès
 - Castries
-- Guzargues
 - Sussargues
 - Saint-Drézéry
 - Beaulieu
@@ -459,11 +453,6 @@ Source technique : `resolveHospitalForArea(...)` et `SPECIAL_AREA_RULES` dans [d
 - Montferrier-sur-Lez
 - Prades-le-Lez
 - Assas
-- Les Matelles
-- Le Triadou
-- Saint-Jean-de-Cuculles
-- Saint-Vincent-de-Barbeyrargues
-- Saint-Mathieu-de-Tréviers
 
 #### Clinique Beausoleil
 
@@ -490,7 +479,6 @@ Source technique : `resolveHospitalForArea(...)` et `SPECIAL_AREA_RULES` dans [d
 - Teyran
 - Le Crès
 - Castries
-- Guzargues
 - Sussargues
 - Saint-Drézéry
 - Beaulieu
@@ -557,11 +545,6 @@ Source technique : `resolveHospitalForArea(...)` et `SPECIAL_AREA_RULES` dans [d
 - Montferrier-sur-Lez
 - Prades-le-Lez
 - Assas
-- Les Matelles
-- Le Triadou
-- Saint-Jean-de-Cuculles
-- Saint-Vincent-de-Barbeyrargues
-- Saint-Mathieu-de-Tréviers
 
 #### Clinique Saint-Roch
 
@@ -589,7 +572,6 @@ Source technique : `resolveHospitalForArea(...)` et `SPECIAL_AREA_RULES` dans [d
 - Teyran
 - Le Crès
 - Castries
-- Guzargues
 - Sussargues
 - Saint-Drézéry
 - Beaulieu
@@ -657,11 +639,6 @@ Source technique : `resolveHospitalForArea(...)` et `SPECIAL_AREA_RULES` dans [d
 - Montferrier-sur-Lez
 - Prades-le-Lez
 - Assas
-- Les Matelles
-- Le Triadou
-- Saint-Jean-de-Cuculles
-- Saint-Vincent-de-Barbeyrargues
-- Saint-Mathieu-de-Tréviers
 
 #### Clinique Saint-Roch
 
@@ -688,7 +665,6 @@ Source technique : `resolveHospitalForArea(...)` et `SPECIAL_AREA_RULES` dans [d
 - Teyran
 - Le Crès
 - Castries
-- Guzargues
 - Sussargues
 - Saint-Drézéry
 - Beaulieu

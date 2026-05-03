@@ -310,51 +310,18 @@
       area,
     ]),
   );
-  const BEZIERS_STRUCTURE_COORDS_BY_ID = new Map(
-    (Array.isArray(BEZIERS_STRUCTURES) ? BEZIERS_STRUCTURES : [])
-      .filter(
-        (item) =>
-          item &&
-          item.id &&
-          item.coordinates &&
-          Number.isFinite(item.coordinates.lat) &&
-          Number.isFinite(item.coordinates.lng),
-      )
-      .map((item) => [
-        item.id,
-        {
-          lat: item.coordinates.lat,
-          lng: item.coordinates.lng,
-        },
-      ]),
-  );
-
   const BEZIERS_COMMUNE_AREA_BY_CITY = new Map(
-    (Array.isArray(BEZIERS_COMMUNES) ? BEZIERS_COMMUNES : []).map((item) => {
-      const ownCoords =
-        item &&
-        item.coordinates &&
-        Number.isFinite(item.coordinates.lat) &&
-        Number.isFinite(item.coordinates.lng)
-          ? item.coordinates
-          : null;
-      const structureCoords = ownCoords
-        ? null
-        : BEZIERS_STRUCTURE_COORDS_BY_ID.get(item.structureId) || null;
-      const fallbackCoords = ownCoords || structureCoords;
-
-      return [
-        item.commune,
-        Object.freeze({
-          id: `beziers_${simplify(item.commune).replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "")}`,
-          city: item.commune,
-          label: item.commune,
-          lat: fallbackCoords ? fallbackCoords.lat : null,
-          lng: fallbackCoords ? fallbackCoords.lng : null,
-          type: "beziers_commune",
-        }),
-      ];
-    }),
+    (Array.isArray(BEZIERS_COMMUNES) ? BEZIERS_COMMUNES : []).map((item) => [
+      item.commune,
+      Object.freeze({
+        id: `beziers_${simplify(item.commune).replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "")}`,
+        city: item.commune,
+        label: item.commune,
+        lat: item.coordinates ? item.coordinates.lat : null,
+        lng: item.coordinates ? item.coordinates.lng : null,
+        type: "beziers_commune",
+      }),
+    ]),
   );
   const BEZIERS_EHPAD_SELECTION_BY_KEY = new Map(
     (Array.isArray(BEZIERS_EHPAD) ? BEZIERS_EHPAD : []).flatMap((item) => {

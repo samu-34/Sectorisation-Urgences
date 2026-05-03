@@ -35,6 +35,7 @@ const DOM = {
   feedbackMessage: document.getElementById("feedbackMessage"),
   feedbackStatus: document.getElementById("feedbackStatus"),
   feedbackCloseBtn: document.getElementById("feedbackCloseBtn"),
+  feedbackMailBtn: document.getElementById("feedbackMailBtn"),
 };
 
 const MAP_ACCESS_PASSWORD = "samu34secteur";
@@ -201,6 +202,7 @@ function refreshMap() {
   const mapModel = appController.refreshSectorisationMap();
   mapRenderer.refresh({
     specialtyId: mapModel.specialtyId,
+    areaHospitalMap: mapModel.areaHospitalMap,
     cloudHospitalMap: mapModel.cloudHospitalMap,
     beziersPreviewEnabled,
   });
@@ -456,6 +458,10 @@ cityInputController = MediMapCityInput.createCityInputController({
 
 function syncSelectionFromCityInput(rawValue) {
   return cityInputController.syncSelectionFromCityInput(rawValue);
+}
+
+async function syncSelectionFromCityInputWithFallback(rawValue) {
+  await cityInputController.syncSelectionFromCityInputWithFallback(rawValue);
 }
 
 DOM.symptomInput.addEventListener("input", () => {

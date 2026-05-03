@@ -269,6 +269,13 @@
       return true;
     }
 
+    function isEventInsideSuggestions(target) {
+      return (
+        DOM.symptomInput.parentElement.contains(target) ||
+        DOM.cityInput.parentElement.contains(target)
+      );
+    }
+
     return Object.freeze({
       closeSymptomSuggestions,
       closeCitySuggestions,
@@ -296,6 +303,7 @@
       },
       acceptActiveCitySuggestion,
       acceptActiveSymptomSuggestion,
+      isEventInsideSuggestions,
     });
   }
 

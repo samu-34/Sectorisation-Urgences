@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-02T17:30:08.407Z",
+  "generated_at": "2026-05-01T14:59:51.388Z",
   "source": {
     "sectorization_bundle": "generated/sectorization-data.js",
     "resolver": "Equivalent logique resolveHospitalForArea(data.js)"
@@ -131,15 +131,6 @@
       },
       {
         "specialty_id": "divers",
-        "area_id": "guzargues",
-        "area_label": "Guzargues",
-        "area_type": "commune",
-        "city": "Guzargues",
-        "bucket": "",
-        "hospital_id": "parc"
-      },
-      {
-        "specialty_id": "divers",
         "area_id": "jacou",
         "area_label": "Jacou",
         "area_type": "commune",
@@ -200,24 +191,6 @@
         "city": "Le Crès",
         "bucket": "",
         "hospital_id": "parc"
-      },
-      {
-        "specialty_id": "divers",
-        "area_id": "le_triadou",
-        "area_label": "Le Triadou",
-        "area_type": "commune",
-        "city": "Le Triadou",
-        "bucket": "",
-        "hospital_id": "lapeyronie"
-      },
-      {
-        "specialty_id": "divers",
-        "area_id": "les_matelles",
-        "area_label": "Les Matelles",
-        "area_type": "commune",
-        "city": "Les Matelles",
-        "bucket": "",
-        "hospital_id": "lapeyronie"
       },
       {
         "specialty_id": "divers",
@@ -482,39 +455,12 @@
       },
       {
         "specialty_id": "divers",
-        "area_id": "saint_jean_de_cuculles",
-        "area_label": "Saint-Jean-de-Cuculles",
-        "area_type": "commune",
-        "city": "Saint-Jean-de-Cuculles",
-        "bucket": "",
-        "hospital_id": "lapeyronie"
-      },
-      {
-        "specialty_id": "divers",
         "area_id": "saint_jean_de_vedas",
         "area_label": "Saint-Jean-de-Védas",
         "area_type": "commune",
         "city": "Saint-Jean-de-Védas",
         "bucket": "",
         "hospital_id": "saint_jean"
-      },
-      {
-        "specialty_id": "divers",
-        "area_id": "saint_mathieu_de_treviers",
-        "area_label": "Saint-Mathieu-de-Tréviers",
-        "area_type": "commune",
-        "city": "Saint-Mathieu-de-Tréviers",
-        "bucket": "",
-        "hospital_id": "lapeyronie"
-      },
-      {
-        "specialty_id": "divers",
-        "area_id": "saint_vincent_de_barbeyrargues",
-        "area_label": "Saint-Vincent-de-Barbeyrargues",
-        "area_type": "commune",
-        "city": "Saint-Vincent-de-Barbeyrargues",
-        "bucket": "",
-        "hospital_id": "lapeyronie"
       },
       {
         "specialty_id": "divers",
@@ -700,15 +646,6 @@
       },
       {
         "specialty_id": "cardio_pneumo",
-        "area_id": "guzargues",
-        "area_label": "Guzargues",
-        "area_type": "commune",
-        "city": "Guzargues",
-        "bucket": "",
-        "hospital_id": "parc"
-      },
-      {
-        "specialty_id": "cardio_pneumo",
         "area_id": "jacou",
         "area_label": "Jacou",
         "area_type": "commune",
@@ -769,24 +706,6 @@
         "city": "Le Crès",
         "bucket": "",
         "hospital_id": "parc"
-      },
-      {
-        "specialty_id": "cardio_pneumo",
-        "area_id": "le_triadou",
-        "area_label": "Le Triadou",
-        "area_type": "commune",
-        "city": "Le Triadou",
-        "bucket": "",
-        "hospital_id": "lapeyronie"
-      },
-      {
-        "specialty_id": "cardio_pneumo",
-        "area_id": "les_matelles",
-        "area_label": "Les Matelles",
-        "area_type": "commune",
-        "city": "Les Matelles",
-        "bucket": "",
-        "hospital_id": "lapeyronie"
       },
       {
         "specialty_id": "cardio_pneumo",
@@ -1051,39 +970,12 @@
       },
       {
         "specialty_id": "cardio_pneumo",
-        "area_id": "saint_jean_de_cuculles",
-        "area_label": "Saint-Jean-de-Cuculles",
-        "area_type": "commune",
-        "city": "Saint-Jean-de-Cuculles",
-        "bucket": "",
-        "hospital_id": "lapeyronie"
-      },
-      {
-        "specialty_id": "cardio_pneumo",
         "area_id": "saint_jean_de_vedas",
         "area_label": "Saint-Jean-de-Védas",
         "area_type": "commune",
         "city": "Saint-Jean-de-Védas",
         "bucket": "",
         "hospital_id": "saint_jean"
-      },
-      {
-        "specialty_id": "cardio_pneumo",
-        "area_id": "saint_mathieu_de_treviers",
-        "area_label": "Saint-Mathieu-de-Tréviers",
-        "area_type": "commune",
-        "city": "Saint-Mathieu-de-Tréviers",
-        "bucket": "",
-        "hospital_id": "lapeyronie"
-      },
-      {
-        "specialty_id": "cardio_pneumo",
-        "area_id": "saint_vincent_de_barbeyrargues",
-        "area_label": "Saint-Vincent-de-Barbeyrargues",
-        "area_type": "commune",
-        "city": "Saint-Vincent-de-Barbeyrargues",
-        "bucket": "",
-        "hospital_id": "lapeyronie"
       },
       {
         "specialty_id": "cardio_pneumo",
@@ -1269,15 +1161,6 @@
       },
       {
         "specialty_id": "gastro_uro",
-        "area_id": "guzargues",
-        "area_label": "Guzargues",
-        "area_type": "commune",
-        "city": "Guzargues",
-        "bucket": "",
-        "hospital_id": "parc"
-      },
-      {
-        "specialty_id": "gastro_uro",
         "area_id": "jacou",
         "area_label": "Jacou",
         "area_type": "commune",
@@ -1338,24 +1221,6 @@
         "city": "Le Crès",
         "bucket": "",
         "hospital_id": "parc"
-      },
-      {
-        "specialty_id": "gastro_uro",
-        "area_id": "le_triadou",
-        "area_label": "Le Triadou",
-        "area_type": "commune",
-        "city": "Le Triadou",
-        "bucket": "",
-        "hospital_id": "lapeyronie"
-      },
-      {
-        "specialty_id": "gastro_uro",
-        "area_id": "les_matelles",
-        "area_label": "Les Matelles",
-        "area_type": "commune",
-        "city": "Les Matelles",
-        "bucket": "",
-        "hospital_id": "lapeyronie"
       },
       {
         "specialty_id": "gastro_uro",
@@ -1620,39 +1485,12 @@
       },
       {
         "specialty_id": "gastro_uro",
-        "area_id": "saint_jean_de_cuculles",
-        "area_label": "Saint-Jean-de-Cuculles",
-        "area_type": "commune",
-        "city": "Saint-Jean-de-Cuculles",
-        "bucket": "",
-        "hospital_id": "lapeyronie"
-      },
-      {
-        "specialty_id": "gastro_uro",
         "area_id": "saint_jean_de_vedas",
         "area_label": "Saint-Jean-de-Védas",
         "area_type": "commune",
         "city": "Saint-Jean-de-Védas",
         "bucket": "",
         "hospital_id": "saint_jean"
-      },
-      {
-        "specialty_id": "gastro_uro",
-        "area_id": "saint_mathieu_de_treviers",
-        "area_label": "Saint-Mathieu-de-Tréviers",
-        "area_type": "commune",
-        "city": "Saint-Mathieu-de-Tréviers",
-        "bucket": "",
-        "hospital_id": "lapeyronie"
-      },
-      {
-        "specialty_id": "gastro_uro",
-        "area_id": "saint_vincent_de_barbeyrargues",
-        "area_label": "Saint-Vincent-de-Barbeyrargues",
-        "area_type": "commune",
-        "city": "Saint-Vincent-de-Barbeyrargues",
-        "bucket": "",
-        "hospital_id": "lapeyronie"
       },
       {
         "specialty_id": "gastro_uro",
@@ -1838,15 +1676,6 @@
       },
       {
         "specialty_id": "trauma",
-        "area_id": "guzargues",
-        "area_label": "Guzargues",
-        "area_type": "commune",
-        "city": "Guzargues",
-        "bucket": "",
-        "hospital_id": "parc"
-      },
-      {
-        "specialty_id": "trauma",
         "area_id": "jacou",
         "area_label": "Jacou",
         "area_type": "commune",
@@ -1907,24 +1736,6 @@
         "city": "Le Crès",
         "bucket": "",
         "hospital_id": "parc"
-      },
-      {
-        "specialty_id": "trauma",
-        "area_id": "le_triadou",
-        "area_label": "Le Triadou",
-        "area_type": "commune",
-        "city": "Le Triadou",
-        "bucket": "",
-        "hospital_id": "lapeyronie"
-      },
-      {
-        "specialty_id": "trauma",
-        "area_id": "les_matelles",
-        "area_label": "Les Matelles",
-        "area_type": "commune",
-        "city": "Les Matelles",
-        "bucket": "",
-        "hospital_id": "lapeyronie"
       },
       {
         "specialty_id": "trauma",
@@ -2189,39 +2000,12 @@
       },
       {
         "specialty_id": "trauma",
-        "area_id": "saint_jean_de_cuculles",
-        "area_label": "Saint-Jean-de-Cuculles",
-        "area_type": "commune",
-        "city": "Saint-Jean-de-Cuculles",
-        "bucket": "",
-        "hospital_id": "lapeyronie"
-      },
-      {
-        "specialty_id": "trauma",
         "area_id": "saint_jean_de_vedas",
         "area_label": "Saint-Jean-de-Védas",
         "area_type": "commune",
         "city": "Saint-Jean-de-Védas",
         "bucket": "",
         "hospital_id": "saint_jean"
-      },
-      {
-        "specialty_id": "trauma",
-        "area_id": "saint_mathieu_de_treviers",
-        "area_label": "Saint-Mathieu-de-Tréviers",
-        "area_type": "commune",
-        "city": "Saint-Mathieu-de-Tréviers",
-        "bucket": "",
-        "hospital_id": "lapeyronie"
-      },
-      {
-        "specialty_id": "trauma",
-        "area_id": "saint_vincent_de_barbeyrargues",
-        "area_label": "Saint-Vincent-de-Barbeyrargues",
-        "area_type": "commune",
-        "city": "Saint-Vincent-de-Barbeyrargues",
-        "bucket": "",
-        "hospital_id": "lapeyronie"
       },
       {
         "specialty_id": "trauma",
