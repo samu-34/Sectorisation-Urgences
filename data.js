@@ -200,7 +200,7 @@ const HOSPITAL_RECORDS = [
   },
   {
     id: "ch_beziers",
-    name: "CH Béziers",
+    name: "CH de Béziers",
     color: "#DE1A58",
     location: {
       lat: 43.3399156,
@@ -217,6 +217,27 @@ const HOSPITAL_RECORDS = [
       note: "Coordonnées recalées sur géocodage établissement",
     },
     verified_at: "2026-05-01",
+    verification_status: "reviewed",
+  },
+  {
+    id: "ch_sete",
+    name: "CH de Sète",
+    color: "#22223b",
+    location: {
+      lat: 43.4029493,
+      lng: 3.6984129,
+      city: "Sète",
+      address: "Boulevard Camille Blanc, 34200 Sète",
+    },
+    phones: {
+      urgences: "Non communiqué",
+      specialites: "Non communiqué",
+    },
+    source: {
+      label: "Référentiel MediMap",
+      note: "Coordonnées recalées sur géocodage établissement",
+    },
+    verified_at: "2026-05-03",
     verification_status: "reviewed",
   },
 ];

@@ -245,18 +245,17 @@ test("beziers reference exposes coherent structures and commune assignment uniqu
   });
 });
 
-test("beziers Agde exclusion and EHPAD exception stay coherent", () => {
+test("beziers perimeter no longer excludes Agde after CH de Sète integration", () => {
   const perimetre = BEZIERS_SECTORIZATION.perimetre || {};
   const excludedCommunes = new Set(
     (perimetre.exclusionsCommunales || []).map((item) => simplifySectorizationText(item.commune)),
   );
   const exceptions = perimetre.exceptionEhpad || [];
 
-  assert.ok(excludedCommunes.has("agde"), "Agde must remain excluded at commune level");
-  assert.ok(exceptions.length > 0, "Expected at least one EHPAD exception");
+  assert.ok(!excludedCommunes.has("agde"), "Agde should now be mapped to CH de Sète at commune level");
   assert.ok(
-    exceptions.some((item) => simplifySectorizationText(item.commune) === "agde"),
-    "Expected an exception EHPAD for Agde",
+    !exceptions.some((item) => simplifySectorizationText(item.commune) === "agde"),
+    "No Agde EHPAD exception should remain once Agde is integrated",
   );
 });
 
