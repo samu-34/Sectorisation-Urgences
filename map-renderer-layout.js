@@ -22,6 +22,11 @@
     left: 12,
     bottom: 12,
   });
+  const PANEL_FALLBACK_SIZE = Object.freeze({
+    width: 520,
+    left: 12,
+    top: 12,
+  });
 
   function createMapLayoutController({
     map,
@@ -379,6 +384,33 @@
       };
     }
 
+    function getPanelElement() {
+      return document.querySelector(".panel");
+    }
+
+    function getPanelViewportBox(viewportSize = map.getSize()) {
+      const panelElement = getPanelElement();
+      if (!panelElement) return null;
+
+      const isHidden = panelElement.classList?.contains("hidden");
+      if (isHidden) return null;
+
+      const width = Number(panelElement.offsetWidth) || PANEL_FALLBACK_SIZE.width;
+      const left = PANEL_FALLBACK_SIZE.left;
+      const top = PANEL_FALLBACK_SIZE.top;
+      const right = left + width;
+      if (right <= 0 || left >= viewportSize.x) return null;
+
+      return {
+        left,
+        top,
+        right,
+        bottom: viewportSize.y - 12,
+        width,
+        height: Math.max(0, viewportSize.y - top - 12),
+      };
+    }
+
     function boxesIntersect(firstBox, secondBox) {
       if (!firstBox || !secondBox) return false;
       return !(
@@ -562,6 +594,7 @@
       const popupSize = getPopupElementSize(orientationPopup);
       const markerPoint = projectLatLngToContainerPoint([hospital.lat, hospital.lng]);
       const viewportSize = map.getSize();
+      const panelBox = getPanelViewportBox(viewportSize);
       let bestPlacement = placementOrder[0];
       let bestScore = -1;
 
@@ -572,7 +605,16 @@
           placement,
           viewportSize,
         );
-        if (doesPopupBoxFitViewport(box, popupSize, viewportSize)) {
+        const intersectsPanel = panelBox ? boxesIntersect({
+          left: box.left,
+          top: box.top,
+          right: box.left + popupSize.width,
+          bottom: box.top + popupSize.height,
+        }, panelBox) : false;
+        if (
+          doesPopupBoxFitViewport(box, popupSize, viewportSize) &&
+          !intersectsPanel
+        ) {
           bestPlacement = placement;
           bestScore = Number.POSITIVE_INFINITY;
           return;
@@ -708,6 +750,15 @@
         reserveRouteView ? 180 : 140,
         reserveRouteView ? 118 : 96,
       ];
+      const panelBox = getPanelViewportBox(size);
+      if (panelBox) {
+        const panelSafeLeftPadding = clamp(
+          Math.round(panelBox.right + 26),
+          180,
+          Math.max(220, Math.round(size.x * 0.55)),
+        );
+        paddingTopLeft[0] = Math.max(paddingTopLeft[0], panelSafeLeftPadding);
+      }
 
       if (area && hospital) {
         const { dy } = getRouteArrivalScreenVector(area, hospital, originPoint);

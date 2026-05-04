@@ -11,7 +11,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "beausoleil",
     name: "Clinique Beausoleil",
-    color: "#ff7b00",
+    color: "#bb6b00",
     location: {
       lat: 43.609371,
       lng: 3.848698,
@@ -53,7 +53,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "parc",
     name: "Clinique du Parc",
-    color: "#e09f3e",
+    color: "#15616d",
     location: {
       lat: 43.633842,
       lng: 3.893407,
@@ -222,7 +222,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "ch_sete",
     name: "CH de Sète",
-    color: "#386641",
+    color: "#00a896",
     location: {
       lat: 43.4029493,
       lng: 3.6984129,

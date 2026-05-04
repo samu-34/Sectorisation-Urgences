@@ -548,6 +548,14 @@ button:active {
   overflow-y: auto;
   backdrop-filter: blur(6px);
 }
+
+/* Force les popups Leaflet au-dessus des overlays UI (ex: légende). */
+#map .leaflet-popup-pane {
+  z-index: 1600 !important;
+}
+#map .leaflet-tooltip-pane {
+  z-index: 1500 !important;
+}
 .legend .legend-item {
   display: flex;
   gap: 8px;
@@ -915,6 +923,7 @@ button:active {
 }
 .leaflet-popup.orientation-popup {
   margin-bottom: 0;
+  z-index: 1600;
 }
 .leaflet-popup.orientation-popup .leaflet-popup-content-wrapper {
   border-radius: 24px !important;
@@ -936,7 +945,7 @@ button:active {
   left: 12px;
   right: 12px;
   bottom: 12px;
-  z-index: 1200;
+  z-index: 1600;
   display: flex;
   justify-content: center;
   pointer-events: none;
@@ -999,6 +1008,12 @@ button:active {
   margin: 12px 14px !important;
   font-size: 13px !important;
   line-height: 1.5 !important;
+}
+.leaflet-popup .card-flex {
+  align-items: center;
+}
+.leaflet-popup .dot-color {
+  margin-top: 0;
 }
 .leaflet-container a.leaflet-popup-close-button {
   top: 8px !important;
