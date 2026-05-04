@@ -109,6 +109,12 @@ body {
   margin-bottom: 12px;
 }
 
+.section .console-title-row h2 {
+  font-size: 21px;
+  line-height: 1.2;
+  color: #0e21a0;
+}
+
 .header-logos {
   display: flex;
   align-items: center;
@@ -205,7 +211,9 @@ select {
 #symptomInput,
 #cityInput,
 #detectedSpecialty {
-  background: #f6fafc;
+  background: #eef4f8;
+  border-color: #9ab4c0;
+  color: #102831;
 }
 
 input:focus,
@@ -223,8 +231,16 @@ select:disabled {
 }
 
 #detectedSpecialty {
-  background: #f6fafc;
+  background: #e8f1f6;
   cursor: default;
+  font-weight: 600;
+}
+
+#symptomInput:focus,
+#cityInput:focus,
+#detectedSpecialty:focus {
+  border-color: #005a79;
+  box-shadow: 0 0 0 3px rgba(0, 90, 121, 0.2);
 }
 
 button {
@@ -771,7 +787,6 @@ button:active {
   background: #fde7ea;
 }
 
-
 /* ─── Responsive ─── */
 @media (max-width: 1100px) {
   .panel {
@@ -884,10 +899,7 @@ button:active {
   .panel-footer {
     align-items: stretch;
     flex-direction: column;
-    padding:
-      12px
-      14px
-      calc(14px + env(safe-area-inset-bottom, 0px));
+    padding: 12px 14px calc(14px + env(safe-area-inset-bottom, 0px));
   }
 }
 
@@ -908,10 +920,7 @@ button:active {
     padding: 9px 10px;
   }
   .auth-overlay {
-    padding:
-      var(--safe-top)
-      var(--safe-right)
-      var(--safe-bottom)
+    padding: var(--safe-top) var(--safe-right) var(--safe-bottom)
       var(--safe-left);
   }
 }
