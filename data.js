@@ -53,7 +53,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "parc",
     name: "Clinique du Parc",
-    color: "#8A8635",
+    color: "#e09f3e",
     location: {
       lat: 43.633842,
       lng: 3.893407,
@@ -222,7 +222,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "ch_sete",
     name: "CH de Sète",
-    color: "#22223b",
+    color: "#386641",
     location: {
       lat: 43.4029493,
       lng: 3.6984129,

@@ -538,11 +538,19 @@
 
       (BEZIERS_STRUCTURES || []).forEach((item) => {
         if (!item.coordinates) return;
+        const canonicalHospital = HOSPITALS[item.id] || null;
         const pseudoHospital = {
-          name: item.nom || "Établissement",
-          color: item.color || "#1d4e6a",
-          address: item.commune || "Béziers",
-          phone_urgences: "Non communiqué",
+          name: canonicalHospital?.name || item.nom || "Établissement",
+          color: canonicalHospital?.color || item.color || "#1d4e6a",
+          city: canonicalHospital?.city || item.commune || "Béziers",
+          address:
+            canonicalHospital?.address ||
+            item.address ||
+            item.coordinates?.display_name ||
+            item.commune ||
+            "Béziers",
+          phone_urgences:
+            canonicalHospital?.phone_urgences || "Non communiqué",
         };
         beziersPreviewLayers.push(
           L.circle([item.coordinates.lat, item.coordinates.lng], {

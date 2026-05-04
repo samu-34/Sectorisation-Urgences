@@ -177,7 +177,7 @@
       return row;
     }
 
-    function buildPopupHeader(hospital, pillText) {
+    function buildPopupHeader(hospital, pillText, { showTitle = true } = {}) {
       const header = document.createElement("div");
       header.className = "card-flex";
       header.style.marginBottom = "8px";
@@ -199,13 +199,19 @@
       pill.style.background = hexToRgba(hospital.color, 0.14);
       pill.style.color = hospital.color;
       pill.style.border = `1px solid ${hexToRgba(hospital.color, 0.28)}`;
-
-      const title = document.createElement("div");
-      title.className = "popup-hospital-name";
-      title.textContent = hospital.name;
+      if (!showTitle) {
+        pill.style.fontSize = "18px";
+        pill.style.fontWeight = "800";
+      }
 
       pillRow.append(dot, pill);
-      headerText.append(pillRow, title);
+      headerText.append(pillRow);
+      if (showTitle) {
+        const title = document.createElement("div");
+        title.className = "popup-hospital-name";
+        title.textContent = hospital.name;
+        headerText.append(title);
+      }
       header.append(headerText);
 
       return header;
@@ -229,7 +235,7 @@
       row.style.alignItems = "center";
       row.style.justifyContent = "space-between";
       row.style.gap = "10px";
-      row.style.flexWrap = "wrap";
+      row.style.flexWrap = "nowrap";
       row.append(
         buildPhoneLink("Urgences :", hospital.phone_urgences),
         buildCopyButton(hospital.phone_urgences, hospital.color),
@@ -296,7 +302,7 @@
     function buildHospitalPopup(hospital) {
       const root = document.createElement("div");
       root.append(
-        buildPopupHeader(hospital, "Établissement"),
+        buildPopupHeader(hospital, hospital.name, { showTitle: false }),
         buildPopupAddressBlock(hospital),
         buildPopupPhoneCard(hospital),
       );
