@@ -89,7 +89,7 @@ body {
   box-shadow: var(--shadow);
   display: flex;
   flex-direction: column;
-  overflow: auto;
+  overflow: visible;
   min-width: 0;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
@@ -112,6 +112,15 @@ body {
 .section .console-title-row h2 {
   font-size: 21px;
   line-height: 1.2;
+  font-weight: 800;
+  color: #0e21a0;
+}
+
+#filieresTitle {
+  margin: 0;
+  font-size: 21px;
+  line-height: 1.2;
+  font-weight: 800;
   color: #0e21a0;
 }
 
@@ -141,6 +150,7 @@ body {
 .section {
   padding: 14px 18px;
   border-bottom: 1px solid var(--line);
+  overflow: visible;
 }
 .section h2 {
   margin: 0 0 10px;
@@ -479,7 +489,7 @@ button:active {
   right: 0;
   top: 100%;
   margin-top: 6px;
-  z-index: 1200;
+  z-index: 2200;
   background: #fff;
   border: 1px solid var(--line);
   border-radius: var(--radius);

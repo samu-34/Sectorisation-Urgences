@@ -43,6 +43,7 @@ const REGULATE_BUTTON_HIDE_VIEWPORT_MAX_WIDTH = 768;
 let mapAccessUnlocked = false;
 let filieresDialogOpen = false;
 const beziersPreviewEnabled = true;
+let suppressNextCityBlurSync = false;
 
 const {
   simplify,
@@ -279,6 +280,16 @@ function syncResponsiveMapUi() {
   } catch (error) {}
 }
 
+let responsiveUiRafId = null;
+function requestResponsiveUiSync() {
+  if (responsiveUiRafId !== null) return;
+  responsiveUiRafId = window.requestAnimationFrame(() => {
+    responsiveUiRafId = null;
+    syncResponsiveMapUi();
+    syncFilieresPanelPosition();
+  });
+}
+
 function submitMapAccessPassword() {
   if (!PASSWORD_GATE_ENABLED) {
     unlockMapAccess();
@@ -451,6 +462,11 @@ DOM.cityInput.addEventListener("keydown", (event) => {
 });
 
 DOM.cityInput.addEventListener("blur", () => {
+  if (suppressNextCityBlurSync) {
+    suppressNextCityBlurSync = false;
+    cityInputController.cancelPendingCitySuggestions();
+    return;
+  }
   cityInputController.handleBlur(DOM.cityInput.value);
 });
 
@@ -530,19 +546,6 @@ DOM.filieresCloseBtn.addEventListener("click", () => {
 });
 
 document.addEventListener("click", (event) => {
-  const popupCloseTarget =
-    event.target instanceof Element
-      ? event.target.closest(
-          ".leaflet-popup-close-button, .orientation-overlay-close",
-        )
-      : null;
-  if (popupCloseTarget) {
-    event.preventDefault();
-    event.stopPropagation();
-    resetSessionUi({ resetMapView: true });
-    return;
-  }
-
   if (!DOM.symptomInput.parentElement.contains(event.target)) {
     autocomplete.closeSymptomSuggestions();
   }
@@ -556,6 +559,23 @@ document.addEventListener("keydown", (event) => {
     closeFilieresDialog();
   }
 });
+
+document.addEventListener(
+  "pointerdown",
+  (event) => {
+    const isPopupCloseButton =
+      event.target instanceof Element &&
+      Boolean(
+        event.target.closest(
+          ".leaflet-popup-close-button, .orientation-overlay-close",
+        ),
+      );
+    if (!isPopupCloseButton) return;
+    suppressNextCityBlurSync = true;
+    cityInputController.cancelPendingWork();
+  },
+  true,
+);
 
 document.addEventListener("DOMContentLoaded", () => {
   syncLegendVisibility();
@@ -577,22 +597,19 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 window.addEventListener("load", () => {
-  syncResponsiveMapUi();
+  requestResponsiveUiSync();
 });
 
 window.addEventListener("resize", () => {
-  syncResponsiveMapUi();
-  syncFilieresPanelPosition();
+  requestResponsiveUiSync();
 });
 
 if (window.visualViewport) {
   window.visualViewport.addEventListener("resize", () => {
-    syncResponsiveMapUi();
-    syncFilieresPanelPosition();
+    requestResponsiveUiSync();
   });
   window.visualViewport.addEventListener("scroll", () => {
-    syncResponsiveMapUi();
-    syncFilieresPanelPosition();
+    requestResponsiveUiSync();
   });
 }
 

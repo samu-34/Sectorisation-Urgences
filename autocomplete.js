@@ -49,13 +49,13 @@
     }
 
     function closeSymptomSuggestions() {
-      DOM.suggestBox.innerHTML = "";
+      DOM.suggestBox.replaceChildren();
       symptomSuggestionIndex = -1;
       setSuggestBoxState(DOM.symptomInput, DOM.suggestBox, false);
     }
 
     function closeCitySuggestions() {
-      DOM.citySuggestBox.innerHTML = "";
+      DOM.citySuggestBox.replaceChildren();
       citySuggestionIndex = -1;
       currentCitySuggestions = [];
       setSuggestBoxState(DOM.cityInput, DOM.citySuggestBox, false);
@@ -65,27 +65,32 @@
       box.replaceChildren();
     }
 
-    function bindSuggestionPick(element, pick) {
-      let handled = false;
-
-      function handlePick(event) {
-        if (handled) {
-          return;
-        }
-        handled = true;
-
-        if (event && typeof event.preventDefault === "function") {
-          event.preventDefault();
-        }
-
-        pick();
-      }
-
-      element.addEventListener("pointerdown", handlePick);
-      element.addEventListener("mousedown", handlePick);
-      element.addEventListener("touchstart", handlePick);
-      element.addEventListener("click", handlePick);
+    function handleSymptomSuggestionPick(event) {
+      if (DOM.suggestBox.classList.contains("hidden")) return;
+      const target = event.target instanceof Element
+        ? event.target.closest(".suggest-item")
+        : null;
+      if (!target) return;
+      event.preventDefault();
+      onSymptomPick(target.dataset.label, target.dataset.filiere);
+      closeSymptomSuggestions();
     }
+
+    function handleCitySuggestionPick(event) {
+      if (DOM.citySuggestBox.classList.contains("hidden")) return;
+      const target = event.target instanceof Element
+        ? event.target.closest(".suggest-item")
+        : null;
+      if (!target) return;
+      event.preventDefault();
+      const suggestion = currentCitySuggestions[Number(target.dataset.index)];
+      if (suggestion) {
+        onCityPick(suggestion);
+      }
+    }
+
+    DOM.suggestBox.addEventListener("pointerdown", handleSymptomSuggestionPick);
+    DOM.citySuggestBox.addEventListener("pointerdown", handleCitySuggestionPick);
 
     function buildSuggestionItem({
       id,
@@ -168,13 +173,6 @@
       symptomSuggestionIndex = -1;
       setSuggestBoxState(DOM.symptomInput, DOM.suggestBox, true);
       setActiveSuggestion(DOM.symptomInput, DOM.suggestBox, symptomSuggestionIndex);
-
-      DOM.suggestBox.querySelectorAll(".suggest-item").forEach((element) => {
-        bindSuggestionPick(element, () => {
-          onSymptomPick(element.dataset.label, element.dataset.filiere);
-          closeSymptomSuggestions();
-        });
-      });
     }
 
     function renderCitySuggestionEntries(entries) {
@@ -201,15 +199,6 @@
       citySuggestionIndex = -1;
       setSuggestBoxState(DOM.cityInput, DOM.citySuggestBox, true);
       setActiveSuggestion(DOM.cityInput, DOM.citySuggestBox, citySuggestionIndex);
-
-      DOM.citySuggestBox.querySelectorAll(".suggest-item").forEach((element) => {
-        bindSuggestionPick(element, () => {
-          const suggestion = currentCitySuggestions[Number(element.dataset.index)];
-          if (suggestion) {
-            onCityPick(suggestion);
-          }
-        });
-      });
     }
 
     function renderCitySuggestions(query, { extraItems = [] } = {}) {

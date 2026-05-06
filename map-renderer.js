@@ -276,6 +276,26 @@
         hospitalId,
         placement: popupPlacement,
       });
+
+      const popupElement =
+        orientationPopup &&
+        typeof orientationPopup.getElement === "function"
+          ? orientationPopup.getElement()
+          : null;
+      const closeButton = popupElement
+        ? popupElement.querySelector(".leaflet-popup-close-button")
+        : null;
+      if (closeButton) {
+        closeButton.addEventListener(
+          "click",
+          (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            closeOrientationPopup({ notifyApp: true });
+          },
+          { once: true },
+        );
+      }
     }
 
     function openFixedOrientationOverlay(hospitalId, travelEstimate) {
@@ -425,6 +445,11 @@
 
     function resetDecisionState() {
       closeOrientationPopup();
+      // Filet de securite: ferme toute popup Leaflet restante
+      // meme si elle n'est plus referencee par orientationPopup.
+      if (typeof map.closePopup === "function") {
+        map.closePopup();
+      }
       clearSelectionVisuals();
       lastOrientationContext = null;
     }
