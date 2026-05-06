@@ -171,6 +171,23 @@
           mapByCommune.set(key, hospitalId);
         });
       });
+
+      // Coverage carte: inclure aussi toutes les communes des regles de filiere.
+      // Cela evite de devoir dupliquer chaque commune dans CITY_AREAS juste pour l'affichage.
+      const specialtyRules =
+        specialtyId === "divers"
+          ? DIVERS_CITY_RULES
+          : (RULES && RULES[specialtyId]) || {};
+      Object.entries(specialtyRules || {}).forEach(([hospitalId, communes]) => {
+        (communes || []).forEach((communeName) => {
+          buildCommuneNameKeys(communeName).forEach((key) => {
+            if (!mapByCommune.has(key)) {
+              mapByCommune.set(key, hospitalId);
+            }
+          });
+        });
+      });
+
       (BEZIERS_COMMUNES || []).forEach((item) => {
         if (!item || !item.commune || !item.structureId) return;
         buildCommuneNameKeys(item.commune).forEach((key) => {

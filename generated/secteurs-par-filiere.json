@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-03T13:38:50.886Z",
+  "generated_at": "2026-05-06T13:17:00.018Z",
   "source": {
     "sectorization_bundle": "generated/sectorization-data.js",
     "resolver": "Equivalent logique resolveHospitalForArea(data.js)"
