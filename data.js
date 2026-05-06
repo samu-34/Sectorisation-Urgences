@@ -53,7 +53,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "millenaire",
     name: "Clinique du Millénaire",
-    color: "#FF2DD1",
+    color: "#F45B26",
     location: {
       lat: 43.601962,
       lng: 3.913786,
@@ -95,7 +95,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "saint_roch",
     name: "Clinique Saint-Roch",
-    color: "#F45B26",
+    color: "#FF2DD1",
     location: {
       lat: 43.582811,
       lng: 3.861684,
@@ -245,12 +245,12 @@ const HOSPITAL_RECORDS = [
   {
     id: "saint_louis_ganges",
     name: "Clinique Saint-Louis",
-    color: "#003566",
+    color: "#0002A1",
     location: {
       lat: 43.9349,
       lng: 3.7068,
       city: "Ganges",
-      address: "Clinique Saint-Louis, 34190 Ganges",
+      address: "2 place Joseph Boudouresques, 34190 Ganges",
     },
     phones: {
       urgences: "Non communiqué",
@@ -258,7 +258,7 @@ const HOSPITAL_RECORDS = [
     },
     source: {
       label: "Référentiel MediMap",
-      note: "Coordonnées provisoires centrées sur la commune",
+      note: "Adresse vérifiée sur le site officiel de l'établissement",
     },
     verified_at: "2026-05-06",
     verification_status: "reviewed",
@@ -271,7 +271,7 @@ const HOSPITAL_RECORDS = [
       lat: 43.6778,
       lng: 4.1361,
       city: "Lunel",
-      address: "Clinique Via Domitia, 34400 Lunel",
+      address: "235 chemin des Alicantes, 34400 Lunel",
     },
     phones: {
       urgences: "Non communiqué",
@@ -279,7 +279,7 @@ const HOSPITAL_RECORDS = [
     },
     source: {
       label: "Référentiel MediMap",
-      note: "Coordonnées provisoires centrées sur la commune",
+      note: "Adresse vérifiée sur le site officiel de l'établissement",
     },
     verified_at: "2026-05-06",
     verification_status: "reviewed",
