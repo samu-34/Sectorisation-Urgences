@@ -9,6 +9,27 @@
 // ─────────────────────────────────────────────
 const HOSPITAL_RECORDS = [
   {
+    id: "lapeyronie",
+    name: "CHU Lapeyronie",
+    color: "#d81159",
+    location: {
+      lat: 43.629886,
+      lng: 3.851481,
+      city: "Montpellier",
+      address: "371 avenue du Doyen Gaston Giraud, 34090 Montpellier",
+    },
+    phones: {
+      urgences: "04 67 33 95 02",
+      specialites: "04 67 33 67 33",
+    },
+    source: {
+      label: "Référentiel MediMap",
+      note: "Coordonnées recalées sur le géocodage de l'adresse",
+    },
+    verified_at: "2026-03-24",
+    verification_status: "reviewed",
+  },
+  {
     id: "beausoleil",
     name: "Clinique Beausoleil",
     color: "#bb6b00",
@@ -32,7 +53,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "millenaire",
     name: "Clinique du Millénaire",
-    color: "#0079FF",
+    color: "#FF2DD1",
     location: {
       lat: 43.601962,
       lng: 3.913786,
@@ -53,7 +74,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "parc",
     name: "Clinique du Parc",
-    color: "#15616d",
+    color: "#8C00FF",
     location: {
       lat: 43.633842,
       lng: 3.893407,
@@ -74,7 +95,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "saint_roch",
     name: "Clinique Saint-Roch",
-    color: "#FF2DD1",
+    color: "#F45B26",
     location: {
       lat: 43.582811,
       lng: 3.861684,
@@ -96,7 +117,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "saint_jean",
     name: "Clinique Saint-Jean",
-    color: "#8C00FF",
+    color: "#008BFF",
     location: {
       lat: 43.570217,
       lng: 3.835075,
@@ -114,36 +135,16 @@ const HOSPITAL_RECORDS = [
     verified_at: "2026-03-24",
     verification_status: "reviewed",
   },
+
   {
-    id: "lapeyronie",
-    name: "CHU Lapeyronie",
-    color: "#d81159",
+    id: "ch_sete",
+    name: "CH de Sète",
+    color: "#08CB00",
     location: {
-      lat: 43.629886,
-      lng: 3.851481,
-      city: "Montpellier",
-      address: "371 avenue du Doyen Gaston Giraud, 34090 Montpellier",
-    },
-    phones: {
-      urgences: "04 67 33 95 02",
-      specialites: "04 67 33 67 33",
-    },
-    source: {
-      label: "Référentiel MediMap",
-      note: "Coordonnées recalées sur le géocodage de l'adresse",
-    },
-    verified_at: "2026-03-24",
-    verification_status: "reviewed",
-  },
-  {
-    id: "saint_louis_ganges",
-    name: "Clinique Saint-Louis",
-    color: "#2A9D8F",
-    location: {
-      lat: 43.9349,
-      lng: 3.7068,
-      city: "Ganges",
-      address: "Clinique Saint-Louis, 34190 Ganges",
+      lat: 43.4029493,
+      lng: 3.6984129,
+      city: "Sète",
+      address: "Boulevard Camille Blanc, 34200 Sète",
     },
     phones: {
       urgences: "Non communiqué",
@@ -151,20 +152,20 @@ const HOSPITAL_RECORDS = [
     },
     source: {
       label: "Référentiel MediMap",
-      note: "Coordonnées provisoires centrées sur la commune",
+      note: "Coordonnées recalées sur géocodage établissement",
     },
-    verified_at: "2026-05-06",
+    verified_at: "2026-05-03",
     verification_status: "reviewed",
   },
   {
-    id: "via_domitia_lunel",
-    name: "Clinique Via Domitia",
-    color: "#343a40",
+    id: "ch_beziers",
+    name: "CH de Béziers",
+    color: "#A0153E",
     location: {
-      lat: 43.6778,
-      lng: 4.1361,
-      city: "Lunel",
-      address: "Clinique Via Domitia, 34400 Lunel",
+      lat: 43.3399156,
+      lng: 3.2546494,
+      city: "Béziers",
+      address: "2 Rue Valentin Haüy, 34500 Béziers",
     },
     phones: {
       urgences: "Non communiqué",
@@ -172,11 +173,12 @@ const HOSPITAL_RECORDS = [
     },
     source: {
       label: "Référentiel MediMap",
-      note: "Coordonnées provisoires centrées sur la commune",
+      note: "Coordonnées recalées sur géocodage établissement",
     },
-    verified_at: "2026-05-06",
+    verified_at: "2026-05-01",
     verification_status: "reviewed",
   },
+
   {
     id: "trois_vallees",
     name: "Clinique des 3 Vallées",
@@ -241,14 +243,14 @@ const HOSPITAL_RECORDS = [
     verification_status: "reviewed",
   },
   {
-    id: "ch_beziers",
-    name: "CH de Béziers",
-    color: "#DE1A58",
+    id: "saint_louis_ganges",
+    name: "Clinique Saint-Louis",
+    color: "#003566",
     location: {
-      lat: 43.3399156,
-      lng: 3.2546494,
-      city: "Béziers",
-      address: "2 Rue Valentin Haüy, 34500 Béziers",
+      lat: 43.9349,
+      lng: 3.7068,
+      city: "Ganges",
+      address: "Clinique Saint-Louis, 34190 Ganges",
     },
     phones: {
       urgences: "Non communiqué",
@@ -256,20 +258,20 @@ const HOSPITAL_RECORDS = [
     },
     source: {
       label: "Référentiel MediMap",
-      note: "Coordonnées recalées sur géocodage établissement",
+      note: "Coordonnées provisoires centrées sur la commune",
     },
-    verified_at: "2026-05-01",
+    verified_at: "2026-05-06",
     verification_status: "reviewed",
   },
   {
-    id: "ch_sete",
-    name: "CH de Sète",
-    color: "#00a896",
+    id: "via_domitia_lunel",
+    name: "Clinique Via Domitia",
+    color: "#343a40",
     location: {
-      lat: 43.4029493,
-      lng: 3.6984129,
-      city: "Sète",
-      address: "Boulevard Camille Blanc, 34200 Sète",
+      lat: 43.6778,
+      lng: 4.1361,
+      city: "Lunel",
+      address: "Clinique Via Domitia, 34400 Lunel",
     },
     phones: {
       urgences: "Non communiqué",
@@ -277,9 +279,9 @@ const HOSPITAL_RECORDS = [
     },
     source: {
       label: "Référentiel MediMap",
-      note: "Coordonnées recalées sur géocodage établissement",
+      note: "Coordonnées provisoires centrées sur la commune",
     },
-    verified_at: "2026-05-03",
+    verified_at: "2026-05-06",
     verification_status: "reviewed",
   },
 ];
