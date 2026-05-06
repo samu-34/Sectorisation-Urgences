@@ -1,0 +1,18 @@
+Secteur;Commune;Population;lit_touristique;population_estivale_potentielle;coefficient_pression_estivale
+Clinique Saint-Louis;Ganges;3724;38;3762;1,01
+Clinique Saint-Louis;Saint-André-de-Buèges;47;0;47;1,00
+Clinique Saint-Louis;Saint-Jean-de-Buèges;208;0;208;1,00
+Clinique Saint-Louis;Gorniès;103;0;103;1,00
+Clinique Saint-Louis;Pégairolles-de-Buèges;54;0;54;1,00
+Clinique Saint-Louis;Causse-de-la-Selle;454;0;454;1,00
+Clinique Saint-Louis;Saint-Martin-de-Londres;2696;662;3358;1,25
+Clinique Saint-Louis;Mas-de-Londres;674;0;674;1,00
+Clinique Saint-Louis;Notre-Dame-de-Londres;520;0;520;1,00
+Clinique Saint-Louis;Ferrières-les-Verreries;47;20;67;1,43
+Clinique Saint-Louis;Saint-Bauzille-de-Putois;1766;0;1766;1,00
+Clinique Saint-Louis;Agonès;319;0;319;1,00
+Clinique Saint-Louis;Brissac;615;1420;2035;3,31
+Clinique Saint-Louis;Laroque;1668;246;1914;1,15
+Clinique Saint-Louis;Cazilhac;1605;24;1629;1,01
+Clinique Saint-Louis;Moulès-et-Baucels;875;28;903;1,03
+Clinique Saint-Louis;Montoulieu;189;256;445;2,35

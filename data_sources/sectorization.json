@@ -11,7 +11,7 @@
     {
       "id": "palavas",
       "city": "Palavas-les-Flots",
-      "lat": 43.5294,
+      "lat": 43.5323,
       "lng": 3.9346,
       "type": "commune",
       "cloud": "sud_est"
@@ -19,392 +19,392 @@
     {
       "id": "saint_jean_de_vedas",
       "city": "Saint-Jean-de-Védas",
-      "lat": 43.5735,
-      "lng": 3.8286,
+      "lat": 43.5732,
+      "lng": 3.8329,
       "type": "commune",
       "cloud": "sud_ouest"
     },
     {
       "id": "villeneuve",
       "city": "Villeneuve-lès-Maguelone",
-      "lat": 43.5343,
-      "lng": 3.8625,
+      "lat": 43.5119,
+      "lng": 3.8589,
       "type": "commune",
       "cloud": "sud_ouest"
     },
     {
       "id": "vic",
       "city": "Vic-la-Gardiole",
-      "lat": 43.4906,
-      "lng": 3.7982,
+      "lat": 43.4838,
+      "lng": 3.8046,
       "type": "commune",
       "cloud": "sud_ouest"
     },
     {
       "id": "gigean",
       "city": "Gigean",
-      "lat": 43.5,
-      "lng": 3.712,
+      "lat": 43.4953,
+      "lng": 3.7242,
       "type": "commune",
       "cloud": "sud_ouest"
     },
     {
       "id": "fabregues",
       "city": "Fabrègues",
-      "lat": 43.5517,
-      "lng": 3.7779,
+      "lat": 43.5312,
+      "lng": 3.7737,
       "type": "commune",
       "cloud": "sud_ouest"
     },
     {
       "id": "montbazin",
       "city": "Montbazin",
-      "lat": 43.5166,
-      "lng": 3.6975,
+      "lat": 43.5325,
+      "lng": 3.6694,
       "type": "commune",
       "cloud": "sud_ouest"
     },
     {
       "id": "cournonsec",
       "city": "Cournonsec",
-      "lat": 43.5482,
-      "lng": 3.7067,
+      "lat": 43.5395,
+      "lng": 3.7024,
       "type": "commune",
       "cloud": "sud_ouest"
     },
     {
       "id": "cournonterral",
       "city": "Cournonterral",
-      "lat": 43.5591,
-      "lng": 3.7198,
+      "lat": 43.5712,
+      "lng": 3.7072,
       "type": "commune",
       "cloud": "sud_ouest"
     },
     {
       "id": "pignan",
       "city": "Pignan",
-      "lat": 43.5828,
-      "lng": 3.7647,
+      "lat": 43.5819,
+      "lng": 3.742,
       "type": "commune",
       "cloud": "sud_ouest"
     },
     {
       "id": "saussan",
       "city": "Saussan",
-      "lat": 43.5726,
-      "lng": 3.775,
+      "lat": 43.5685,
+      "lng": 3.7829,
       "type": "commune",
       "cloud": "sud_ouest"
     },
     {
       "id": "laverune",
       "city": "Lavérune",
-      "lat": 43.5843,
-      "lng": 3.8051,
+      "lat": 43.5848,
+      "lng": 3.8003,
       "type": "commune",
       "cloud": "sud_ouest"
     },
     {
       "id": "murviel",
       "city": "Murviel-lès-Montpellier",
-      "lat": 43.6053,
-      "lng": 3.7377,
+      "lat": 43.6116,
+      "lng": 3.7405,
       "type": "commune",
       "cloud": "ouest"
     },
     {
       "id": "saint_georges",
       "city": "Saint-Georges-d'Orques",
-      "lat": 43.6119,
-      "lng": 3.7815,
+      "lat": 43.6167,
+      "lng": 3.775,
       "type": "commune",
       "cloud": "ouest"
     },
     {
       "id": "juvignac",
       "city": "Juvignac",
-      "lat": 43.6138,
-      "lng": 3.8106,
+      "lat": 43.6173,
+      "lng": 3.7908,
       "type": "commune",
       "cloud": "ouest"
     },
     {
       "id": "grabels",
       "city": "Grabels",
-      "lat": 43.6487,
-      "lng": 3.7981,
+      "lat": 43.6503,
+      "lng": 3.7894,
       "type": "commune",
       "cloud": "nord"
     },
     {
       "id": "montarnaud",
       "city": "Montarnaud",
-      "lat": 43.6467,
-      "lng": 3.697,
+      "lat": 43.648,
+      "lng": 3.7053,
       "type": "commune",
       "cloud": "nord"
     },
     {
       "id": "combaillaux",
       "city": "Combaillaux",
-      "lat": 43.6685,
-      "lng": 3.8041,
+      "lat": 43.6744,
+      "lng": 3.7847,
       "type": "commune",
       "cloud": "nord"
     },
     {
       "id": "vailhauques",
       "city": "Vailhauquès",
-      "lat": 43.6727,
-      "lng": 3.721,
+      "lat": 43.6652,
+      "lng": 3.7304,
       "type": "commune",
       "cloud": "nord"
     },
     {
       "id": "murles",
       "city": "Murles",
-      "lat": 43.6916,
-      "lng": 3.7548,
+      "lat": 43.7012,
+      "lng": 3.7551,
       "type": "commune",
       "cloud": "nord"
     },
     {
       "id": "saint_gely",
       "city": "Saint-Gély-du-Fesc",
-      "lat": 43.6943,
-      "lng": 3.8041,
+      "lat": 43.6897,
+      "lng": 3.81,
       "type": "commune",
       "cloud": "nord"
     },
     {
       "id": "saint_clement",
       "city": "Saint-Clément-de-Rivière",
-      "lat": 43.6836,
-      "lng": 3.8428,
+      "lat": 43.6831,
+      "lng": 3.8447,
       "type": "commune",
       "cloud": "nord"
     },
     {
       "id": "montferrier",
       "city": "Montferrier-sur-Lez",
-      "lat": 43.6674,
-      "lng": 3.8598,
+      "lat": 43.6677,
+      "lng": 3.8621,
       "type": "commune",
       "cloud": "nord"
     },
     {
       "id": "prades",
       "city": "Prades-le-Lez",
-      "lat": 43.6983,
-      "lng": 3.8736,
+      "lat": 43.7079,
+      "lng": 3.8648,
       "type": "commune",
       "cloud": "nord"
     },
     {
       "id": "assas",
       "city": "Assas",
-      "lat": 43.702,
-      "lng": 3.9,
+      "lat": 43.7144,
+      "lng": 3.9039,
       "type": "commune",
       "cloud": "nord"
     },
     {
       "id": "les_matelles",
       "city": "Les Matelles",
-      "lat": 43.7299,
-      "lng": 3.805,
+      "lat": 43.7281,
+      "lng": 3.8083,
       "type": "commune",
       "cloud": "nord"
     },
     {
       "id": "le_triadou",
       "city": "Le Triadou",
-      "lat": 43.7343,
-      "lng": 3.8549,
+      "lat": 43.7358,
+      "lng": 3.8574,
       "type": "commune",
       "cloud": "nord"
     },
     {
       "id": "saint_jean_de_cuculles",
       "city": "Saint-Jean-de-Cuculles",
-      "lat": 43.7514,
-      "lng": 3.832,
+      "lat": 43.7535,
+      "lng": 3.8347,
       "type": "commune",
       "cloud": "nord"
     },
     {
       "id": "saint_vincent_de_barbeyrargues",
       "city": "Saint-Vincent-de-Barbeyrargues",
-      "lat": 43.7107,
-      "lng": 3.8762,
+      "lat": 43.712,
+      "lng": 3.8765,
       "type": "commune",
       "cloud": "nord"
     },
     {
       "id": "saint_mathieu_de_treviers",
       "city": "Saint-Mathieu-de-Tréviers",
-      "lat": 43.7647,
-      "lng": 3.8751,
+      "lat": 43.7679,
+      "lng": 3.8628,
       "type": "commune",
       "cloud": "nord"
     },
     {
       "id": "clapiers",
       "city": "Clapiers",
-      "lat": 43.6598,
-      "lng": 3.8875,
+      "lat": 43.666,
+      "lng": 3.8848,
       "type": "commune",
       "cloud": "est"
     },
     {
       "id": "jacou",
       "city": "Jacou",
-      "lat": 43.6612,
-      "lng": 3.9108,
+      "lat": 43.6648,
+      "lng": 3.9138,
       "type": "commune",
       "cloud": "est"
     },
     {
       "id": "teyran",
       "city": "Teyran",
-      "lat": 43.6856,
-      "lng": 3.929,
+      "lat": 43.688,
+      "lng": 3.9258,
       "type": "commune",
       "cloud": "est"
     },
     {
       "id": "lecres",
       "city": "Le Crès",
-      "lat": 43.6472,
-      "lng": 3.9391,
+      "lat": 43.6513,
+      "lng": 3.9343,
       "type": "commune",
       "cloud": "est"
     },
     {
       "id": "castelnau",
       "city": "Castelnau-le-Lez",
-      "lat": 43.6335,
-      "lng": 3.9016,
+      "lat": 43.6372,
+      "lng": 3.9113,
       "type": "commune",
       "cloud": "est"
     },
     {
       "id": "castries",
       "city": "Castries",
-      "lat": 43.679,
-      "lng": 3.982,
+      "lat": 43.6905,
+      "lng": 3.9853,
       "type": "commune",
       "cloud": "est"
     },
     {
       "id": "guzargues",
       "city": "Guzargues",
-      "lat": 43.7274,
-      "lng": 3.9233,
+      "lat": 43.728,
+      "lng": 3.923,
       "type": "commune",
       "cloud": "est"
     },
     {
       "id": "sussargues",
       "city": "Sussargues",
-      "lat": 43.7133,
-      "lng": 4.003,
+      "lat": 43.7105,
+      "lng": 3.9884,
       "type": "commune",
       "cloud": "est"
     },
     {
       "id": "saint_drezery",
       "city": "Saint-Drézéry",
-      "lat": 43.7318,
-      "lng": 3.9788,
+      "lat": 43.7308,
+      "lng": 3.9764,
       "type": "commune",
       "cloud": "est"
     },
     {
       "id": "beaulieu",
       "city": "Beaulieu",
-      "lat": 43.7287,
-      "lng": 3.9964,
+      "lat": 43.7293,
+      "lng": 4.0256,
       "type": "commune",
       "cloud": "est"
     },
     {
       "id": "restinclieres",
       "city": "Restinclières",
-      "lat": 43.7228,
-      "lng": 4.0382,
+      "lat": 43.7238,
+      "lng": 4.0393,
       "type": "commune",
       "cloud": "est"
     },
     {
       "id": "mauguio",
       "city": "Mauguio",
-      "lat": 43.6168,
-      "lng": 4.0091,
+      "lat": 43.5915,
+      "lng": 4.0128,
       "type": "commune",
       "cloud": "sud_est"
     },
     {
       "id": "saint_aunes",
       "city": "Saint-Aunès",
-      "lat": 43.6408,
-      "lng": 4.0088,
+      "lat": 43.6341,
+      "lng": 3.97,
       "type": "commune",
       "cloud": "est"
     },
     {
       "id": "saint_bres",
       "city": "Saint-Brès",
-      "lat": 43.6683,
-      "lng": 4.03,
+      "lat": 43.6656,
+      "lng": 4.0377,
       "type": "commune",
       "cloud": "est"
     },
     {
       "id": "perols",
       "city": "Pérols",
-      "lat": 43.5622,
-      "lng": 3.9536,
+      "lat": 43.5609,
+      "lng": 3.9512,
       "type": "commune",
       "cloud": "sud_est"
     },
     {
       "id": "baillargues",
       "city": "Baillargues",
-      "lat": 43.6635,
-      "lng": 4.0078,
+      "lat": 43.6565,
+      "lng": 4.0102,
       "type": "commune",
       "cloud": "est"
     },
     {
       "id": "vendargues",
       "city": "Vendargues",
-      "lat": 43.6569,
-      "lng": 3.9696,
+      "lat": 43.6624,
+      "lng": 3.9657,
       "type": "commune",
       "cloud": "est"
     },
     {
       "id": "saint_genies_des_mourgues",
       "city": "Saint-Geniès-des-Mourgues",
-      "lat": 43.697,
-      "lng": 4.034,
+      "lat": 43.6972,
+      "lng": 4.0382,
       "type": "commune",
       "cloud": "est"
     },
     {
       "id": "montaud",
       "city": "Montaud",
-      "lat": 43.7519,
-      "lng": 3.9564,
+      "lat": 43.7422,
+      "lng": 3.9502,
       "type": "commune",
       "cloud": "est"
     },
     {
       "id": "mireval",
       "city": "Mireval",
-      "lat": 43.5086,
-      "lng": 3.8017,
+      "lat": 43.5158,
+      "lng": 3.8022,
       "type": "commune",
       "cloud": "sud_ouest"
     },
@@ -3326,10 +3326,10 @@
           "precision": "entity"
         },
         "commune:mourèze:": {
-          "lat": 43.6176,
-          "lng": 3.3131,
-          "display_name": "Mourèze, Lodève, Hérault, Occitanie, France métropolitaine, 34800, France",
-          "precision": "manual_estimate"
+          "lat": 43.6177,
+          "lng": 3.3476,
+          "display_name": "Mourèze, Hérault, Occitanie, France",
+          "precision": "entity"
         },
         "commune:villeneuvette:": {
           "lat": 43.6057,
@@ -3338,10 +3338,10 @@
           "precision": "manual_estimate"
         },
         "commune:lieuran-cabrières:": {
-          "lat": 43.5712,
-          "lng": 3.4635,
+          "lat": 43.5907,
+          "lng": 3.4096,
           "display_name": "Lieuran-Cabrières, Lodève, Hérault, Occitanie, France métropolitaine, 34800, France",
-          "precision": "manual_estimate"
+          "precision": "entity"
         },
         "commune:nébian:": {
           "lat": 43.6044,
@@ -3350,34 +3350,34 @@
           "precision": "manual_estimate"
         },
         "commune:liausson:": {
-          "lat": 43.6492,
-          "lng": 3.3894,
-          "display_name": "Liausson, Lodève, Hérault, Occitanie, France métropolitaine, 34800, France",
-          "precision": "manual_estimate"
+          "lat": 43.6384,
+          "lng": 3.3604,
+          "display_name": "Liausson, Hérault, Occitanie, France",
+          "precision": "entity"
         },
         "commune:canet:": {
-          "lat": 43.5997,
-          "lng": 3.3977,
+          "lat": 43.5992,
+          "lng": 3.4821,
           "display_name": "Canet, Lodève, Hérault, Occitanie, France métropolitaine, 34800, France",
-          "precision": "manual_estimate"
+          "precision": "entity"
         },
         "commune:tressan:": {
-          "lat": 43.5936,
-          "lng": 3.4758,
-          "display_name": "Tressan, Lodève, Hérault, Occitanie, France métropolitaine, 34230, France",
-          "precision": "manual_estimate"
+          "lat": 43.5718,
+          "lng": 3.487,
+          "display_name": "Tressan, Hérault, Occitanie, France",
+          "precision": "entity"
         },
         "commune:bélarga:": {
-          "lat": 43.553,
-          "lng": 3.5332,
-          "display_name": "Bélarga, Lodève, Hérault, Occitanie, France métropolitaine, 34230, France",
-          "precision": "manual_estimate"
+          "lat": 43.5547,
+          "lng": 3.5001,
+          "display_name": "Bélarga, Hérault, Occitanie, France",
+          "precision": "entity"
         },
         "commune:puilacher:": {
-          "lat": 43.5577,
-          "lng": 3.5073,
-          "display_name": "Puilacher, Lodève, Hérault, Occitanie, France métropolitaine, 34230, France",
-          "precision": "manual_estimate"
+          "lat": 43.5655,
+          "lng": 3.5036,
+          "display_name": "Puilacher, Hérault, Occitanie, France",
+          "precision": "entity"
         },
         "commune:nézignan-l'évêque:": {
           "lat": 43.4210557,
@@ -3764,10 +3764,10 @@
           "precision": "entity"
         },
         "commune:Villecun:": {
-          "lat": 43.6718,
-          "lng": 3.2946,
-          "display_name": "Villecun, Lodève, Hérault, Occitanie, France métropolitaine, 34800, France",
-          "precision": "manual_estimate"
+          "lat": 43.7097,
+          "lng": 3.3021,
+          "display_name": "Olmet-et-Villecun, Hérault, Occitanie, France",
+          "precision": "entity"
         },
         "commune:Colombières-sur-Orb:": {
           "lat": 43.5786,
