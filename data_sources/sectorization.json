@@ -1636,7 +1636,6 @@
         "Saint-Bauzille-de-la-Sylve",
         "Pouzols",
         "Brignac",
-        "Clermont-l'Hérault",
         "Ceyras",
         "Lacoste",
         "Saint-André-de-Sangonis",
@@ -1758,6 +1757,9 @@
         "La Salvetat-sur-Agout",
         "Le Soulié",
         "Courniou"
+      ],
+      "pasteur": [
+        "Clermont-l'Hérault"
       ]
     },
     "gastro_uro": {
@@ -1805,7 +1807,6 @@
         "Saint-Bauzille-de-la-Sylve",
         "Pouzols",
         "Brignac",
-        "Clermont-l'Hérault",
         "Ceyras",
         "Lacoste",
         "Saint-André-de-Sangonis",
@@ -1925,6 +1926,9 @@
         "La Salvetat-sur-Agout",
         "Le Soulié",
         "Courniou"
+      ],
+      "pasteur": [
+        "Clermont-l'Hérault"
       ]
     },
     "trauma": {
@@ -1973,7 +1977,6 @@
         "Saint-Bauzille-de-la-Sylve",
         "Pouzols",
         "Brignac",
-        "Clermont-l'Hérault",
         "Ceyras",
         "Lacoste",
         "Saint-André-de-Sangonis",
@@ -2093,6 +2096,9 @@
         "La Salvetat-sur-Agout",
         "Le Soulié",
         "Courniou"
+      ],
+      "pasteur": [
+        "Clermont-l'Hérault"
       ]
     }
   },
@@ -2352,48 +2358,49 @@
           "Ceilhes-et-Rocozels"
         ],
         "pasteur": [
-          "Pézenas",
-          "Tourbes",
-          "Castelnau-de-Guers",
-          "Aumes",
-          "Montagnac",
-          "Lézignan-la-Cèbe",
-          "Caux",
-          "Nizas",
-          "Alignan-du-Vent",
-          "Neffiès",
-          "Roujan",
-          "Margon",
-          "Pouzolles",
           "Abeilhan",
-          "Fontès",
           "Adissan",
-          "Paulhan",
-          "Usclas-d’Hérault",
-          "Cazouls-d’Hérault",
-          "Saint-Pons-de-Mauchiens",
-          "Campagnan",
-          "Nézignan-l’Évêque",
-          "Pinet",
-          "Florensac",
+          "Alignan-du-Vent",
           "Aspiran",
-          "Pomérols",
-          "Gabian",
-          "Fouzilhon",
-          "Vailhan",
-          "Cabrières",
-          "Péret",
-          "Saint-Pargoire",
-          "Mourèze",
-          "Villeneuvette",
-          "Lieuran-Cabrières",
-          "Nébian",
-          "Liausson",
-          "Canet",
-          "Tressan",
+          "Aumes",
           "Bélarga",
+          "Cabrières",
+          "Campagnan",
+          "Canet",
+          "Castelnau-de-Guers",
+          "Caux",
+          "Cazouls-d’Hérault",
+          "Clermont-l'Hérault",
+          "Florensac",
+          "Fontès",
+          "Fouzilhon",
+          "Gabian",
+          "Lézignan-la-Cèbe",
+          "Liausson",
+          "Lieuran-Cabrières",
+          "Margon",
+          "Montagnac",
+          "Mourèze",
+          "Nébian",
+          "Neffiès",
+          "Nézignan-l’Évêque",
+          "Nizas",
+          "Paulhan",
+          "Péret",
+          "Pézenas",
+          "Pinet",
+          "Plaissan",
+          "Pomérols",
+          "Pouzolles",
           "Puilacher",
-          "Plaissan"
+          "Roujan",
+          "Saint-Pargoire",
+          "Saint-Pons-de-Mauchiens",
+          "Tourbes",
+          "Tressan",
+          "Usclas-d’Hérault",
+          "Vailhan",
+          "Villeneuvette"
         ],
         "saint_privat": [
           "Boujan-sur-Libron",
@@ -2520,10 +2527,9 @@
       },
       "ehpad": {
         "pasteur": [
-          "EHPA Les Floréales — Pinet",
           "EHPAD Amandiers — Nézignan-l’Évêque",
           "EHPAD HL Pézenas — Pézenas",
-          "EHPAD Les Floréales — Pinet",
+          "AJ HL Pézenas — Pézenas",
           "EHPAD Les Jardins de Brescou — Agde",
           "EHPAD ORPEA Sainte Clotilde — Caux",
           "EHPAD Sainte Amélie — Florensac",
@@ -2536,10 +2542,9 @@
           "EHPAD Lou Redoundel — La Salvetat-sur-Agout",
           "CH Saint-Pons - Frescati — Saint-Pons-de-Thomières",
           "EHPAD Le Minervois — Olonzac",
-          "EEPHA Les Treilles — Saint-Gervais-sur-Mare",
+          "EHPAD Les Treilles — Saint-Gervais-sur-Mare",
           "EHPAD Le Château de la Roche — Saint-Gervais-sur-Mare",
           "EHPAD Le Val Fleuri — Lamalou-les-Bains",
-          "EHPAD Les Treilles — Saint-Gervais-sur-Mare",
           "EHPAD Le Château de la Verrerie — Le Bousquet-d’Orb",
           "HL Bédarieux - Accueil de jour Alzheimer — Bédarieux",
           "HL Bédarieux - EHPAD — Bédarieux",
@@ -2555,33 +2560,31 @@
           "EHPAD Mireille Vidal — Saint-Thibéry",
           "EHPAD Montplaisir — Saint-Pargoire",
           "Accueil de Jour Alzheimer Entour’âge — Béziers",
-          "CH Béziers - EHPAD Pinède — Béziers",
-          "EHPA Les jardins d’Eulalie — Montblanc",
-          "EHPA Les Terrasses du Caroux — Corneilhan",
+          "EHPAD Pinède — Béziers",
+          "EHPAD Les jardins d’Eulalie — Montblanc",
+          "EHPAD Les Terrasses du Caroux — Corneilhan",
           "EHPAD La Méridienne — Béziers",
           "EHPAD L’Ensolelhada — Servian",
           "EHPAD Les Cascades — Béziers",
           "EHPAD Les Jardins du Canalet — Villeneuve-lès-Béziers",
           "EHPAD Saint-Antoine — Béziers",
           "USLD Perréal — Béziers",
-          "AJ Estagnol — Vias",
-          "AJ HL Pézenas — Pézenas",
-          "EEPHA Louis Fonoll — Nissan-lez-Enserune",
+          "EHPAD Estagnol — Vias",
+          "EHPAD Louis Fonoll — Nissan-lez-Enserune",
           "EHPAD La Roselière Vendres — Vendres",
           "EHPAD Simone de Beauvoir — Cazouls-lès-Béziers",
           "EHPAD Terre Blanche — Maraussan",
           "EHPAD La Murelle — Laurens",
           "EHPAD Les Tilleuls — Murviel-lès-Béziers",
           "EHPAD L’Orée du Pech — Thézan-lès-Béziers",
-          "EEPHA Les Oliviers — Saint-Chinian",
+          "EHPAD Les Oliviers — Saint-Chinian",
           "EHPAD de Capestang — Capestang",
           "EHPAD Les Jardins d’Adoyra — Creissan",
-          "EHPA Korian Lo Solelh — Béziers",
-          "EHPA Les Jardins de Flore — Boujan-sur-Libron",
+          "EHPAD Korian Lo Solelh — Béziers",
+          "EHPAD Les Jardins de Flore — Boujan-sur-Libron",
           "EHPAD La Renaissance — Béziers",
           "EHPAD Les Frères — Béziers",
           "EHPAD les Jardins de Badones — Béziers",
-          "EHPAD Louis Fonoll — Nissan-lez-Enserune",
           "EHPAD Lou Castellas — Puisserguier"
         ],
         "saint_privat": [
@@ -2597,6 +2600,9 @@
           "EHPAD La Résidentielle — Colombiers",
           "EHPAD La Maison Ensoleillée — Abeilhan",
           "EHPAD Les Acacias — Magalas"
+        ],
+        "ch_sete": [
+          "EHPAD Les Floréales — Pinet"
         ]
       },
       "affichageCarte": {
@@ -2641,11 +2647,11 @@
           "display_name": "Centre Hospitalier de Sète, Boulevard Camille Blanc, Sète, Hérault, France",
           "precision": "entity_verified"
         },
-        "ehpad:ehpa les floréales:pinet": {
-          "lat": 43.4068,
-          "lng": 3.5072,
-          "display_name": "Pinet, Béziers, Hérault, Occitanie, France métropolitaine, 34850, France",
-          "precision": "commune_fallback"
+        "ehpad:ehpad les floréales:pinet": {
+          "lat": 43.4044967,
+          "lng": 3.4976216,
+          "display_name": "EHPAD Les Floréales, 1, Rue des Floréales, Pinet, Béziers, Hérault, Occitanie, France métropolitaine, 34850, France",
+          "precision": "entity"
         },
         "ehpad:ehpad amandiers:nézignan-l'évêque": {
           "lat": 43.4236392,
@@ -2658,12 +2664,6 @@
           "lng": 3.4228323,
           "display_name": "Pézenas, Béziers, Hérault, Occitanie, France métropolitaine, 34120, France",
           "precision": "commune_fallback"
-        },
-        "ehpad:ehpad les floréales:pinet": {
-          "lat": 43.4044967,
-          "lng": 3.4976216,
-          "display_name": "EHPAD Les Floréales, 1, Rue des Floréales, Pinet, Béziers, Hérault, Occitanie, France métropolitaine, 34850, France",
-          "precision": "entity"
         },
         "ehpad:ehpad les jardins de brescou:agde": {
           "lat": 43.3124696,
@@ -2725,7 +2725,7 @@
           "display_name": "EHPAD Le Minervois, Chemin des Rabonnières, Olonzac, Béziers, Hérault, Occitanie, France métropolitaine, 34210, France",
           "precision": "entity"
         },
-        "ehpad:eepha les treilles:saint-gervais-sur-mare": {
+        "ehpad:ehpad les treilles:saint-gervais-sur-mare": {
           "lat": 43.6534475,
           "lng": 3.0415138,
           "display_name": "Saint-Gervais-sur-Mare, Béziers, Hérault, Occitanie, France métropolitaine, 34610, France",
@@ -2741,12 +2741,6 @@
           "lat": 43.5962,
           "lng": 3.08514,
           "display_name": "Lamalou-les-Bains, Béziers, Hérault, Occitanie, France métropolitaine, 34240, France",
-          "precision": "commune_fallback"
-        },
-        "ehpad:ehpad les treilles:saint-gervais-sur-mare": {
-          "lat": 43.6534475,
-          "lng": 3.0415138,
-          "display_name": "Saint-Gervais-sur-Mare, Béziers, Hérault, Occitanie, France métropolitaine, 34610, France",
           "precision": "commune_fallback"
         },
         "ehpad:ehpad le château de la verrerie:le bousquet-d'orb": {
@@ -2827,23 +2821,17 @@
           "display_name": "Béziers, Hérault, Occitanie, France métropolitaine, 34500, France",
           "precision": "commune_fallback"
         },
-        "ehpad:ch béziers - ehpad pinède:béziers": {
-          "lat": 43.3426562,
-          "lng": 3.2131307,
-          "display_name": "Béziers, Hérault, Occitanie, France métropolitaine, 34500, France",
-          "precision": "commune_fallback"
+        "ehpad:ehpad les jardins d'eulalie:montblanc": {
+          "lat": 43.3959636,
+          "lng": 3.3732529,
+          "display_name": "EHPAD Les Jardins d'Eulalie, Rue Marcel Pagnol, Montblanc, Béziers, Hérault, Occitanie, France métropolitaine, 34290, France",
+          "precision": "entity"
         },
-        "ehpad:ehpa les jardins d'eulalie:montblanc": {
-          "lat": 43.3958648,
-          "lng": 3.3672892,
-          "display_name": "Montblanc, Béziers, Hérault, Occitanie, France métropolitaine, 34290, France",
-          "precision": "commune_fallback"
-        },
-        "ehpad:ehpa les terrasses du caroux:corneilhan": {
-          "lat": 43.3996,
-          "lng": 3.19318,
-          "display_name": "Corneilhan, Béziers, Hérault, Occitanie, France métropolitaine, 34490, France",
-          "precision": "commune_fallback"
+        "ehpad:ehpad les terrasses du caroux:corneilhan": {
+          "lat": 43.401123,
+          "lng": 3.1878691,
+          "display_name": "EHPAD Les Terrasses du Caroux, Avenue de Thézan, Saint-Sernin, Corneilhan, Béziers, Hérault, Occitanie, France métropolitaine, 34490, France",
+          "precision": "entity"
         },
         "ehpad:ehpad la méridienne:béziers": {
           "lat": 43.338432,
@@ -2881,23 +2869,17 @@
           "display_name": "Béziers, Hérault, Occitanie, France métropolitaine, 34500, France",
           "precision": "commune_fallback"
         },
-        "ehpad:aj estagnol:vias": {
-          "lat": 43.3096693,
-          "lng": 3.4233007,
-          "display_name": "Chemin de l'Estagnol, Vias, Béziers, Hérault, Occitanie, France métropolitaine, 34450, France",
-          "precision": "entity"
-        },
         "ehpad:aj hl pézenas:pézenas": {
           "lat": 43.4611777,
           "lng": 3.4228323,
           "display_name": "Pézenas, Béziers, Hérault, Occitanie, France métropolitaine, 34120, France",
           "precision": "commune_fallback"
         },
-        "ehpad:eepha louis fonoll:nissan-lez-enserune": {
-          "lat": 43.2900051,
-          "lng": 3.1279229,
-          "display_name": "Nissan-lez-Enserune, Béziers, Hérault, Occitanie, France métropolitaine, 34440, France",
-          "precision": "commune_fallback"
+        "ehpad:ehpad louis fonoll:nissan-lez-enserune": {
+          "lat": 43.2857305,
+          "lng": 3.1213809,
+          "display_name": "EHPAD Louis Fonoll, Chemin de Sainte-Eulalie, Domaine de Vénus, Nissan-lez-Enserune, Béziers, Hérault, Occitanie, France métropolitaine, 34440, France",
+          "precision": "entity"
         },
         "ehpad:ehpad la roselière vendres:vendres": {
           "lat": 43.2686109,
@@ -2935,7 +2917,7 @@
           "display_name": "Thézan-lès-Béziers, Béziers, Hérault, Occitanie, France métropolitaine, 34490, France",
           "precision": "commune_fallback"
         },
-        "ehpad:eepha les oliviers:saint-chinian": {
+        "ehpad:ehpad les oliviers:saint-chinian": {
           "lat": 43.4215,
           "lng": 2.94677,
           "display_name": "Saint-Chinian, Béziers, Hérault, Occitanie, France métropolitaine, 34360, France",
@@ -2953,17 +2935,17 @@
           "display_name": "Creissan, Béziers, Hérault, Occitanie, France métropolitaine, 34370, France",
           "precision": "commune_fallback"
         },
-        "ehpad:ehpa korian lo solelh:béziers": {
+        "ehpad:ehpad korian lo solelh:béziers": {
           "lat": 43.3426562,
           "lng": 3.2131307,
           "display_name": "Béziers, Hérault, Occitanie, France métropolitaine, 34500, France",
           "precision": "commune_fallback"
         },
-        "ehpad:ehpa les jardins de flore:boujan-sur-libron": {
-          "lat": 43.3721159,
-          "lng": 3.2483732,
-          "display_name": "Boujan-sur-Libron, Béziers, Hérault, Occitanie, France métropolitaine, 34760, France",
-          "precision": "commune_fallback"
+        "ehpad:ehpad les jardins de flore:boujan-sur-libron": {
+          "lat": 43.3658876,
+          "lng": 3.2497029,
+          "display_name": "EHPAD Les Jardins de Flore, Allée de l'Espinouse, ZAE Le Monestié, Boujan-sur-Libron, Béziers, Hérault, Occitanie, France métropolitaine, 34760, France",
+          "precision": "entity"
         },
         "ehpad:ehpad la renaissance:béziers": {
           "lat": 43.3310311,
@@ -2983,12 +2965,6 @@
           "display_name": "Béziers, Hérault, Occitanie, France métropolitaine, 34500, France",
           "precision": "commune_fallback"
         },
-        "ehpad:ehpad louis fonoll:nissan-lez-enserune": {
-          "lat": 43.2857305,
-          "lng": 3.1213809,
-          "display_name": "EHPAD Louis Fonoll, Chemin de Sainte-Eulalie, Domaine de Vénus, Nissan-lez-Enserune, Béziers, Hérault, Occitanie, France métropolitaine, 34440, France",
-          "precision": "entity"
-        },
         "ehpad:ehpad lou castellas:puisserguier": {
           "lat": 43.3638203,
           "lng": 3.0455976,
@@ -3007,12 +2983,6 @@
           "display_name": "Ehpad Korian Les Tamaris, Boulevard du Général de Gaulle, Sérignan, Béziers, Hérault, Occitanie, France métropolitaine, 34410, France",
           "precision": "entity"
         },
-        "ehpad:ehpad korian lo solelh:béziers": {
-          "lat": 43.3426562,
-          "lng": 3.2131307,
-          "display_name": "Béziers, Hérault, Occitanie, France métropolitaine, 34500, France",
-          "precision": "commune_fallback"
-        },
         "ehpad:ehpad le mas du moulin:cers": {
           "lat": 43.3232846,
           "lng": 3.3057088,
@@ -3023,24 +2993,6 @@
           "lat": 43.3441358,
           "lng": 3.2510251,
           "display_name": "EHPAD Les Feuillantines, 40, Rue Raoul Bayou, Montimaran, Béziers, Hérault, Occitanie, France métropolitaine, 34500, France",
-          "precision": "entity"
-        },
-        "ehpad:ehpad les jardins de flore:boujan-sur-libron": {
-          "lat": 43.3658876,
-          "lng": 3.2497029,
-          "display_name": "EHPAD Les Jardins de Flore, Allée de l'Espinouse, ZAE Le Monestié, Boujan-sur-Libron, Béziers, Hérault, Occitanie, France métropolitaine, 34760, France",
-          "precision": "entity"
-        },
-        "ehpad:ehpad les jardins d'eulalie:montblanc": {
-          "lat": 43.3959636,
-          "lng": 3.3732529,
-          "display_name": "EHPAD Les Jardins d'Eulalie, Rue Marcel Pagnol, Montblanc, Béziers, Hérault, Occitanie, France métropolitaine, 34290, France",
-          "precision": "entity"
-        },
-        "ehpad:ehpad les terrasses du caroux:corneilhan": {
-          "lat": 43.401123,
-          "lng": 3.1878691,
-          "display_name": "EHPAD Les Terrasses du Caroux, Avenue de Thézan, Saint-Sernin, Corneilhan, Béziers, Hérault, Occitanie, France métropolitaine, 34490, France",
           "precision": "entity"
         },
         "ehpad:ehpad la renaissance:montady": {
@@ -4146,6 +4098,24 @@
           "lng": 2.6327355,
           "display_name": "La Livinière, Béziers, Hérault, Occitanie, France métropolitaine, France",
           "precision": "manual_estimate"
+        },
+        "ehpad:ehpad pinède:béziers": {
+          "lat": 43.3426562,
+          "lng": 3.2131307,
+          "display_name": "Béziers, Hérault, Occitanie, France métropolitaine, 34500, France",
+          "precision": "commune_fallback"
+        },
+        "ehpad:ehpad estagnol:vias": {
+          "lat": 43.3096693,
+          "lng": 3.4233007,
+          "display_name": "Chemin de l'Estagnol, Vias, Béziers, Hérault, Occitanie, France métropolitaine, 34450, France",
+          "precision": "entity"
+        },
+        "commune:clermont-l'hérault:": {
+          "lat": 43.6280556,
+          "lng": 3.4330556,
+          "display_name": "Clermont-l'Hérault, Lodève, Hérault, Occitanie, France métropolitaine, 34800, France",
+          "precision": "entity"
         }
       }
     }

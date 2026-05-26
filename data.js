@@ -32,7 +32,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "beausoleil",
     name: "Clinique Beausoleil",
-    color: "#bb6b00",
+    color: "#ffb703",
     location: {
       lat: 43.609371,
       lng: 3.848698,
@@ -74,7 +74,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "parc",
     name: "Clinique du Parc",
-    color: "#8C00FF",
+    color: "#390099",
     location: {
       lat: 43.633842,
       lng: 3.893407,
@@ -95,7 +95,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "saint_roch",
     name: "Clinique Saint-Roch",
-    color: "#FF2DD1",
+    color: "#d81159",
     location: {
       lat: 43.582811,
       lng: 3.861684,
@@ -160,7 +160,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "ch_beziers",
     name: "CH de Béziers",
-    color: "#A0153E",
+    color: "#F67D31 ",
     location: {
       lat: 43.3399156,
       lng: 3.2546494,
@@ -182,7 +182,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "trois_vallees",
     name: "Clinique des 3 Vallées",
-    color: "#8338ec",
+    color: "#bc00dd",
     location: {
       lat: 43.6081013,
       lng: 3.1503237,
@@ -203,7 +203,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "pasteur",
     name: "Clinique Pasteur",
-    color: "#F67D31",
+    color: "#008BFF",
     location: {
       lat: 43.4564227,
       lng: 3.4233371,
@@ -224,7 +224,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "saint_privat",
     name: "Clinique Saint-Privat",
-    color: "#008BFF",
+    color: "#ff0a54",
     location: {
       lat: 43.3672413,
       lng: 3.2547578,
@@ -245,7 +245,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "saint_louis_ganges",
     name: "Clinique Saint-Louis",
-    color: "#0002A1",
+    color: "#218380",
     location: {
       lat: 43.9349,
       lng: 3.7068,
@@ -266,7 +266,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "via_domitia_lunel",
     name: "Clinique Via Domitia",
-    color: "#343a40",
+    color: "#27a300",
     location: {
       lat: 43.6778,
       lng: 4.1361,
@@ -557,7 +557,6 @@ const DIVERS_CITY_RULES = {
     "Saint-Bauzille-de-la-Sylve",
     "Pouzols",
     "Brignac",
-    "Clermont-l'Hérault",
     "Ceyras",
     "Lacoste",
     "Saint-André-de-Sangonis",
@@ -612,6 +611,7 @@ const DIVERS_CITY_RULES = {
   ],
   saint_roch: ["Palavas-les-Flots"],
   beausoleil: ["Murviel-lès-Montpellier", "Saint-Georges-d'Orques", "Juvignac"],
+  pasteur: ["Clermont-l'Hérault"],
   millenaire: [],
   parc: [
     "Clapiers",

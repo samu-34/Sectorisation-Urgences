@@ -221,16 +221,23 @@
 
     function computeOrientation() {
       const area = resolveCurrentArea();
-      if (!area) {
+      const mapSpecialtyChanged = syncMapSpecialtyFromDetected();
+      const ehpadOrientation = state.cityInputValue
+        ? domain.resolveBeziersEhpadOrientation(state.cityInputValue, {
+            commune: state.cityValue,
+          })
+        : null;
+      if (!area && !ehpadOrientation) {
         return {
-          mapSpecialtyChanged: false,
+          mapSpecialtyChanged,
           orientation: null,
           state: getState(),
         };
       }
 
-      const mapSpecialtyChanged = syncMapSpecialtyFromDetected();
-      const hospitalId = domain.resolveOrientationHospital(area, state.symptomInputValue);
+      const hospitalId =
+        (ehpadOrientation && ehpadOrientation.structureId) ||
+        domain.resolveOrientationHospital(area, state.symptomInputValue);
       if (!hospitalId) {
         return {
           mapSpecialtyChanged,
@@ -239,18 +246,40 @@
         };
       }
 
+      const effectiveArea =
+        area ||
+        (state.originPoint
+          ? {
+              id: `ehpad_${domain
+                .simplify(state.cityInputValue)
+                .replace(/[^a-z0-9]+/g, "_")
+                .replace(/^_+|_+$/g, "")}`,
+              city: state.cityValue || state.cityInputValue,
+              label: state.cityValue || state.cityInputValue,
+              lat: state.originPoint.lat,
+              lng: state.originPoint.lng,
+              type: "beziers_ehpad",
+            }
+          : null);
       const originPoint =
-        state.originPoint || {
-          lat: area.lat,
-          lng: area.lng,
-          label: area.label,
+        state.originPoint || (effectiveArea && {
+          lat: effectiveArea.lat,
+          lng: effectiveArea.lng,
+          label: effectiveArea.label,
           precision: "area",
+        });
+      if (!effectiveArea || !originPoint) {
+        return {
+          mapSpecialtyChanged,
+          orientation: null,
+          state: getState(),
         };
+      }
 
       return {
         mapSpecialtyChanged,
         orientation: {
-          area,
+          area: effectiveArea,
           originPoint,
           hospitalId,
           symptom: state.symptomInputValue.trim(),

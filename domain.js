@@ -226,7 +226,7 @@
   const BEZIERS_COMMUNE_SUGGESTIONS = Object.freeze(
     collectBeziersSuggestionCities().map((city) => ({
       label: city,
-      category: "Commune Béziers",
+      category: "Commune",
     })),
   );
 
@@ -252,7 +252,7 @@
               simplify(`${displayLabel}|${item.commune || ""}`),
               {
                 label: displayLabel,
-                category: "EHPAD Béziers",
+                category: "EHPAD",
                 aliases: [shortAlias, communeAlias].filter(Boolean),
               },
             ];
@@ -827,27 +827,35 @@
       return null;
     }
 
-    const strictKey = `${normalizedName}|${normalizedCommune}`;
-    const strictMatch = BEZIERS_EHPAD_LOOKUP[strictKey];
-    if (strictMatch) {
-      return {
-        ...strictMatch,
-        structure: BEZIERS_STRUCTURES_BY_ID[strictMatch.structureId] || null,
-      };
+    const nameCandidates = [
+      normalizedName,
+      normalizedName.replace(/^ehpad\s+/i, "").trim(),
+      normalizedName.replace(/^(?:ehpad\s+)?(?:l'|le|la|les)\s+/i, "").trim(),
+    ].filter(Boolean);
+
+    for (const candidateName of nameCandidates) {
+      const strictKey = `${candidateName}|${normalizedCommune}`;
+      const strictMatch = BEZIERS_EHPAD_LOOKUP[strictKey];
+      if (strictMatch) {
+        return {
+          ...strictMatch,
+          structure: BEZIERS_STRUCTURES_BY_ID[strictMatch.structureId] || null,
+        };
+      }
+
+      const fallbackMatch = Object.entries(BEZIERS_EHPAD_LOOKUP).find(([key]) =>
+        key.startsWith(`${candidateName}|`),
+      );
+      if (fallbackMatch) {
+        const match = fallbackMatch[1];
+        return {
+          ...match,
+          structure: BEZIERS_STRUCTURES_BY_ID[match.structureId] || null,
+        };
+      }
     }
 
-    const fallbackMatch = Object.entries(BEZIERS_EHPAD_LOOKUP).find(([key]) =>
-      key.startsWith(`${normalizedName}|`),
-    );
-    if (!fallbackMatch) {
-      return null;
-    }
-
-    const match = fallbackMatch[1];
-    return {
-      ...match,
-      structure: BEZIERS_STRUCTURES_BY_ID[match.structureId] || null,
-    };
+    return null;
   }
 
   function distanceKm(lat1, lng1, lat2, lng2) {

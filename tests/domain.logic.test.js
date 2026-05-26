@@ -148,20 +148,20 @@ test("city suggestions expose both communes and quartier aliases", () => {
   assert.ok(
     suggestions.some(
       (item) =>
-        item.label === "Béziers" && item.category === "Commune Béziers",
+        item.label === "Béziers" && item.category === "Commune",
     ),
   );
   assert.ok(
     suggestions.some(
       (item) =>
-        item.label === "Agde" && item.category === "Commune Béziers",
+        item.label === "Agde" && item.category === "Commune",
     ),
   );
   assert.ok(
     suggestions.some(
       (item) =>
         item.label === "EHPAD Le Mas du Moulin" &&
-        item.category === "EHPAD Béziers",
+        item.category === "EHPAD",
     ),
   );
   assert.ok(
@@ -212,4 +212,18 @@ test("resolveBeziersEhpadOrientation handles exact match, normalized variant and
   );
   assert.ok(fallback);
   assert.equal(fallback.structureId, "saint_privat");
+
+  const pins = MediMapDomain.resolveBeziersEhpadOrientation(
+    "EHPAD Maison de retraite Les Pins",
+    { commune: "Cessenon-sur-Orb" },
+  );
+  assert.ok(pins);
+  assert.equal(pins.structureId, "trois_vallees");
+
+  const mrpa = MediMapDomain.resolveBeziersEhpadOrientation(
+    "EHPAD MRPA Saint-Chinianais",
+    { commune: "Saint-Chinian" },
+  );
+  assert.ok(mrpa);
+  assert.equal(mrpa.structureId, "trois_vallees");
 });

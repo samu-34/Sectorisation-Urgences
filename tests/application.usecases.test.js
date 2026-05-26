@@ -36,6 +36,34 @@ test("un motif non reconnu bloque l'orientation sans casser la selection de zone
   assert.equal(orientationResult.state.detectedSpecialty, "");
 });
 
+test("un EHPAD Beziers utilise son hopital de reference meme avec un motif non reconnu", () => {
+  const controller = MediMapApplication.createAppController();
+
+  const cityResult = controller.selectCityInput("EHPAD Les Floréales");
+  assert.equal(cityResult.selection.matched, true);
+  assert.equal(cityResult.state.cityValue, "Pinet");
+
+  controller.setSymptomInput("motif hors catalogue", { syncMapSpecialty: false });
+  const orientationResult = controller.computeOrientation();
+
+  assert.ok(orientationResult.orientation);
+  assert.equal(orientationResult.orientation.hospitalId, "ch_sete");
+});
+
+test("un EHPAD hors zones communales cartographiees reste orientable via son referentiel", () => {
+  const controller = MediMapApplication.createAppController();
+
+  const cityResult = controller.selectCityInput("La Rebondine");
+  assert.equal(cityResult.selection.matched, true);
+  assert.equal(cityResult.state.cityValue, "La Salvetat-sur-Agout");
+
+  controller.setSymptomInput("motif hors catalogue", { syncMapSpecialty: false });
+  const orientationResult = controller.computeOrientation();
+
+  assert.ok(orientationResult.orientation);
+  assert.equal(orientationResult.orientation.hospitalId, "trois_vallees");
+});
+
 test("refreshSectorisationMap s'appuie sur la configuration declarative des nuages", () => {
   const controller = MediMapApplication.createAppController();
 
