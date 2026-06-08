@@ -409,6 +409,838 @@
       "cloud": "sud_ouest"
     },
     {
+      "id": "agones",
+      "city": "Agonès",
+      "lat": 43.8989,
+      "lng": 3.7262,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "aniane",
+      "city": "Aniane",
+      "lat": 43.6859,
+      "lng": 3.5907,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "arboras",
+      "city": "Arboras",
+      "lat": 43.7204,
+      "lng": 3.4726,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "argelliers",
+      "city": "Argelliers",
+      "lat": 43.733,
+      "lng": 3.683,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "aumelas",
+      "city": "Aumelas",
+      "lat": 43.5768,
+      "lng": 3.6052,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "boisseron",
+      "city": "Boisseron",
+      "lat": 43.7531,
+      "lng": 4.0745,
+      "type": "commune",
+      "cloud": "est"
+    },
+    {
+      "id": "brignac",
+      "city": "Brignac",
+      "lat": 43.6222,
+      "lng": 3.4715,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "brissac",
+      "city": "Brissac",
+      "lat": 43.868,
+      "lng": 3.712,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "buzignargues",
+      "city": "Buzignargues",
+      "lat": 43.7731,
+      "lng": 3.9944,
+      "type": "commune",
+      "cloud": "est"
+    },
+    {
+      "id": "campagne",
+      "city": "Campagne",
+      "lat": 43.7875,
+      "lng": 4.033,
+      "type": "commune",
+      "cloud": "est"
+    },
+    {
+      "id": "candillargues",
+      "city": "Candillargues",
+      "lat": 43.6189,
+      "lng": 4.0645,
+      "type": "commune",
+      "cloud": "est"
+    },
+    {
+      "id": "causse_de_la_selle",
+      "city": "Causse-de-la-Selle",
+      "lat": 43.7922,
+      "lng": 3.6326,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "cazevieille",
+      "city": "Cazevieille",
+      "lat": 43.7659,
+      "lng": 3.7847,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "cazilhac",
+      "city": "Cazilhac",
+      "lat": 43.9178,
+      "lng": 3.6936,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "celles",
+      "city": "Celles",
+      "lat": 43.668,
+      "lng": 3.3562,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "ceyras",
+      "city": "Ceyras",
+      "lat": 43.6512,
+      "lng": 3.4645,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "claret",
+      "city": "Claret",
+      "lat": 43.8537,
+      "lng": 3.8765,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "clermont_l_herault",
+      "city": "Clermont-l'Hérault",
+      "lat": 43.6325,
+      "lng": 3.4023,
+      "type": "commune",
+      "cloud": "ouest"
+    },
+    {
+      "id": "courniou",
+      "city": "Courniou",
+      "lat": 43.489,
+      "lng": 2.6953,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "ferrieres_les_verreries",
+      "city": "Ferrières-les-Verreries",
+      "lat": 43.8652,
+      "lng": 3.8031,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "fontanes",
+      "city": "Fontanès",
+      "lat": 43.7937,
+      "lng": 3.9206,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "fozieres",
+      "city": "Fozières",
+      "lat": 43.7516,
+      "lng": 3.3552,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "fraisse_sur_agout",
+      "city": "Fraisse-sur-Agout",
+      "lat": 43.5956,
+      "lng": 2.7994,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "galargues",
+      "city": "Galargues",
+      "lat": 43.7848,
+      "lng": 4.0132,
+      "type": "commune",
+      "cloud": "est"
+    },
+    {
+      "id": "ganges",
+      "city": "Ganges",
+      "lat": 43.9443,
+      "lng": 3.7036,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "garrigues",
+      "city": "Garrigues",
+      "lat": 43.7996,
+      "lng": 4.0136,
+      "type": "commune",
+      "cloud": "est"
+    },
+    {
+      "id": "gignac",
+      "city": "Gignac",
+      "lat": 43.6419,
+      "lng": 3.5659,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "gornies",
+      "city": "Gorniès",
+      "lat": 43.885,
+      "lng": 3.6224,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "jonquieres",
+      "city": "Jonquières",
+      "lat": 43.6737,
+      "lng": 3.478,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "la_boissiere",
+      "city": "La Boissière",
+      "lat": 43.6595,
+      "lng": 3.6465,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "la_grande_motte",
+      "city": "La Grande-Motte",
+      "lat": 43.5723,
+      "lng": 4.0725,
+      "type": "commune",
+      "cloud": "est"
+    },
+    {
+      "id": "la_salvetat_sur_agout",
+      "city": "La Salvetat-sur-Agout",
+      "lat": 43.6031,
+      "lng": 2.6914,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "la_vacquerie_et_saint_martin_de_castries",
+      "city": "La Vacquerie-et-Saint-Martin-de-Castries",
+      "lat": 43.794,
+      "lng": 3.4828,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "lacoste",
+      "city": "Lacoste",
+      "lat": 43.6549,
+      "lng": 3.4218,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "lagamas",
+      "city": "Lagamas",
+      "lat": 43.6758,
+      "lng": 3.5296,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "lansargues",
+      "city": "Lansargues",
+      "lat": 43.6309,
+      "lng": 4.0789,
+      "type": "commune",
+      "cloud": "est"
+    },
+    {
+      "id": "laroque",
+      "city": "Laroque",
+      "lat": 43.925,
+      "lng": 3.7333,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "lauret",
+      "city": "Lauret",
+      "lat": 43.8309,
+      "lng": 3.8789,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "le_bosc",
+      "city": "Le Bosc",
+      "lat": 43.6993,
+      "lng": 3.3895,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "le_caylar",
+      "city": "Le Caylar",
+      "lat": 43.8714,
+      "lng": 3.3104,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "le_cros",
+      "city": "Le Cros",
+      "lat": 43.8812,
+      "lng": 3.3677,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "le_pouget",
+      "city": "Le Pouget",
+      "lat": 43.5916,
+      "lng": 3.5185,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "le_puech",
+      "city": "Le Puech",
+      "lat": 43.6843,
+      "lng": 3.3286,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "le_soulie",
+      "city": "Le Soulié",
+      "lat": 43.54,
+      "lng": 2.6862,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "lodeve",
+      "city": "Lodève",
+      "lat": 43.7289,
+      "lng": 3.2973,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "lunel",
+      "city": "Lunel",
+      "lat": 43.6781,
+      "lng": 4.1322,
+      "type": "commune",
+      "cloud": "est"
+    },
+    {
+      "id": "lunel_viel",
+      "city": "Lunel-Viel",
+      "lat": 43.6802,
+      "lng": 4.0827,
+      "type": "commune",
+      "cloud": "est"
+    },
+    {
+      "id": "marsillargues",
+      "city": "Marsillargues",
+      "lat": 43.6374,
+      "lng": 4.1346,
+      "type": "commune",
+      "cloud": "est"
+    },
+    {
+      "id": "mas_de_londres",
+      "city": "Mas-de-Londres",
+      "lat": 43.7855,
+      "lng": 3.7757,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "montoulieu",
+      "city": "Montoulieu",
+      "lat": 43.915,
+      "lng": 3.8011,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "montpeyroux",
+      "city": "Montpeyroux",
+      "lat": 43.7113,
+      "lng": 3.5014,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "moules_et_baucels",
+      "city": "Moulès-et-Baucels",
+      "lat": 43.9476,
+      "lng": 3.7564,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "mudaison",
+      "city": "Mudaison",
+      "lat": 43.6407,
+      "lng": 4.0375,
+      "type": "commune",
+      "cloud": "est"
+    },
+    {
+      "id": "notre_dame_de_londres",
+      "city": "Notre-Dame-de-Londres",
+      "lat": 43.8376,
+      "lng": 3.7553,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "olmet_et_villecun",
+      "city": "Olmet-et-Villecun",
+      "lat": 43.7089,
+      "lng": 3.3024,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "pegairolles_de_bueges",
+      "city": "Pégairolles-de-Buèges",
+      "lat": 43.8076,
+      "lng": 3.5745,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "pegairolles_de_l_escalette",
+      "city": "Pégairolles-de-l'Escalette",
+      "lat": 43.8138,
+      "lng": 3.3341,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "popian",
+      "city": "Popian",
+      "lat": 43.6223,
+      "lng": 3.5359,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "poujols",
+      "city": "Poujols",
+      "lat": 43.7736,
+      "lng": 3.3158,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "pouzols",
+      "city": "Pouzols",
+      "lat": 43.6222,
+      "lng": 3.5075,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "puechabon",
+      "city": "Puéchabon",
+      "lat": 43.7241,
+      "lng": 3.6048,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "rouet",
+      "city": "Rouet",
+      "lat": 43.8251,
+      "lng": 3.8193,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "saint_andre_de_bueges",
+      "city": "Saint-André-de-Buèges",
+      "lat": 43.854,
+      "lng": 3.6439,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "saint_andre_de_sangonis",
+      "city": "Saint-André-de-Sangonis",
+      "lat": 43.6488,
+      "lng": 3.5058,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "saint_bauzille_de_la_sylve",
+      "city": "Saint-Bauzille-de-la-Sylve",
+      "lat": 43.6113,
+      "lng": 3.5615,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "saint_bauzille_de_montmel",
+      "city": "Saint-Bauzille-de-Montmel",
+      "lat": 43.7761,
+      "lng": 3.9432,
+      "type": "commune",
+      "cloud": "est"
+    },
+    {
+      "id": "saint_bauzille_de_putois",
+      "city": "Saint-Bauzille-de-Putois",
+      "lat": 43.9027,
+      "lng": 3.7574,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "saint_christol",
+      "city": "Saint-Christol",
+      "lat": 43.7192,
+      "lng": 4.0734,
+      "type": "commune",
+      "cloud": "est"
+    },
+    {
+      "id": "saint_etienne_de_gourgas",
+      "city": "Saint-Étienne-de-Gourgas",
+      "lat": 43.7867,
+      "lng": 3.3865,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "saint_felix_de_l_heras",
+      "city": "Saint-Félix-de-l'Héras",
+      "lat": 43.8351,
+      "lng": 3.3196,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "saint_felix_de_lodez",
+      "city": "Saint-Félix-de-Lodez",
+      "lat": 43.6602,
+      "lng": 3.4687,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "saint_guilhem_le_desert",
+      "city": "Saint-Guilhem-le-Désert",
+      "lat": 43.7523,
+      "lng": 3.5441,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "saint_guiraud",
+      "city": "Saint-Guiraud",
+      "lat": 43.6803,
+      "lng": 3.4507,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "saint_hilaire_de_beauvoir",
+      "city": "Saint-Hilaire-de-Beauvoir",
+      "lat": 43.7521,
+      "lng": 4.0174,
+      "type": "commune",
+      "cloud": "est"
+    },
+    {
+      "id": "saint_jean_de_bueges",
+      "city": "Saint-Jean-de-Buèges",
+      "lat": 43.8337,
+      "lng": 3.6018,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "saint_jean_de_cornies",
+      "city": "Saint-Jean-de-Cornies",
+      "lat": 43.7453,
+      "lng": 4.005,
+      "type": "commune",
+      "cloud": "est"
+    },
+    {
+      "id": "saint_jean_de_fos",
+      "city": "Saint-Jean-de-Fos",
+      "lat": 43.6954,
+      "lng": 3.5461,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "saint_jean_de_la_blaquiere",
+      "city": "Saint-Jean-de-la-Blaquière",
+      "lat": 43.7082,
+      "lng": 3.431,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "saint_just",
+      "city": "Saint-Just",
+      "lat": 43.6569,
+      "lng": 4.1118,
+      "type": "commune",
+      "cloud": "est"
+    },
+    {
+      "id": "saint_martin_de_londres",
+      "city": "Saint-Martin-de-Londres",
+      "lat": 43.7936,
+      "lng": 3.7125,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "saint_maurice_navacelles",
+      "city": "Saint-Maurice-Navacelles",
+      "lat": 43.8422,
+      "lng": 3.5039,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "saint_michel",
+      "city": "Saint-Michel",
+      "lat": 43.8435,
+      "lng": 3.4055,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "saint_nazaire_de_pezan",
+      "city": "Saint-Nazaire-de-Pézan",
+      "lat": 43.6322,
+      "lng": 4.1176,
+      "type": "commune",
+      "cloud": "est"
+    },
+    {
+      "id": "saint_paul_et_valmalle",
+      "city": "Saint-Paul-et-Valmalle",
+      "lat": 43.6151,
+      "lng": 3.6827,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "saint_pierre_de_la_fage",
+      "city": "Saint-Pierre-de-la-Fage",
+      "lat": 43.7939,
+      "lng": 3.42,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "saint_privat",
+      "city": "Saint-Privat",
+      "lat": 43.7534,
+      "lng": 3.4284,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "saint_saturnin_de_lucian",
+      "city": "Saint-Saturnin-de-Lucian",
+      "lat": 43.7088,
+      "lng": 3.468,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "saint_series",
+      "city": "Saint-Sériès",
+      "lat": 43.7365,
+      "lng": 4.1068,
+      "type": "commune",
+      "cloud": "est"
+    },
+    {
+      "id": "sainte_croix_de_quintillargues",
+      "city": "Sainte-Croix-de-Quintillargues",
+      "lat": 43.7674,
+      "lng": 3.9118,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "saturargues",
+      "city": "Saturargues",
+      "lat": 43.7137,
+      "lng": 4.1173,
+      "type": "commune",
+      "cloud": "est"
+    },
+    {
+      "id": "saussines",
+      "city": "Saussines",
+      "lat": 43.7582,
+      "lng": 4.0501,
+      "type": "commune",
+      "cloud": "est"
+    },
+    {
+      "id": "sauteyrargues",
+      "city": "Sauteyrargues",
+      "lat": 43.8314,
+      "lng": 3.9185,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "sorbs",
+      "city": "Sorbs",
+      "lat": 43.8883,
+      "lng": 3.4066,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "soubes",
+      "city": "Soubès",
+      "lat": 43.7816,
+      "lng": 3.3495,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "soumont",
+      "city": "Soumont",
+      "lat": 43.7226,
+      "lng": 3.3509,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "usclas_du_bosc",
+      "city": "Usclas-du-Bosc",
+      "lat": 43.7246,
+      "lng": 3.3965,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "vacquieres",
+      "city": "Vacquières",
+      "lat": 43.8283,
+      "lng": 3.9543,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "valergues",
+      "city": "Valergues",
+      "lat": 43.6723,
+      "lng": 4.0567,
+      "type": "commune",
+      "cloud": "est"
+    },
+    {
+      "id": "valflaunes",
+      "city": "Valflaunès",
+      "lat": 43.8039,
+      "lng": 3.8598,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "vendemian",
+      "city": "Vendémian",
+      "lat": 43.5807,
+      "lng": 3.5612,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "verargues",
+      "city": "Vérargues",
+      "lat": 43.7107,
+      "lng": 4.0904,
+      "type": "commune",
+      "cloud": "est"
+    },
+    {
+      "id": "villetelle",
+      "city": "Villetelle",
+      "lat": 43.7247,
+      "lng": 4.1382,
+      "type": "commune",
+      "cloud": "est"
+    },
+    {
+      "id": "viols_en_laval",
+      "city": "Viols-en-Laval",
+      "lat": 43.7434,
+      "lng": 3.7403,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
+      "id": "viols_le_fort",
+      "city": "Viols-le-Fort",
+      "lat": 43.7353,
+      "lng": 3.6904,
+      "type": "commune",
+      "cloud": "nord"
+    },
+    {
       "id": "lattes-maurin",
       "city": "Lattes",
       "label": "Lattes - Maurin",
