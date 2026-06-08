@@ -1,6 +1,6 @@
 (function bootstrapMediMap() {
   const SCRIPTS_IN_ORDER = [
-    "generated/sectorization-data.js?v=1780914582539320452",
+    "generated/sectorization-data.js?v=1780914800078089014",
     "data.js?v=20260506-2100",
     "generated/montpellier_street_index.js?v=20260324-1621",
     "domain.js?v=20260319-1735",

@@ -10,6 +10,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_SOURCE = REPO_ROOT / "data_sources" / "sectorization.json"
 DEFAULT_OUTPUT = REPO_ROOT / "generated" / "sectorization-data.js"
 BOOTSTRAP_PATH = REPO_ROOT / "bootstrap.js"
+INDEX_PATH = REPO_ROOT / "index.html"
 REQUIRED_TOP_LEVEL_KEYS = (
     "cityAreas",
     "mtpSubareas",
@@ -87,6 +88,32 @@ def update_bootstrap_cache_buster(path: Path, version: str) -> bool:
     return True
 
 
+def update_index_cache_buster(path: Path, version: str) -> bool:
+    source = path.read_text(encoding="utf-8")
+    marker = '<script src="generated/sectorization-data.js?v='
+    updated = source
+    changed = False
+    search_start = 0
+
+    while True:
+        start = updated.find(marker, search_start)
+        if start < 0:
+            break
+
+        version_start = start + len(marker)
+        version_end = updated.find('"', version_start)
+        if version_end < 0:
+            return False
+
+        updated = f"{updated[:version_start]}{version}{updated[version_end:]}"
+        changed = True
+        search_start = version_start + len(version)
+
+    if changed and updated != source:
+        path.write_text(updated, encoding="utf-8")
+    return changed
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Generate the sectorization bundle consumed by the MediMap front-end."
@@ -112,6 +139,7 @@ def main() -> None:
 
     version = output_path.stat().st_mtime_ns
     update_bootstrap_cache_buster(BOOTSTRAP_PATH, str(version))
+    update_index_cache_buster(INDEX_PATH, str(version))
 
     print(f"Generated {output_path} from {source_path}")
 
