@@ -141,7 +141,7 @@ const HOSPITAL_RECORDS = [
       address: "Boulevard Camille Blanc, 34200 Sète",
     },
     phones: {
-      urgences: "Non communiqué",
+      urgences: "04 67 46 50 47",
     },
     source: {
       label: "Référentiel MediMap",
@@ -161,7 +161,7 @@ const HOSPITAL_RECORDS = [
       address: "2 Rue Valentin Haüy, 34500 Béziers",
     },
     phones: {
-      urgences: "Non communiqué",
+      urgences: "04 67 35 72 68",
     },
     source: {
       label: "Référentiel MediMap",
@@ -182,7 +182,7 @@ const HOSPITAL_RECORDS = [
       address: "4 Route de Saint-Pons, 34600 Bédarieux",
     },
     phones: {
-      urgences: "Non communiqué",
+      urgences: "04 67 95 56 56",
     },
     source: {
       label: "Référentiel MediMap",
@@ -202,7 +202,7 @@ const HOSPITAL_RECORDS = [
       address: "3 Rue Pasteur, 34120 Pézenas",
     },
     phones: {
-      urgences: "Non communiqué",
+      urgences: "04 67 90 41 68",
     },
     source: {
       label: "Référentiel MediMap",
@@ -222,7 +222,7 @@ const HOSPITAL_RECORDS = [
       address: "Rue de la Margeride, 34760 Boujan-sur-Libron",
     },
     phones: {
-      urgences: "Non communiqué",
+      urgences: "04 67 35 46 46",
     },
     source: {
       label: "Référentiel MediMap",
@@ -242,7 +242,7 @@ const HOSPITAL_RECORDS = [
       address: "2 place Joseph Boudouresques, 34190 Ganges",
     },
     phones: {
-      urgences: "Non communiqué",
+      urgences: "04 67 81 68 77",
     },
     source: {
       label: "Référentiel MediMap",
@@ -262,7 +262,7 @@ const HOSPITAL_RECORDS = [
       address: "235 chemin des Alicantes, 34400 Lunel",
     },
     phones: {
-      urgences: "Non communiqué",
+      urgences: "04 67 91 78 21",
     },
     source: {
       label: "Référentiel MediMap",
