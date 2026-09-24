@@ -20,7 +20,6 @@ const HOSPITAL_RECORDS = [
     },
     phones: {
       urgences: "04 67 33 95 02",
-      specialites: "04 67 33 67 33",
     },
     source: {
       label: "Référentiel MediMap",
@@ -41,7 +40,6 @@ const HOSPITAL_RECORDS = [
     },
     phones: {
       urgences: "04 67 75 97 19",
-      specialites: "04 67 75 97 00",
     },
     source: {
       label: "Référentiel MediMap",
@@ -62,7 +60,6 @@ const HOSPITAL_RECORDS = [
     },
     phones: {
       urgences: "04 99 53 63 73",
-      specialites: "04 99 75 60 00",
     },
     source: {
       label: "Référentiel MediMap",
@@ -82,8 +79,7 @@ const HOSPITAL_RECORDS = [
       address: "50 rue Émile Combes, 34170 Castelnau-le-Lez",
     },
     phones: {
-      urgences: "04 67 75 97 19",
-      specialites: "04 67 33 05 00",
+      urgences: "04 67 33 17 08",
     },
     source: {
       label: "Référentiel MediMap",
@@ -105,7 +101,6 @@ const HOSPITAL_RECORDS = [
     },
     phones: {
       urgences: "04 67 61 27 27",
-      specialites: "04 67 61 48 00",
     },
     source: {
       label: "Référentiel MediMap",
@@ -126,7 +121,6 @@ const HOSPITAL_RECORDS = [
     },
     phones: {
       urgences: "04 67 61 20 04",
-      specialites: "04 67 61 44 00",
     },
     source: {
       label: "Référentiel MediMap",
@@ -148,7 +142,6 @@ const HOSPITAL_RECORDS = [
     },
     phones: {
       urgences: "Non communiqué",
-      specialites: "Non communiqué",
     },
     source: {
       label: "Référentiel MediMap",
@@ -169,7 +162,6 @@ const HOSPITAL_RECORDS = [
     },
     phones: {
       urgences: "Non communiqué",
-      specialites: "Non communiqué",
     },
     source: {
       label: "Référentiel MediMap",
@@ -191,7 +183,6 @@ const HOSPITAL_RECORDS = [
     },
     phones: {
       urgences: "Non communiqué",
-      specialites: "Non communiqué",
     },
     source: {
       label: "Référentiel MediMap",
@@ -212,7 +203,6 @@ const HOSPITAL_RECORDS = [
     },
     phones: {
       urgences: "Non communiqué",
-      specialites: "Non communiqué",
     },
     source: {
       label: "Référentiel MediMap",
@@ -233,7 +223,6 @@ const HOSPITAL_RECORDS = [
     },
     phones: {
       urgences: "Non communiqué",
-      specialites: "Non communiqué",
     },
     source: {
       label: "Référentiel MediMap",
@@ -254,7 +243,6 @@ const HOSPITAL_RECORDS = [
     },
     phones: {
       urgences: "Non communiqué",
-      specialites: "Non communiqué",
     },
     source: {
       label: "Référentiel MediMap",
@@ -275,7 +263,6 @@ const HOSPITAL_RECORDS = [
     },
     phones: {
       urgences: "Non communiqué",
-      specialites: "Non communiqué",
     },
     source: {
       label: "Référentiel MediMap",
@@ -294,7 +281,6 @@ function assertHospitalRecord(record, index) {
     ["location.city", record.location && record.location.city],
     ["location.address", record.location && record.location.address],
     ["phones.urgences", record.phones && record.phones.urgences],
-    ["phones.specialites", record.phones && record.phones.specialites],
     ["source.label", record.source && record.source.label],
     ["verified_at", record.verified_at],
     ["verification_status", record.verification_status],
@@ -334,7 +320,6 @@ function createHospitalRegistry(records) {
       city: record.location.city,
       address: record.location.address,
       phone_urgences: record.phones.urgences,
-      phone_specialites: record.phones.specialites,
       source: record.source,
       verified_at: record.verified_at,
       verification_status: record.verification_status,

@@ -45,11 +45,7 @@ let filieresDialogOpen = false;
 const beziersPreviewEnabled = true;
 let suppressNextCityBlurSync = false;
 
-const {
-  simplify,
-  getRankedMatches,
-  filiereLabelById,
-} = MediMapDomain;
+const { simplify, getRankedMatches, filiereLabelById } = MediMapDomain;
 const SYMPTOM_ERROR_MESSAGE = "Choisir un motif valable";
 const appController = MediMapApplication.createAppController();
 
@@ -85,11 +81,10 @@ function renderDetectedSpecialtyIndicator() {
 
 function hasSymptomCatalogMatch(query) {
   return (
-    getRankedMatches(
-      MOTIF_CATALOG,
-      query,
-      (item) => [item.label, ...(item.aliases || [])],
-    ).length > 0
+    getRankedMatches(MOTIF_CATALOG, query, (item) => [
+      item.label,
+      ...(item.aliases || []),
+    ]).length > 0
   );
 }
 
@@ -102,7 +97,10 @@ function renderSymptomValidationState() {
     !hasSymptomCatalogMatch(symptomInputValue);
 
   DOM.symptomField.classList.toggle("is-invalid", invalidSymptom);
-  DOM.symptomInput.setAttribute("aria-invalid", invalidSymptom ? "true" : "false");
+  DOM.symptomInput.setAttribute(
+    "aria-invalid",
+    invalidSymptom ? "true" : "false",
+  );
   DOM.symptomInput.parentElement.classList.toggle("is-invalid", invalidSymptom);
 
   if (invalidSymptom) {
@@ -205,7 +203,6 @@ function lockMapAccess() {
     return;
   }
 
-  mapAccessUnlocked = false;
   DOM.appRoot.classList.add("app-locked");
   DOM.authOverlay.classList.remove("hidden");
   DOM.authError.classList.add("hidden");
@@ -406,7 +403,8 @@ cityInputController = MediMapCityInput.createCityInputController({
   autocomplete,
   simplify,
   looksLikeMontpellierAddress: MediMapDomain.looksLikeMontpellierAddress,
-  resolveMontpellierGeocodeCandidate: MediMapDomain.resolveMontpellierGeocodeCandidate,
+  resolveMontpellierGeocodeCandidate:
+    MediMapDomain.resolveMontpellierGeocodeCandidate,
   onSelectionStateChange() {
     renderSelectionState();
   },
