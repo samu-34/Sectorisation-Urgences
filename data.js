@@ -31,7 +31,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "beausoleil",
     name: "Clinique Beausoleil",
-    color: "#ffb703",
+    color: "#D9A400 ",
     location: {
       lat: 43.609371,
       lng: 3.848698,
@@ -51,7 +51,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "millenaire",
     name: "Clinique du Millénaire",
-    color: "#F45B26",
+    color: "#F45B26 ",
     location: {
       lat: 43.601962,
       lng: 3.913786,
@@ -71,7 +71,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "parc",
     name: "Clinique du Parc",
-    color: "#390099",
+    color: "#651FFF",
     location: {
       lat: 43.633842,
       lng: 3.893407,
@@ -91,7 +91,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "saint_roch",
     name: "Clinique Saint-Roch",
-    color: "#d81159",
+    color: "#00E5FF",
     location: {
       lat: 43.582811,
       lng: 3.861684,
@@ -112,7 +112,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "saint_jean",
     name: "Clinique Saint-Jean",
-    color: "#008BFF",
+    color: "#E040FB ",
     location: {
       lat: 43.570217,
       lng: 3.835075,
@@ -133,7 +133,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "ch_sete",
     name: "CH de Sète",
-    color: "#08CB00",
+    color: "#00E676",
     location: {
       lat: 43.4029493,
       lng: 3.6984129,
@@ -174,7 +174,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "trois_vallees",
     name: "Clinique des 3 Vallées",
-    color: "#bc00dd",
+    color: "#B358C8",
     location: {
       lat: 43.6081013,
       lng: 3.1503237,
@@ -194,7 +194,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "pasteur",
     name: "Clinique Pasteur",
-    color: "#008BFF",
+    color: "#B08D57",
     location: {
       lat: 43.4564227,
       lng: 3.4233371,
@@ -214,7 +214,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "saint_privat",
     name: "Clinique Saint-Privat",
-    color: "#ff0a54",
+    color: "#2979FF",
     location: {
       lat: 43.3672413,
       lng: 3.2547578,
