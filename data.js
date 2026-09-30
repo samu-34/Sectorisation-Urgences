@@ -31,7 +31,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "beausoleil",
     name: "Clinique Beausoleil",
-    color: "#D9A400 ",
+    color: "#B08D57",
     location: {
       lat: 43.609371,
       lng: 3.848698,
@@ -133,7 +133,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "ch_sete",
     name: "CH de Sète",
-    color: "#00E676",
+    color: "#D9A400",
     location: {
       lat: 43.4029493,
       lng: 3.6984129,
@@ -194,7 +194,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "pasteur",
     name: "Clinique Pasteur",
-    color: "#B08D57",
+    color: "#27a300 ",
     location: {
       lat: 43.4564227,
       lng: 3.4233371,
@@ -254,7 +254,7 @@ const HOSPITAL_RECORDS = [
   {
     id: "via_domitia_lunel",
     name: "Clinique Via Domitia",
-    color: "#27a300",
+    color: "#00E676",
     location: {
       lat: 43.6778,
       lng: 4.1361,
